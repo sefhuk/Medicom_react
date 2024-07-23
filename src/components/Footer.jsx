@@ -6,9 +6,6 @@ function Footer() {
 }
 
 const FooterBar = styled.footer`
-  width: 70dvh;
-  position: fixed;
-  bottom: 0;
   height: 8dvh;
   text-align: center;
   background-color: skyblue;
