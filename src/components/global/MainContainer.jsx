@@ -14,8 +14,12 @@ function MainContainer({ children }) {
 }
 
 const Container = styled.div`
+  width: 70dvh;
+  margin: 0 auto;
   height: 92dvh;
   overflow-y: scroll;
 `;
+
+
 
 export default MainContainer;
