@@ -1,7 +1,5 @@
 import React from 'react';
 import MainContainer from '../components/global/MainContainer';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
@@ -11,14 +9,11 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 
 function MainPage() {
+
+  /**
+   * mui 테스트용
+   */
   return (<MainContainer>
-    <AppBar position="static">
-      <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          MUI 테스트(툴바 테스트)
-        </Typography>
-      </Toolbar>
-    </AppBar>
     <Container>
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>

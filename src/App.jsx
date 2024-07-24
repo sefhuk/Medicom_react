@@ -1,12 +1,27 @@
 import './App.css';
 import { Outlet } from 'react-router-dom';
+//import React, { useState } from 'react';
 
-function App() {
+
+
+const App = () => {
+  //const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  /*const handleLogin = (userData) => {
+    setIsLoggedIn(true);
+
+  };
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('token');
+  };
+*/
   return (
-    <div>
-      <Outlet />
-    </div>
+    <>
+      <Outlet /> {}
+    </>
+
   );
-}
+};
 
 export default App;
