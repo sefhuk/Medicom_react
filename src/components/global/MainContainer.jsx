@@ -7,15 +7,27 @@ function MainContainer({ children }) {
   return (
     <Container>
       <Nav />
-      {children}
+      <Content>
+        {children}
+      </Content>
       <Footer />
     </Container>
   );
 }
 
 const Container = styled.div`
-  height: 92dvh;
+  display: flex;
+  flex-direction: column;
+  max-width: 70dvh;
+  margin: 0 auto;
+  height: 100dvh;
+`;
+
+const Content = styled.div`
+  flex: 1;
   overflow-y: scroll;
 `;
+
+
 
 export default MainContainer;
