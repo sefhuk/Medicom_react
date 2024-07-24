@@ -4,6 +4,10 @@ import './index.css';
 import App from './App';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainPage from './pages/MainPage';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RecoilRoot } from 'recoil';
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -19,4 +23,10 @@ const router = createBrowserRouter([
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<RouterProvider router={router} />);
+root.render(
+  <QueryClientProvider client={queryClient}>
+    <RecoilRoot>
+      <RouterProvider router={router} />
+    </RecoilRoot>
+  </QueryClientProvider>
+);
