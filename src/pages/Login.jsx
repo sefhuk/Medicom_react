@@ -5,7 +5,6 @@ import { TextField, Button, Typography, Paper, Container, Box } from '@mui/mater
 import MainContainer from '../components/global/MainContainer';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '../utils/atom';
-import Register from './user/Register';
 
 
 const Login = () => {
@@ -33,7 +32,7 @@ const Login = () => {
   };
 
   const navigateRegister = () =>{
-    navigate('/Register');
+    navigate('/register');
   };
 
   return (
