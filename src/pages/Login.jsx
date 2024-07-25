@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userLogin } from '../utils/axios';
-import { TextField, Button, Typography, Paper } from '@mui/material';
+import { TextField, Button, Typography, Paper, Container, Box } from '@mui/material';
 import MainContainer from '../components/global/MainContainer';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '../utils/atom';
+import Register from './user/Register';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -30,6 +32,10 @@ const Login = () => {
     }
   };
 
+  const navigateRegister = () =>{
+    navigate('/Register');
+  };
+
   return (
     <MainContainer>
       <Paper elevation={6} sx={{ padding: 3, borderRadius: '10px' }}>
@@ -43,6 +49,13 @@ const Login = () => {
         </form>
         {message && <Typography color="error" align="center">{message}</Typography>}
       </Paper>
+
+      <Container fixed fullWidth sx={{margin: '15px 0', display: 'flex', flexDirection: 'row'}}>
+        <Button type="button" sx={{flex: '1 1 auto'}}>아이디 찾기</Button>
+        <Button type="button" sx={{flex: '1 1 auto'}}>비밀번호 찾기</Button>
+        <Button type="button" sx={{flex: '1 1 auto'}} onClick={navigateRegister}>회원 가입</Button>
+      </Container>
+      
 
     </MainContainer>
   )
