@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainPage from './pages/MainPage';
+import SymptomAsk from './pages/SymptomAsk'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot } from 'recoil';
 
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <MainPage />
+      },
+      {
+        path: '/symptoms',
+        element: <SymptomAsk />
       }
     ]
   }

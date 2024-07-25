@@ -18,7 +18,7 @@ function MainContainer({ children }) {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 60dvh;
+  max-width: 70dvh;
   margin: 0 auto;
   height: 100dvh;
 `;
