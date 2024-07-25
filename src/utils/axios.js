@@ -8,9 +8,10 @@ export const userLogin = async (email, password) => {
     try{
       const response = await axiosInstance.post('/login', {email, password});
       const token = response.headers['authorization'];
+      const userId = response.data.userId;
       localStorage.setItem('token', token);
       axiosInstance.defaults.headers.common['Authorization'] = `${token}`;
-      return response.data;
+      return { token, userId };
     } catch (error)
     {
       throw error;

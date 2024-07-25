@@ -4,6 +4,7 @@ import { atom } from 'recoil';
 export const authState = atom({
   key: 'authState',
   default: {
-    isLoggedIn: !!localStorage.getItem('token')
+    isLoggedIn: !!localStorage.getItem('token'),
+    userId: null
   },
 });
