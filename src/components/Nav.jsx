@@ -1,9 +1,10 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { authState } from '../utils/atom';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Nav = () => {
   const navigate = useNavigate();
@@ -20,6 +21,15 @@ const Nav = () => {
     navigate('/');
   };
 
+  const LoginIcon = () => {
+    return(
+      <>
+
+      <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
+    </>    
+    );
+  }
+
 
   return (
     //아톰에 있는 상태정보 라이브러리 써서 로그인 여부 판단해서 돼있으면 로그아웃, 안돼있으면 로그인 버튼 뜨게 일단 해놨습니다(auth.isLoggedIn ? <- 부분)
@@ -29,9 +39,10 @@ const Nav = () => {
           네비게이션바
         </Typography>
         {auth.isLoggedIn ? (
-          <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
+          <LoginIcon></LoginIcon>
         ) : (
-          <Button color="inherit" onClick={handleLoginClick}>Login</Button>
+          <LoginIcon/>
+          // <Button color="inherit" onClick={handleLoginClick}>Login</Button>
         )}
       </Toolbar>
     </StyledAppBar>
