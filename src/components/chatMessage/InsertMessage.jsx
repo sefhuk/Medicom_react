@@ -5,32 +5,34 @@ import { axiosInstance } from '../../utils/axios';
 import { useRecoilState } from 'recoil';
 import { authState } from '../../utils/atom';
 import { useNavigate } from 'react-router-dom';
-
-const createChatRoom = async (userId, chatRoomType, navigate) => {
-  try {
-    await axiosInstance.post(`/chatrooms`, {
-      userId: userId,
-      chatRoomType: chatRoomType
-    });
-    navigate(`/chatlist`);
-  } catch (err) {
-    alert(err.response.message);
-  }
-};
+import styled from 'styled-components';
 
 function InsertMessage() {
   const [auth] = useRecoilState(authState);
 
   const navigate = useNavigate();
 
+  const createChatRoom = async (chatRoomType, navigate) => {
+    try {
+      await axiosInstance.post(`/chatrooms`, {
+        userId: Number(auth.userId) || 0,
+        chatRoomType: chatRoomType
+      });
+      navigate(`/chatlist`);
+    } catch (err) {
+      alert(err.response.data.message);
+      navigate('/');
+    }
+  };
+
   const handleButtonClick = e => {
-    createChatRoom(auth.userId, e.target.getAttribute('type'), navigate);
+    createChatRoom(e.target.getAttribute('type'), navigate);
   };
 
   return (
-    <div className='flex container p-[20px]'>
+    <Container>
       <ProfileImage insert={true} self={true} />
-      <div className='flex flex-col border-black border-2 mt-2 p-2 w-[60%] rounded-xl order-2'>
+      <ButtonWrapper className='flex flex-col border-black border-2 mt-2 p-2 w-[60%] rounded-xl order-2'>
         <p className='mb-2'>채팅을 선택해주세요!</p>
         <Button
           type='DOCTOR'
@@ -56,9 +58,25 @@ function InsertMessage() {
         >
           AI 상담
         </Button>
-      </div>
-    </div>
+      </ButtonWrapper>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  padding: 20px;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 2px solid black;
+  margin-top: 2px;
+  padding: 2px;
+  width: 60%;
+  border-radius: 10px;
+  order: 2;
+`;
 
 export default InsertMessage;
