@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ProfileImage from '../chatMessage/ProfileImage';
+import { useRecoilState } from 'recoil';
+import { authState } from '../../utils/atom';
 
 function ChatRoomDetail({ data }) {
   const navigate = useNavigate();
+
+  const [auth] = useRecoilState(authState);
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -20,14 +24,13 @@ function ChatRoomDetail({ data }) {
         onClick={handleWrapperClick}
       >
         <Title>
-          {data.type.type === 'AI 상담' ? (
-            data.type.type
-          ) : data.user2 === '서비스센터 상담' ? (
+          {data.type.type !== '의사 상담' ? (
             data.type.type
           ) : data.user2 ? (
             <>
-              Doc. {data.user2.name}
-              <HospitalName>병원 이름</HospitalName>
+              {auth.userId === data.user1.id ? 'Doc.' : ''}{' '}
+              {auth.userId === data.user1.id ? data.user2.name : data.user1.name}
+              {auth.userId === data.user1.id && <HospitalName>병원 이름</HospitalName>}
             </>
           ) : (
             '매칭된 의사가 없습니다'
@@ -40,7 +43,15 @@ function ChatRoomDetail({ data }) {
             : '메시지가 없습니다'}
         </Preview>
       </Wrapper>
-      <ProfileImage url={data.user2 ? data.user2.image : null} />
+      <ProfileImage
+        url={
+          data.status.status === '수락 대기'
+            ? null
+            : data.user1.id === auth.userId
+              ? data.user2.image
+              : data.user1.image
+        }
+      />
     </Container>
   );
 }
@@ -57,8 +68,8 @@ const Container = styled.div`
   margin: 20px auto 0px;
   padding: 5px 30px;
   &:hover {
-    background-color: ${({ hovered }) => (hovered ? '#c8c1c1' : 'white')};
-    cursor: ${({ hovered }) => 'pointer'};
+    background-color: ${({ hovered }) => (hovered === true ? '#c8c1c1' : 'white')};
+    cursor: ${({ hovered }) => (hovered === true ? 'pointer' : null)};
   }
 `;
 
