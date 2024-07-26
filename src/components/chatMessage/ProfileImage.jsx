@@ -13,14 +13,12 @@ const Image = styled.div`
   background-size: contain;
   margin-right: ${({ self }) => (!self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '10px' : '0px')};
-  z-index: 2;
-  background-image: url(${({ insert, url }) =>
-    insert
-      ? 'https://cdn-icons-png.flaticon.com/512/2942/2942813.png'
+  background-image: ${({ insert, url }) =>
+    insert === true
+      ? 'url("https://cdn-icons-png.flaticon.com/512/2942/2942813.png")'
       : url
-        ? url
-        : 'https://w7.pngwing.com/pngs/306/70/png-transparent-computer-icons-management-admin-silhouette-black-and-white-neck.png'});
-
+        ? `url(${url})`
+        : 'url("https://w7.pngwing.com/pngs/306/70/png-transparent-computer-icons-management-admin-silhouette-black-and-white-neck.png")'};
   &:hover {
     cursor: pointer;
     border: 3px solid red;
