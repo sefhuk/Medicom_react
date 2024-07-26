@@ -1,13 +1,7 @@
 import styled from 'styled-components';
 
 function ProfileImage(props) {
-  return (
-    <Image
-      insert={props.insert}
-      url={props.url}
-      className={`w-[3rem] h-[3rem] rounded-[50%] border-[1px] border-black bg-contain bg-no-repeat mr-[10px] ${props.self ? 'order-2' : 'order-1'}`}
-    />
-  );
+  return <Image insert={props.insert} url={props.url} />;
 }
 
 const Image = styled.div`
