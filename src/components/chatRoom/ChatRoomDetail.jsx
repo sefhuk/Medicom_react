@@ -35,7 +35,9 @@ function ChatRoomDetail({ data }) {
         </Title>
         <Preview>
           {data.status.status !== '진행' && `(${data.status.status})`}{' '}
-          {data.lastMessage !== null ? data.lastMessage.content : '메시지가 없습니다'}
+          {data.lastMessage !== null
+            ? data.lastMessage.content.replace(/\n/g, ' ')
+            : '메시지가 없습니다'}
         </Preview>
       </Wrapper>
       <ProfileImage url={data.user2 ? data.user2.image : null} />
@@ -47,6 +49,7 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
   width: 95%;
   height: 18dvh;
   border: 2px solid black;
