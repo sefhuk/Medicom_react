@@ -8,14 +8,14 @@ function ChatInput({ sendMessage, status }) {
   const button = useRef(null);
 
   const handleInput = e => {
-    if (e.key === 'Enter') {
-      if (e.shiftKey) {
-        return;
+    if (!e.nativeEvent.isComposing)
+      if (e.key === 'Enter') {
+        if (e.shiftKey) {
+          return;
+        }
+        e.preventDefault();
+        button.current.click();
       }
-
-      e.preventDefault();
-      button.current.click();
-    }
   };
 
   const handleClick = () => {
@@ -33,9 +33,7 @@ function ChatInput({ sendMessage, status }) {
     <Container>
       <Input
         value={input}
-        onChange={e => {
-          setInput(e.target.value);
-        }}
+        onChange={e => setInput(e.target.value)}
         onKeyDown={handleInput}
         readOnly={status !== '진행'}
       />
@@ -53,7 +51,7 @@ const Container = styled.div`
   bottom: 8dvh;
   box-sizing: border-box;
   padding: 4px;
-  max-width: 70dvh;
+  max-width: 700px;
   width: 100%;
   height: 8dvh;
 `;
