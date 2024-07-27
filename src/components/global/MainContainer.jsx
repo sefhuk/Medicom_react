@@ -6,15 +6,22 @@ function MainContainer({ children }) {
   return (
     <Container>
       <Nav />
-      {children}
+      <Content>{children}</Content>
     </Container>
   );
 }
 
 const Container = styled.div`
-  height: 92dvh;
-  background-color: yellow;
-  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  max-width: 70dvh;
+  margin: 0 auto;
+  height: 100dvh;
+`;
+
+
+const Content = styled.div`
+  padding: 1em;
 `;
 
 export default MainContainer;
