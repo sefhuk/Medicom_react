@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { authState } from '../utils/atom';
+import { userauthState } from '../utils/atom';
 
 const SocialLoginSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const setAuthState = useSetRecoilState(authState);
+  const setAuthState = useSetRecoilState(userauthState);
 
   useEffect(() => {
     const token = new URLSearchParams(location.search).get('token');

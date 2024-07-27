@@ -14,8 +14,6 @@ import HospitalList from './pages/Hospital/HospitalList';
 import MapComponent from './pages/Hospital/MapComponent';
 import Login from './pages/Login';
 import Register from './pages/user/Register';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RecoilRoot } from 'recoil';
 import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
 
