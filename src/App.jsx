@@ -7,17 +7,7 @@ import { Outlet } from 'react-router-dom';
 
 
 const App = () => {
-  //const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  /*const handleLogin = (userData) => {
-    setIsLoggedIn(true);
-
-  };
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem('token');
-  };
-*/
   return (
     <>
       <Outlet /> {}

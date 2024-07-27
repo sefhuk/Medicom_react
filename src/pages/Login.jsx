@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userLogin } from '../utils/axios';
+import { userLogin, axiosInstance} from '../utils/axios';
 import { TextField, Button, Typography, Paper, Container, Box } from '@mui/material';
 import MainContainer from '../components/global/MainContainer';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '../utils/atom';
+import NaverLoginButton from '../components/NaverLogin';
 
 
 const Login = () => {
@@ -35,6 +36,17 @@ const Login = () => {
     navigate('/register');
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      console.log("구글 로그인 시작")
+      window.location.href = "http://localhost:8080/oauth2/authorization/google";
+      navigate('/');
+    } catch (error) {
+      navigate('/');
+    }
+  };
+
+
   return (
     <MainContainer>
       <Paper elevation={6} sx={{ padding: 3, borderRadius: '10px' }}>
@@ -54,9 +66,10 @@ const Login = () => {
         <Button type="button" sx={{flex: '1 1 auto'}}>비밀번호 찾기</Button>
         <Button type="button" sx={{flex: '1 1 auto'}} onClick={navigateRegister}>회원 가입</Button>
       </Container>
-      
-
+      <Button onClick={handleGoogleLogin}>구글 로그인</Button>
+      <NaverLoginButton />
     </MainContainer>
+
   )
 }
 export default Login;

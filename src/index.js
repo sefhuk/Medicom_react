@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/user/Register';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot } from 'recoil';
+import SocialLoginSuccess from './pages/SocialLoginSuccess';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: 'register',
         element: <Register />
+      },
+      {
+        path: 'social-login-success',
+        element: <SocialLoginSuccess />
       }
     ]
   }

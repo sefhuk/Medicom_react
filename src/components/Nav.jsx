@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { authState } from '../utils/atom';
+import { deleteCookie } from '../utils/cookies';
 
 const Nav = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Nav = () => {
   const handleLogoutClick = () => {
     setAuthState({ isLoggedIn: false });
     localStorage.removeItem('token');
+    deleteCookie('refreshToken');
     navigate('/');
   };
 
