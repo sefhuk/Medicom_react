@@ -3,13 +3,11 @@ import styled from 'styled-components';
 import Nav from '../Nav';
 import Footer from '../Footer';
 
-function MainContainer({ children }) {
+function MainContainer({ children, isChat }) {
   return (
     <Container>
       <Nav />
-      <Content>
-        {children}
-      </Content>
+      <Content isChat={isChat}>{children}</Content>
       <Footer />
     </Container>
   );
@@ -26,8 +24,8 @@ const Container = styled.div`
 const Content = styled.div`
   flex: 1;
   overflow-y: scroll;
+  height: ${({ isChat }) => (isChat === true ? '76dvh' : '84dvh')};
+  margin-bottom: ${({ isChat }) => (isChat === true ? '8dvh' : '0px')};
 `;
-
-
 
 export default MainContainer;
