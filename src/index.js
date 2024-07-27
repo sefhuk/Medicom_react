@@ -9,6 +9,9 @@ import { RecoilRoot } from 'recoil';
 import ChatPage from './pages/chat/ChatPage';
 import ChatListPage from './pages/chat/ChatListPage';
 import NewChatPage from './pages/chat/NewChatPage';
+import HospitalList from './pages/Hospital/HospitalList';
+import MapComponent from './pages/Hospital/MapComponent';
+
 
 const queryClient = new QueryClient();
 
@@ -23,7 +26,9 @@ const router = createBrowserRouter([
       },
       { path: 'chat/:chatRoomId/messages', element: <ChatPage /> },
       { path: 'chat/new', element: <NewChatPage /> },
-      { path: 'chatlist', element: <ChatListPage /> }
+      { path: 'chatlist', element: <ChatListPage /> },
+      {path: 'hospitals', element: <HospitalList />},
+      {path: 'hospitals/maps', element: <MapComponent />}
     ]
   }
 ]);
