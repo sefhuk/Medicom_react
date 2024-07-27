@@ -3,8 +3,15 @@ import { Outlet, Link } from 'react-router-dom';
 import './App.css';
 import { NavermapsProvider } from 'react-naver-maps';
 
-function App() {
+
+//import React, { useState } from 'react';
+
+
+
+const App = () => {
+
   return (
+
     <NavermapsProvider ncpClientId='327ksyij3n'>
       <div>
         {/* <nav>
@@ -23,7 +30,11 @@ function App() {
         <Outlet />
       </div>
     </NavermapsProvider>
+
+
+
+
   );
-}
+};
 
 export default App;
