@@ -6,15 +6,15 @@ import axios from 'axios';
 
 const MapComponent = () => {
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [hospital, setHospital] = useState(null); // hospital 데이터 상태
+  const [hospital, setHospital] = useState(null);
 
   useEffect(() => {
-    // 특정 ID의 병원 데이터 불러오기 (ID 1인 병원만)
+    //(ID 1인 병원만)
     const fetchHospitalData = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/hospitals/1'); // 특정 ID의 병원 정보 가져오기
-        setHospital(response.data); // 'hospital' 데이터로 설정
-        console.log('Fetched hospital data:', response.data); // 콘솔에 데이터 출력
+        setHospital(response.data);
+        console.log('Fetched hospital data:', response.data);
       } catch (error) {
         console.error('Error fetching hospital data:', error);
       }
@@ -56,7 +56,6 @@ const MapComponent = () => {
           zoom: 15
         });
 
-        // 마커 추가하기
         const marker = new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(hospital.longitude, hospital.latitude),
           map: map,
@@ -75,7 +74,7 @@ const MapComponent = () => {
           }
         });
 
-        console.log('Marker added:', marker); // 마커 추가 여부 확인
+        console.log('Marker added:', marker);
       }
     }
   }, [mapLoaded, hospital]);
