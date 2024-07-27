@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { authState } from '../utils/atom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import IconButton from '@mui/material/IconButton';
 
 const Nav = () => {
   const navigate = useNavigate();
@@ -24,10 +25,16 @@ const Nav = () => {
   const LoginIcon = () => {
     return(
       <>
-
+      <IconButton size='large'>
+        <AccountCircleIcon/>
+      </IconButton>
       <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
     </>    
     );
+  }
+
+  const OnClicMyPage = () => {
+    navigate('my-page');
   }
 
 
@@ -39,10 +46,9 @@ const Nav = () => {
           네비게이션바
         </Typography>
         {auth.isLoggedIn ? (
-          <LoginIcon></LoginIcon>
-        ) : (
           <LoginIcon/>
-          // <Button color="inherit" onClick={handleLoginClick}>Login</Button>
+        ) : (
+          <Button color="inherit" onClick={handleLoginClick}>Login</Button>
         )}
       </Toolbar>
     </StyledAppBar>
