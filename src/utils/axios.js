@@ -32,9 +32,14 @@ export const userLogin = async (email, password) => {
       const response = await axiosInstance.post('/login', {email, password});
       const token = response.headers['authorization'];
       const userId = response.data.userId;
+      const role = response.data.role;
+      
+      console.log(userId, role);
       localStorage.setItem('token', token);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('userRole', role);
       axiosInstance.defaults.headers.common['Authorization'] = `${token}`;
-      return { token, userId };
+      return { token, userId, role };
     } catch (error)
     {
       throw error;

@@ -19,9 +19,9 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const { userId } = await userLogin(email, password);
+      const { userId, role } = await userLogin(email, password);
       setMessage('로그인 성공');
-      setAuthState({ isLoggedIn: true, userId });
+      setAuthState({ isLoggedIn: true, userId, role });
       navigate('/');
     } catch (error) {
       let errorMessage = '로그인 실패';
