@@ -17,6 +17,7 @@ import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
 import AdminPage from './pages/user/AdminPage';
 import SymptomAsk from './pages/SymptomAsk'
+import HospitalReservation from './pages/HospitalReservation.jsx';
 
 
 
@@ -40,7 +41,7 @@ const router = createBrowserRouter([
       
       //hospitalpage
       {path: '/symptoms', element: <SymptomAsk />},
-
+      {path: '/hospitalid/reservation', element: <HospitalReservation />},
       {
         path: 'login',
         element: <Login />
