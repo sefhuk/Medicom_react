@@ -32,7 +32,7 @@ function InsertMessage() {
   return (
     <Container>
       <ProfileImage insert={true} self={true} />
-      <ButtonWrapper className='flex flex-col border-black border-2 mt-2 p-2 w-[60%] rounded-xl order-2'>
+      <ButtonWrapper>
         <p className='mb-2'>채팅을 선택해주세요!</p>
         <Button
           type='DOCTOR'
