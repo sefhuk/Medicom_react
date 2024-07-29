@@ -3,22 +3,26 @@ import React from 'react';
 import ProfileImage from './ProfileImage';
 import { axiosInstance } from '../../utils/axios';
 import { useRecoilState } from 'recoil';
-import { userauthState } from '../../utils/atom';
+import { chatRoomState, userauthState } from '../../utils/atom';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 function InsertMessage() {
   const [auth] = useRecoilState(userauthState);
+  const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
 
   const navigate = useNavigate();
 
   const createChatRoom = async (chatRoomType, navigate) => {
     try {
-      await axiosInstance.post(`/chatrooms`, {
+      const response = await axiosInstance.post(`/chatrooms`, {
         userId: Number(auth.userId) || 0,
         chatRoomType: chatRoomType
       });
-      navigate(`/chatlist`);
+      setChatRoom(e => ({
+        rooms: { ...e.rooms, [`ch_${response.data.id}`]: response.data.status.status }
+      }));
+      navigate(`/chat/${response.data.id}/messages`);
     } catch (err) {
       alert(err.response.data.message);
       navigate('/');
