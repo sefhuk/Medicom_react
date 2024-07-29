@@ -17,7 +17,8 @@ export const userauthState = atom({
   key: 'userauthState',
   default: {
     isLoggedIn: !!localStorage.getItem('token'),
-    userId: null
+    userId: null,
+    role: null
   },
 });
 

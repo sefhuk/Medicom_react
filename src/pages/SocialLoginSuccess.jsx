@@ -10,9 +10,11 @@ const SocialLoginSuccess = () => {
 
   useEffect(() => {
     const token = new URLSearchParams(location.search).get('token');
+    const userId = new URLSearchParams(location.search).get('userId');
+    const role = new URLSearchParams(location.search).get('role');
     if (token) {
       localStorage.setItem('token', token);
-      setAuthState({ isLoggedIn: true });
+      setAuthState({ isLoggedIn: true, userId, role });
       navigate('/');
     } else {
       navigate('/login');
