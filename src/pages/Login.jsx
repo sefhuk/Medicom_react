@@ -4,7 +4,7 @@ import { userLogin, axiosInstance} from '../utils/axios';
 import { TextField, Button, Typography, Paper, Container, Box } from '@mui/material';
 import MainContainer from '../components/global/MainContainer';
 import { useSetRecoilState } from 'recoil';
-import { authState } from '../utils/atom';
+import { userauthState } from '../utils/atom';
 import NaverLoginButton from '../components/NaverLogin';
 
 
@@ -13,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
-  const setAuthState = useSetRecoilState(authState);
+  const setAuthState = useSetRecoilState(userauthState);
 
 
   const handleSubmit = async (event) => {

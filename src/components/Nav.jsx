@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Typography, Button} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { authState } from '../utils/atom';
+import { authState, userauthState } from '../utils/atom';
 import { deleteCookie } from '../utils/cookies';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
@@ -11,8 +11,8 @@ import IconButton from '@mui/material/IconButton';
 
 const Nav = () => {
   const navigate = useNavigate();
-  const auth = useRecoilValue(authState);
-  const setAuthState = useSetRecoilState(authState);
+  const auth = useRecoilValue(userauthState);
+  const setAuthState = useSetRecoilState(userauthState);
 
   const handleLoginClick = () => {
     navigate('/login');
