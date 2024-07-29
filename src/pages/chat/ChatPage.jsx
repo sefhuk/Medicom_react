@@ -7,7 +7,8 @@ import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
-import { authState, chatRoomState } from '../../utils/atom';
+import { chatRoomState, userauthState } from '../../utils/atom';
+import { Button } from '@mui/material';
 
 const fetchData = async (id, setMessages, setError) => {
   try {
@@ -26,7 +27,7 @@ const fetchData = async (id, setMessages, setError) => {
 function ChatPage() {
   const params = useParams();
 
-  const [auth] = useRecoilState(authState);
+  const [auth] = useRecoilState(userauthState);
   const [chatRoom] = useRecoilState(chatRoomState);
 
   const [messages, setMessages] = useState([]);
@@ -36,6 +37,20 @@ function ChatPage() {
   const navigate = useNavigate();
 
   const tmp = useRef(null);
+
+  const acceptChatRoom = async () => {
+    const confirmed = window.confirm('채팅을 수락하시겠습니까?');
+    if (!confirmed) return;
+
+    try {
+      const response = await axiosInstance.post(
+        `/chatrooms/${Number(params.chatRoomId)}/users/${auth.userId}`
+      );
+      navigate('/chatlist');
+    } catch (err) {
+      alert(err);
+    }
+  };
 
   const sendMessage = input => {
     const body = JSON.stringify({
@@ -77,19 +92,38 @@ function ChatPage() {
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
-      <button onClick={() => navigate('/chatlist')}>리스트로 이동</button>
       {error && <div>{error}</div>}
       {chatRoom.rooms[`ch_${params.chatRoomId}`] === '수락 대기' && (
         <div
           style={{
-            height: '50dvh',
-            fontWeight: 'bold',
-            fontSize: '2.5rem',
-            lineHeight: '50dvh',
-            textAlign: 'center'
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: '76dvh',
+            margin: 'auto'
           }}
         >
-          매칭을 기다리고 있습니다
+          <div
+            style={{
+              height: '40%',
+              fontWeight: 'bold',
+              fontSize: '1.5rem',
+              lineHeight: '50dvh',
+              textAlign: 'center'
+            }}
+          >
+            매칭을 기다리고 있습니다
+          </div>
+          {auth.role !== 'USER' && (
+            <Button
+              type='SERVICE'
+              variant='contained'
+              style={{ width: '50%', marginBottom: '4px' }}
+              onClick={acceptChatRoom}
+            >
+              채팅 수락
+            </Button>
+          )}
         </div>
       )}
       {messages.length !== 0 &&

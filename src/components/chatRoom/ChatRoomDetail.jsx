@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ProfileImage from '../chatMessage/ProfileImage';
 import { useRecoilState } from 'recoil';
-import { authState } from '../../utils/atom';
+import { userauthState } from '../../utils/atom';
 
-function ChatRoomDetail({ data }) {
+function ChatRoomDetail({ data, selectedIndex }) {
   const navigate = useNavigate();
 
-  const [auth] = useRecoilState(authState);
+  const [auth] = useRecoilState(userauthState);
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -24,16 +24,17 @@ function ChatRoomDetail({ data }) {
         onClick={handleWrapperClick}
       >
         <Title>
-          {data.type.type !== '의사 상담' ? (
-            data.type.type
+          {selectedIndex === 1 ? (
+            data.user1.name
+          ) : auth.role !== 'USER' ? (
+            data.user1.name
           ) : data.user2 ? (
             <>
-              {auth.userId === data.user1.id ? 'Doc.' : ''}{' '}
-              {auth.userId === data.user1.id ? data.user2.name : data.user1.name}
-              {auth.userId === data.user1.id && <HospitalName>병원 이름</HospitalName>}
+              {data.user2.role === 'DOCTOR' ? '(의사) ' : '(관리자) '} {data.user2.name}
+              {data.user2.role === 'DOCTOR' && <HospitalName>병원 이름</HospitalName>}
             </>
           ) : (
-            '매칭된 의사가 없습니다'
+            '매칭을 기다리고 있습니다'
           )}
         </Title>
         <Preview>
@@ -45,11 +46,11 @@ function ChatRoomDetail({ data }) {
       </Wrapper>
       <ProfileImage
         url={
-          data.status.status === '수락 대기'
-            ? null
-            : data.user1.id === auth.userId
-              ? data.user2.image
-              : data.user1.image
+          selectedIndex === 1
+            ? data.user1.image
+            : auth.userId === data.user1.id
+              ? data.user2?.image
+              : data.user1?.image
         }
       />
     </Container>
