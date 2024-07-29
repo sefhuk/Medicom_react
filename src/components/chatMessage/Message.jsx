@@ -2,6 +2,8 @@ import React from 'react';
 import ProfileImage from './ProfileImage';
 import styled from 'styled-components';
 import { fromatDate, isToday } from '../../utils/time';
+import { Button } from '@mui/material';
+import { axiosInstance } from '../../utils/axios';
 
 function Message({ data, repeat, self }) {
   const messageTime = () => {
@@ -15,6 +17,15 @@ function Message({ data, repeat, self }) {
     return date;
   };
 
+  const requestHospital = async () => {
+    alert('API 연결 전');
+    // try {
+    //   await axiosInstance.get('');
+    // } catch (err) {
+    //   alert(err);
+    // }
+  };
+
   return (
     <Container self={self}>
       {self || (
@@ -25,12 +36,22 @@ function Message({ data, repeat, self }) {
       )}
       <BottomContainer self={self}>
         <Content self={self}>
-          {data.content.split('\\n').map(e => (
-            <span>
-              {e}
-              <br />
-            </span>
-          ))}
+          {data.content.startsWith('dpt: ') ? (
+            <>
+              <p>진료과 추천 정보가 제공되었습니다</p>
+              <Button variant='contained' onClick={requestHospital}>
+                {' '}
+                {data.content.split(' ')[1]}
+              </Button>
+            </>
+          ) : (
+            data.content.split('\\n').map(e => (
+              <span>
+                {e}
+                <br />
+              </span>
+            ))
+          )}
         </Content>
         <Time self={self}>{messageTime()}</Time>
       </BottomContainer>
