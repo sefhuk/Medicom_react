@@ -151,7 +151,7 @@ const Wrapper = styled.div`
 
 const Notice = styled.div`
   text-align: center;
-  font-size: 3rem;
+  font-size: 2rem;
   height: 50dvh;
   line-height: 50dvh;
 `;
