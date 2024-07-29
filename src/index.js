@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import Login from './pages/Login';
 import Register from './pages/user/Register';
+import AdminPage from './pages/user/AdminPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot } from 'recoil';
 import SocialLoginSuccess from './pages/SocialLoginSuccess';
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: 'register',
         element: <Register />
+      },
+      {
+        path: 'admin-page',
+        element: <AdminPage />
       },
       {
 
