@@ -38,23 +38,27 @@ function InsertMessage() {
       <ProfileImage insert={true} self={true} />
       <ButtonWrapper>
         <p className='mb-2'>채팅을 선택해주세요!</p>
-        <Button
-          type='DOCTOR'
-          variant='contained'
-          ㅎ
-          style={{ marginBottom: '4px' }}
-          onClick={handleButtonClick}
-        >
-          증상 간편 상담 (의사)
-        </Button>
-        <Button
-          type='SERVICE'
-          variant='contained'
-          style={{ marginBottom: '4px' }}
-          onClick={handleButtonClick}
-        >
-          고객 센터
-        </Button>
+        {auth.role !== 'DOCTOR' && (
+          <Button
+            type='DOCTOR'
+            variant='contained'
+            ㅎ
+            style={{ marginBottom: '4px' }}
+            onClick={handleButtonClick}
+          >
+            증상 간편 상담 (의사)
+          </Button>
+        )}
+        {auth.role !== 'ADMIN' && (
+          <Button
+            type='SERVICE'
+            variant='contained'
+            style={{ marginBottom: '4px' }}
+            onClick={handleButtonClick}
+          >
+            고객 센터
+          </Button>
+        )}
         <Button
           type='AI'
           variant='contained'
