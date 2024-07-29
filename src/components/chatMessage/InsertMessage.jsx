@@ -3,12 +3,12 @@ import React from 'react';
 import ProfileImage from './ProfileImage';
 import { axiosInstance } from '../../utils/axios';
 import { useRecoilState } from 'recoil';
-import { authState } from '../../utils/atom';
+import { userauthState } from '../../utils/atom';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 function InsertMessage() {
-  const [auth] = useRecoilState(authState);
+  const [auth] = useRecoilState(userauthState);
 
   const navigate = useNavigate();
 
@@ -37,6 +37,7 @@ function InsertMessage() {
         <Button
           type='DOCTOR'
           variant='contained'
+          ㅎ
           style={{ marginBottom: '4px' }}
           onClick={handleButtonClick}
         >

@@ -4,14 +4,14 @@ import { axiosInstance } from '../../utils/axios';
 import styled from 'styled-components';
 import ChatRoomDetail from '../../components/chatRoom/ChatRoomDetail';
 import { useRecoilState } from 'recoil';
-import { authState, chatRoomState } from '../../utils/atom';
+import { chatRoomState, userauthState } from '../../utils/atom';
 
 function ChatListPage() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [auth] = useRecoilState(authState);
+  const [auth] = useRecoilState(userauthState);
   const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
 
   const fetchData = async () => {
