@@ -8,6 +8,8 @@ function ChatInput({ sendMessage, status }) {
   const button = useRef(null);
 
   const handleInput = e => {
+    if (status !== '진행') return;
+
     if (!e.nativeEvent.isComposing)
       if (e.key === 'Enter') {
         if (e.shiftKey) {
@@ -19,6 +21,8 @@ function ChatInput({ sendMessage, status }) {
   };
 
   const handleClick = () => {
+    if (status !== '진행') return;
+
     if (/^\s*$/.test(input)) {
       alert('공백 메시지는 전송이 불가능합니다');
       setInput('');
@@ -51,7 +55,7 @@ const Container = styled.div`
   bottom: 8dvh;
   box-sizing: border-box;
   padding: 4px;
-  max-width: 700px;
+  max-width: 70dvh;
   width: 100%;
   height: 8dvh;
 `;
