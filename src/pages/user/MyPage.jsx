@@ -10,6 +10,7 @@ import { useSetRecoilState } from 'recoil';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import PostCodeModal from '../../components/PostCodeModal';
 
 const theme = createTheme({
   palette: {
@@ -27,6 +28,7 @@ const MyPage = () => {
   const [editField, setEditField] = useState(null);
   const [formData, setFormData] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [postcodeOpen, setPostcodeOpen] = useState(false);
   const [addressData, setAddressData] = useState({ address: '', addressDetail: '' });
   const navigate = useNavigate();
   const setAuthState = useSetRecoilState(userauthState);
@@ -86,7 +88,7 @@ const MyPage = () => {
       setDialogOpen(false);
       window.location.reload();  // 새로고침
     } catch (error) {
-      if (error.response && error.response.status === 401) {//임시로 넣어놓음, 401에러가 무한으로 반복될때가 있어서 에러 확인용
+      if (error.response && error.response.status === 401) {
         alert('기존 비밀번호가 올바르지 않습니다.');
       } else {
         console.error(error);
@@ -113,6 +115,13 @@ const MyPage = () => {
     setAddressData({
       ...addressData,
       [name]: value,
+    });
+  };
+
+  const handleAddressComplete = (fullAddress) => {
+    setAddressData({
+      ...addressData,
+      address: fullAddress
     });
   };
 
@@ -228,18 +237,26 @@ const MyPage = () => {
       </Paper>
 
       <Dialog open={dialogOpen} onClose={handleCancelClick}>
-        <DialogTitle>{editField === 'address' ? '주소 수정' : '수정'}</DialogTitle>
+        <DialogTitle>{getFieldLabel(editField)}</DialogTitle>
         <DialogContent>
           {editField === 'address' ? (
             <>
-              <TextField
-                label="주소"
-                name="address"
-                value={addressData.address}
-                onChange={handleDialogInputChange}
-                fullWidth
-                margin="normal"
-              />
+              <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <TextField
+                  label="주소"
+                  name="address"
+                  value={addressData.address}
+                  onChange={handleDialogInputChange}
+                  fullWidth
+                  margin="normal"
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+                <Button variant="contained" onClick={() => setPostcodeOpen(true)} sx={{ height: '40px', marginLeft: '10px' }}>
+                  검색
+                </Button>
+              </Box>
               <TextField
                 label="상세주소"
                 name="addressDetail"
@@ -291,6 +308,8 @@ const MyPage = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <PostCodeModal open={postcodeOpen} onClose={() => setPostcodeOpen(false)} onComplete={handleAddressComplete} />
     </MainContainer>
   );
 };

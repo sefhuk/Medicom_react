@@ -1,12 +1,12 @@
 import React, { useState, IconButton, CloseIcon} from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Typography, TextField, Button } from '@mui/material';
+import { TextField, Button, Typography, Box } from '@mui/material';
 import MainContainer from '../../components/global/MainContainer';
 import { Paper }  from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
 import Snackbar from '@mui/material/Snackbar';
-
+import PostCodeModal from '../../components/PostCodeModal';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ const Register = () => {
   const [addressDetail, setAddressDetail] = useState('');
 
   const [SnackbarOpen, setSnackbarOpen] = useState(false);
+  const [postcodeOpen, setPostcodeOpen] = useState(false);
 
   const EmailValidation = () => {
     let check = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
@@ -52,6 +53,10 @@ const Register = () => {
     setSnackbarOpen(false);
     navigate('/login');
   };
+  const handleAddressComplete = (fullAddress) => {
+    setAddress(fullAddress);
+    setPostcodeOpen(false);
+  };
 
   return(
     <MainContainer>
@@ -82,12 +87,14 @@ const Register = () => {
             onChange={(e) => { 
               setBirthday(e.target.value);
             }}></TextField>
-            
-          <TextField label="주소" type='address' size='small' sx={{margin: '0px 0px 10px 0px'}} fullWidth
-            onChange={(e) => {
-              setAddress(e.target.value);
-            }}></TextField>
 
+          <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+            <TextField label="주소" type='address' size='small' sx={{ marginRight: '10px' }} fullWidth
+                       value={address} disabled />
+            <Button variant="contained" onClick={() => setPostcodeOpen(true)} sx={{ height: '40px' }}>
+              검색
+            </Button>
+          </Box>
           <TextField label="상세주소" type='addressDetail' size='small' fullWidth
             onChange={(e) => {
               setAddressDetail(e.target.value);
@@ -99,6 +106,7 @@ const Register = () => {
         </form>
         
       </Paper>
+      <PostCodeModal open={postcodeOpen} onClose={() => setPostcodeOpen(false)} onComplete={handleAddressComplete} />
     </MainContainer>      
   );
 };
