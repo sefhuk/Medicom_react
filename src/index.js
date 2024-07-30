@@ -18,7 +18,7 @@ import MyPage from './pages/user/MyPage';
 import AdminPage from './pages/admin/AdminPage';
 import SymptomAsk from './pages/SymptomAsk'
 import UserList from './pages/admin/UserList';
-
+import AdminUserListDetail from './pages/admin/AdminUserListDetail';
 
 const queryClient = new QueryClient();
 
@@ -56,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: 'admin-page/user-list',
         element: <UserList />
+      },
+      {
+        path: 'admin-page/user-list/user-detail',
+        element: <AdminUserListDetail />
       },
       {
 
