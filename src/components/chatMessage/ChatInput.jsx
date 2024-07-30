@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import AdvancedModal from './modal/AdvancedModal';
+import AdvancedModal from '../chatRoom/modal/AdvancedModal';
 import { useRecoilState } from 'recoil';
 import { userauthState } from '../../utils/atom';
 
