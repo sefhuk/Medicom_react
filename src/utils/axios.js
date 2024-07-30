@@ -14,10 +14,10 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axiosInstance.get('/refresh-token');
-        const newToken = data.token;
+        const newToken = data.headers['authorization'];
         localStorage.setItem('token', newToken);
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+        axiosInstance.defaults.headers.common['Authorization'] = `${newToken}`;
+        originalRequest.headers['Authorization'] = `${newToken}`;
         return axiosInstance(originalRequest);
       } catch (e) {
         return Promise.reject(e);

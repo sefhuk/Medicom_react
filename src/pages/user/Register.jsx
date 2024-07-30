@@ -38,6 +38,7 @@ const Register = () => {
 
       console.log(response.data);
       setSnackbarOpen(true);
+      navigate('/');
     } catch (exception){
       console.log(exception);
     };    

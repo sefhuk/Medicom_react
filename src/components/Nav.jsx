@@ -3,11 +3,13 @@ import { AppBar, Toolbar, Typography, Button} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { authState, userauthState } from '../utils/atom';
+import { userauthState } from '../utils/atom';
 import { deleteCookie } from '../utils/cookies';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
 import HttpsIcon from '@mui/icons-material/Https';
+import { axiosInstance } from '../utils/axios';
+
 
 
 const Nav = () => {
@@ -19,15 +21,17 @@ const Nav = () => {
     navigate('/login');
   };
 
-  const handleLogoutClick = () => {
+  const handleLogoutClick = async () => {
     setAuthState({ isLoggedIn: false });
     localStorage.removeItem('token');
+    await axiosInstance.post('/user-logout');
     deleteCookie('refreshToken');
     navigate('/');
   };
 
   const LoginIcon = () => {
     return(
+
     <>
       {auth.role==='ADMIN' ? (
         <IconButton>
@@ -44,10 +48,12 @@ const Nav = () => {
 
   const OnClickMyPage = () => {
     navigate('/my-page');
+
   }
 
   const OnClickAdminPage = () => {
     navigate('/admin-page');
+
   }
 
 
@@ -58,6 +64,9 @@ const Nav = () => {
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           네비게이션바
         </Typography>
+        <IconButton size='large' onClick={OnClickMyPage}>
+          <AccountCircleIcon/>
+        </IconButton>
         {auth.isLoggedIn ? (
           <LoginIcon/>
         ) : (
