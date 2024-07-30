@@ -1,22 +1,26 @@
 import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PostForm from '../components/board/PostForm';
-import { useParams } from 'react-router-dom';
 import MainContainer from '../components/global/MainContainer';
 
 function CreatePostPage() {
   const { boardId } = useParams();
+  const navigate = useNavigate();
 
-  const handleCreatePost = (postData) => {
-    axios.post(`http://localhost:8080/posts`, { ...postData, boardId })
-      .then(response => console.log('Post created:', response.data))
-      .catch(error => console.error('Error creating post:', error));
+  const handleSubmit = async (data) => {
+    try {
+      await axios.post(`http://localhost:8080/posts`, { ...data, boardId });
+      navigate(`/boards/${boardId}`);
+    } catch (error) {
+      console.error('Error creating post:', error);
+    }
   };
 
-  return(
-  <MainContainer>
-  <PostForm onSubmit={handleCreatePost} />;
-  </MainContainer>
+  return (
+    <MainContainer>
+      <PostForm onSubmit={handleSubmit} />
+    </MainContainer>
   );
 }
 

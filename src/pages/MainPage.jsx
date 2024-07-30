@@ -21,7 +21,7 @@ import MainContainer from '../components/global/MainContainer';
 function MainPage() {
   return (
     <MainContainer>
-      <h1>Welcome to the Main Page</h1>
+      <h1>메인</h1>
     </MainContainer>
   );
 }

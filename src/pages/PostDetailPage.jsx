@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import CommentList from '../components/board/CommentList';
 import MainContainer from '../components/global/MainContainer';
 
@@ -41,13 +41,46 @@ function PostDetailPage() {
   };
 
   const handleDeleteComment = async (commentId) => {
-      try {
-        await axios.delete(`http://localhost:8080/comments/${commentId}`);
-        setComments(comments.filter(comment => comment.id !== commentId));
-      } catch (error) {
-        console.error('Error deleting comment:', error);
-      }
-    };
+    try {
+      await axios.delete(`http://localhost:8080/comments/${commentId}`);
+      setComments(comments.filter(comment => comment.id !== commentId));
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
+  const handleUpdateComment = async (commentId, content) => {
+    try {
+      const response = await axios.put(`http://localhost:8080/comments/${commentId}`, {
+        postId: id,
+        content: content,
+      });
+      setComments(comments.map(comment => comment.id === commentId ? response.data : comment));
+    } catch (error) {
+      console.error('Error updating comment:', error);
+    }
+  };
+
+  const handleReplyComment = async (parentId, content) => {
+    try {
+      const response = await axios.post('http://localhost:8080/comments', {
+        postId: id,
+        content: content,
+        parentId: parentId
+      });
+      setComments(comments.map(comment => {
+        if (comment.id === parentId) {
+          return {
+            ...comment,
+            replies: [...(comment.replies || []), response.data]
+          };
+        }
+        return comment;
+      }));
+    } catch (error) {
+      console.error('Error adding reply:', error);
+    }
+  };
 
   if (!post) return <p>Loading...</p>;
 
@@ -56,6 +89,9 @@ function PostDetailPage() {
       <div>
         <h1>{post.title}</h1>
         <p>{post.content}</p>
+        <Link to={`/posts/update/${id}`}>
+          <button>Edit Post</button>
+        </Link>
         <button onClick={handleDeletePost}>Delete Post</button>
         <form onSubmit={handleCommentSubmit}>
           <label>
@@ -64,7 +100,7 @@ function PostDetailPage() {
           </label>
           <button type="submit">Add Comment</button>
         </form>
-        <CommentList comments={comments} onDelete={handleDeleteComment} />
+        <CommentList comments={comments} onDelete={handleDeleteComment} onUpdate={handleUpdateComment} onReply={handleReplyComment} />
       </div>
     </MainContainer>
   );

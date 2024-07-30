@@ -1,31 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import BoardForm from '../components/board/BoardForm';
 import MainContainer from '../components/global/MainContainer';
 
 function UpdateBoardPage() {
-  const { boardId } = useParams();
+  const { id } = useParams();
   const [board, setBoard] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/boards/${boardId}`)
+    axios.get(`http://localhost:8080/boards/${id}`)
       .then(response => setBoard(response.data))
       .catch(error => console.error('Error fetching board:', error));
-  }, [boardId]);
+  }, [id]);
 
-  const handleUpdateBoard = (boardData) => {
-    axios.put(`http://localhost:8080/boards/${boardId}`, boardData)
-      .then(() => navigate('/boards'))
-      .catch(error => console.error('Error updating board:', error));
+  const handleSubmit = async (data) => {
+    try {
+      await axios.put(`http://localhost:8080/boards/${id}`, data);
+      navigate(`/boards/${id}`);
+    } catch (error) {
+      console.error('Error updating board:', error);
+    }
   };
 
   if (!board) return <p>Loading...</p>;
 
   return (
     <MainContainer>
-      <BoardForm initialValues={board} onSubmit={handleUpdateBoard} />
+      <BoardForm onSubmit={handleSubmit} initialValues={board} />
     </MainContainer>
   );
 }
