@@ -4,8 +4,12 @@ import styled from 'styled-components';
 import { fromatDate, isToday } from '../../utils/time';
 import { Button } from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
+import { useRecoilState } from 'recoil';
+import { userauthState } from '../../utils/atom';
 
 function Message({ data, repeat, self }) {
+  const [auth] = useRecoilState(userauthState);
+
   const messageTime = () => {
     let date = fromatDate(new Date(data.createdAt));
 
@@ -31,7 +35,7 @@ function Message({ data, repeat, self }) {
       {self || (
         <TopContainer repeat={repeat} self={self}>
           {repeat || <ProfileImage url={data.user.image} insert={false} self={self} />}
-          {repeat || <Author self={self}>{data.user.userName}</Author>}
+          {repeat || <Author self={self}>{data.user.name}</Author>}
         </TopContainer>
       )}
       <BottomContainer self={self}>
@@ -83,17 +87,18 @@ const BottomContainer = styled.div`
 `;
 
 const Author = styled.p`
-  margin-top: 0.6rem;
+  /* margin-top: 0.6rem; */
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
   order: ${({ self }) => (self ? 1 : 2)};
 `;
 
 const Content = styled.div`
-  background-color: skyblue;
+  background-color: ${({ self }) => (self ? '#3399ff' : '#99ddff')};
   padding: 10px;
   border-radius: 10px;
   margin-right: 10px;
+  margin-right: ${({ self }) => (self ? '10px' : '0px')};
   order: ${({ self }) => (self ? 2 : 1)};
   white-space: pre-line;
   max-width: 70%;
@@ -103,6 +108,8 @@ const Content = styled.div`
 
 const Time = styled.p`
   order: ${({ self }) => (self ? 1 : 2)};
+  margin-top: 0px;
+  margin-bottom: 0px;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
 `;
