@@ -5,6 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import { axiosInstance } from "../../utils/axios";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import CheckIcon from '@mui/icons-material/Check';
+import { useNavigate } from "react-router";
 
 
 function stringToColor(string) {
@@ -41,6 +42,8 @@ const UserList = () =>{
   const [userList, setUserList] = useState(null);
   const [pageSelect, setPageSelect] = useState(0);
 
+  const navigate = useNavigate();
+
   useEffect(()=>{
     const GetUserList = async () =>{
       try{
@@ -51,7 +54,7 @@ const UserList = () =>{
       }
     };
     GetUserList();
-  }, [])
+  }, []);
 
   const GetUserRoleString = (role) => {
     if(role === 'USER'){
@@ -66,7 +69,7 @@ const UserList = () =>{
       <Box fullWidth sx={{height: '45px', padding: '10px', margin: '15px 0 auto', border: '1px solid #BCBDBC', }}>
         <Avatar sx={{float: 'left'}}></Avatar>
         <Typography variant="body1" sx={{display: 'inline-block', margin: '10px 0px 0px 15px'}}>{user.name}</Typography>
-        <IconButton sx={{float: 'right', padding: '4px'}}>
+        <IconButton sx={{float: 'right', padding: '4px'}} onClick={(e) => OnClickUserDetail(e, user.id)}>
           <ArrowRightIcon fontSize="large"></ArrowRightIcon>
         </IconButton>
         <Typography variant="body1" sx={{display: 'inline-block', margin: '10px 0px 0px 15px', float: 'right'}}>{GetUserRoleString(user.role)}</Typography>
@@ -91,6 +94,12 @@ const UserList = () =>{
   const AdminUserList = () => {
     let list = userList.filter(user => user.role === 'ADMIN');
     return UserListComponent(list);
+  }
+
+  const OnClickUserDetail = (e, id) => {
+    e.preventDefault();
+    let user = userList.filter(user => user.id === id);
+    navigate('/admin-page/user-list/user-detail', {state: {userDetail: user}});
   }
 
   return(
