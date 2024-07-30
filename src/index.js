@@ -15,8 +15,6 @@ import ChatListPage from './pages/chat/ChatListPage';
 import NewChatPage from './pages/chat/NewChatPage';
 import HospitalList from './pages/Hospital/HospitalList';
 import MapComponent from './pages/Hospital/MapComponent';
-import Login from './pages/Login';
-import Register from './pages/user/Register';
 import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
 import AdminPage from './pages/user/AdminPage';
