@@ -34,7 +34,7 @@ const Nav = () => {
           <HttpsIcon fontSize='large'></HttpsIcon>
         </IconButton>
       ) : (<></>)}
-      <IconButton onClick={OnClicMyPage}>
+      <IconButton onClick={OnClickMyPage}>
         <AccountCircleIcon fontSize='large'/>
       </IconButton>
       <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
@@ -42,8 +42,12 @@ const Nav = () => {
     );
   }
 
-  const OnClicMyPage = () => {
-    navigate('my-page');
+  const OnClickMyPage = () => {
+    navigate('/my-page');
+  }
+
+  const OnClickAdminPage = () => {
+    navigate('/admin-page');
   }
 
 
