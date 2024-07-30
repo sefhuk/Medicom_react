@@ -1,27 +1,10 @@
-// import React from 'react';
-// import MainContainer from '../components/global/MainContainer';
-// import { Link } from 'react-router-dom';
-//
-// function MainPage() {
-//   return (
-//     <MainContainer>
-//       <h1>Welcome to the Board App</h1>
-//       <Link to="/boards">
-//         <button>Go to Boards</button>
-//       </Link>
-//     </MainContainer>
-//   );
-// }
-//
-// export default MainPage;
-
 import React from 'react';
 import MainContainer from '../components/global/MainContainer';
 
 function MainPage() {
   return (
     <MainContainer>
-      <h1>메인</h1>
+      <h1>메인페이지</h1>
     </MainContainer>
   );
 }

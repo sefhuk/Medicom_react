@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 function PostForm({ initialValues = {}, onSubmit }) {
   const [title, setTitle] = useState(initialValues.title || '');
   const [content, setContent] = useState(initialValues.content || '');
+
+  useEffect(() => {
+    setTitle(initialValues.title || '');
+    setContent(initialValues.content || '');
+  }, [initialValues]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
