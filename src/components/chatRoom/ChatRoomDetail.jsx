@@ -34,7 +34,7 @@ function ChatRoomDetail({ data, selectedIndex }) {
               {data.user2.role === 'DOCTOR' && <HospitalName>병원 이름</HospitalName>}
             </>
           ) : (
-            '매칭을 기다리고 있습니다'
+            data.type.type
           )}
         </Title>
         <Preview>
