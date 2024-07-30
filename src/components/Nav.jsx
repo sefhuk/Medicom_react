@@ -31,7 +31,7 @@ const Nav = () => {
     <>
       {auth.role==='ADMIN' ? (
         <IconButton>
-          <HttpsIcon fontSize='large'></HttpsIcon>
+          <HttpsIcon fontSize='large' onClick={OnClickAdminPage}></HttpsIcon>
         </IconButton>
       ) : (<></>)}
       <IconButton onClick={OnClickMyPage}>

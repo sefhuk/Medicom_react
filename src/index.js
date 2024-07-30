@@ -15,9 +15,9 @@ import Login from './pages/Login';
 import Register from './pages/user/Register';
 import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
-import AdminPage from './pages/user/AdminPage';
+import AdminPage from './pages/admin/AdminPage';
 import SymptomAsk from './pages/SymptomAsk'
-
+import UserList from './pages/admin/UserList';
 
 
 const queryClient = new QueryClient();
@@ -51,7 +51,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'admin-page',
-        element: <AdminPage />
+        element: <AdminPage />,
+      },
+      {
+        path: 'admin-page/user-list',
+        element: <UserList />
       },
       {
 
@@ -60,10 +64,8 @@ const router = createBrowserRouter([
       },
       {
         path: "my-page",
-        element: <MyPage />
-
-      }
-
+        element: <MyPage />,
+      },
     ]
   }
 ]);
