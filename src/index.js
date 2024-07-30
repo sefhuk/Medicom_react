@@ -19,6 +19,8 @@ import Login from './pages/Login';
 import Register from './pages/user/Register';
 import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
+import AdminPage from './pages/user/AdminPage';
+import SymptomAsk from './pages/SymptomAsk'
 
 
 

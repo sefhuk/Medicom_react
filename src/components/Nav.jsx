@@ -7,6 +7,7 @@ import { authState, userauthState } from '../utils/atom';
 import { deleteCookie } from '../utils/cookies';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
+import HttpsIcon from '@mui/icons-material/Https';
 
 
 const Nav = () => {
@@ -27,17 +28,26 @@ const Nav = () => {
 
   const LoginIcon = () => {
     return(
-      <>
-      <IconButton size='large'>
-        <AccountCircleIcon/>
+    <>
+      {auth.role==='ADMIN' ? (
+        <IconButton>
+          <HttpsIcon fontSize='large'></HttpsIcon>
+        </IconButton>
+      ) : (<></>)}
+      <IconButton onClick={OnClickMyPage}>
+        <AccountCircleIcon fontSize='large'/>
       </IconButton>
       <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
     </>    
     );
   }
 
-  const OnClicMyPage = () => {
-    navigate('my-page');
+  const OnClickMyPage = () => {
+    navigate('/my-page');
+  }
+
+  const OnClickAdminPage = () => {
+    navigate('/admin-page');
   }
 
 
