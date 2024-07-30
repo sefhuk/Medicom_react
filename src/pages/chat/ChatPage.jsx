@@ -10,14 +10,14 @@ import { useRecoilState } from 'recoil';
 import { chatRoomState, userauthState } from '../../utils/atom';
 import { Button } from '@mui/material';
 
-const fetchData = async (id, setMessages, setError) => {
+const fetchData = async (id, setChatRoom, setError) => {
   try {
     const response = await axiosInstance.get(`/chatmessages`, {
       params: {
         chatRoomId: id
       }
     });
-    setMessages(response.data);
+    setChatRoom(m => ({ ...m, messages: response.data }));
   } catch (err) {
     setError(err.response.message);
     alert('잘못된 접근입니다');
@@ -28,9 +28,8 @@ function ChatPage() {
   const params = useParams();
 
   const [auth] = useRecoilState(userauthState);
-  const [chatRoom] = useRecoilState(chatRoomState);
+  const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
 
-  const [messages, setMessages] = useState([]);
   const [error, setError] = useState(null);
   const [stompClient, setStompClient] = useState(null);
 
@@ -63,7 +62,7 @@ function ChatPage() {
 
   useEffect(() => {
     try {
-      fetchData(params.chatRoomId, setMessages, setError);
+      fetchData(params.chatRoomId, setChatRoom, setError);
     } catch (err) {
       alert('잘못된 접근입니다');
     }
@@ -76,7 +75,7 @@ function ChatPage() {
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
         data.content = data.content.replace(/\\n/g, '\n');
-        setMessages(m => [...m, data]);
+        setChatRoom(m => ({ ...m, messages: [...m.messages, data] }));
       });
     });
 
@@ -88,7 +87,7 @@ function ChatPage() {
 
   useEffect(() => {
     if (tmp != null) tmp.current.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [chatRoom.messages]);
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
@@ -126,21 +125,27 @@ function ChatPage() {
           )}
         </div>
       )}
-      {messages.length !== 0 &&
-        messages.map((e, idx) => {
+      {chatRoom.messages.length !== 0 &&
+        chatRoom.messages.map((e, idx) => {
           return e.user.id === Number(auth.userId) ? (
             <Message
               key={e.id}
               self={true}
               data={e}
-              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+              repeat={
+                e.user.id ===
+                (chatRoom.messages[idx - 1] ? chatRoom.messages[idx - 1].user.id : '0')
+              }
             />
           ) : (
             <Message
               key={e.id}
               self={false}
               data={e}
-              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+              repeat={
+                e.user.id ===
+                (chatRoom.messages[idx - 1] ? chatRoom.messages[idx - 1].user.id : '0')
+              }
             />
           );
         })}

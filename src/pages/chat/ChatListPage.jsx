@@ -63,7 +63,7 @@ function ChatListPage() {
           lastMessage: { ...e.lastMessage, content: e.lastMessage.content.replace(/\\n/g, ' ') }
         };
       });
-      setChatRoom({ rooms: chatRooms });
+      setChatRoom(m => ({ ...m, rooms: chatRooms }));
       setData(response.data);
     } catch (err) {
       setError(err.response.data.message);
