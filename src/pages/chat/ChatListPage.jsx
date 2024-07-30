@@ -56,7 +56,13 @@ function ChatListPage() {
         }
       });
       const chatRooms = {};
-      response.data.map(e => (chatRooms[`ch_${e.id}`] = e.status.status));
+      response.data = response.data.map(e => {
+        chatRooms[`ch_${e.id}`] = e.status.status;
+        return {
+          ...e,
+          lastMessage: { ...e.lastMessage, content: e.lastMessage.content.replace(/\\n/g, ' ') }
+        };
+      });
       setChatRoom({ rooms: chatRooms });
       setData(response.data);
     } catch (err) {
