@@ -2,6 +2,7 @@ import React from "react";
 import MainContainer from '../../components/global/MainContainer';
 import { Paper, Button, Box, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from "react-router";
 
 
 const theme = createTheme({
@@ -16,6 +17,13 @@ const theme = createTheme({
 });
 
 const AdminPage = () => {
+
+  const navigate = useNavigate();
+
+  const OnClickUserList = () => {
+    navigate('/admin-page/user-list');
+  };
+
   return(
     <MainContainer>
       <Paper elevation={6} sx={{margin: '10px', padding: 3, borderRadius: '10px' }}> 
@@ -33,7 +41,7 @@ const AdminPage = () => {
             <Box sx={{margin: '15px 0 auto', border: '1px solid grey' }}></Box>
             <Button variant="contained" color="black" size='large' fullWidth sx={{margin: '15px 0 auto', height: '50px', fontSize: '16px'}}>상담 채팅 목록</Button>
             <Box sx={{margin: '15px 0 auto', border: '1px solid grey' }}></Box>
-            <Button variant="contained" color="black" size='large' fullWidth sx={{margin: '15px 0 auto', height: '50px', fontSize: '18px'}}>회원 목록</Button>
+            <Button variant="contained" color="black" size='large' fullWidth sx={{margin: '15px 0 auto', height: '50px', fontSize: '18px'}} onClick={OnClickUserList}>회원 목록</Button>
             <Box sx={{margin: '15px 0 auto', border: '1px solid grey' }}></Box>
           </Box>
         </ThemeProvider>               

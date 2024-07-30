@@ -6,7 +6,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import Login from './pages/Login';
 import Register from './pages/user/Register';
-import SymptomAsk from './pages/SymptomAsk'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot } from 'recoil';
 import ChatPage from './pages/chat/ChatPage';
@@ -17,6 +16,9 @@ import MapComponent from './pages/Hospital/MapComponent';
 import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
 import AdminPage from './pages/admin/AdminPage';
+import SymptomAsk from './pages/SymptomAsk';
+import UserList from './pages/admin/UserList';
+
 
 
 const queryClient = new QueryClient();
@@ -50,7 +52,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'admin-page',
-        element: <AdminPage />
+        element: <AdminPage />,
+      },
+      {
+        path: 'admin-page/user-list',
+        element: <UserList />
       },
       {
 
@@ -59,10 +65,8 @@ const router = createBrowserRouter([
       },
       {
         path: "my-page",
-        element: <MyPage />
-
-      }
-
+        element: <MyPage />,
+      },
     ]
   }
 ]);
