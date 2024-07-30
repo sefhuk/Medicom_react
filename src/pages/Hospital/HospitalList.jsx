@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
+import './HospitalList.css';
 
-//페이지 경로 : http://localhost:3000/hospitals
+// 페이지 경로 : http://localhost:3000/hospitals
 
 const HospitalList = () => {
   const [hospitals, setHospitals] = useState([]);
@@ -11,6 +12,8 @@ const HospitalList = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const [departments, setDepartments] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState('');
   const pageSize = 10;
 
   useEffect(() => {
@@ -19,7 +22,8 @@ const HospitalList = () => {
         const response = await axios.get('http://localhost:8080/api/hospitals', {
           params: {
             page: currentPage,
-            size: pageSize
+            size: pageSize,
+            department: selectedDepartment // 부서 필터 추가
           }
         });
         setHospitals(response.data.content || []);
@@ -33,7 +37,21 @@ const HospitalList = () => {
     };
 
     fetchHospitals();
-  }, [currentPage]);
+  }, [currentPage, selectedDepartment]); // 의존성 배열에 selectedDepartment 추가
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/departments');
+        console.log('Fetched departments:', response.data); // 디버깅용 로그
+        setDepartments(response.data || []);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   const handleSearch = async () => {
     setLoading(true);
@@ -53,6 +71,11 @@ const HospitalList = () => {
       console.error('Error searching hospitals:', error);
       setLoading(false);
     }
+  };
+
+  const handleFilter = (department) => {
+    setSelectedDepartment(department);
+    setCurrentPage(0); // 필터 변경 시 첫 페이지로 이동
   };
 
   const handlePageClick = (page) => {
@@ -88,7 +111,7 @@ const HospitalList = () => {
 
   return (
     <MainContainer>
-      <div>
+      <div className="container">
         <h1>병원 검색하기</h1>
         <h2>키워드 검색</h2>
         <input
@@ -98,6 +121,20 @@ const HospitalList = () => {
           placeholder="찾으실 병원을 입력하세요"
         />
         <button onClick={handleSearch}>검색</button>
+        
+        <h2>부서 필터링</h2>
+        <select
+          value={selectedDepartment}
+          onChange={e => handleFilter(e.target.value)}
+        >
+          <option value="">모든 부서</option>
+          {departments.map(department => (
+            <option key={department.id} value={department.name}>
+              {department.name}
+            </option>
+          ))}
+        </select>
+        
         <ul>
           {hospitals.length > 0 ? (
             hospitals.map(hospital => (
@@ -109,7 +146,7 @@ const HospitalList = () => {
             <p>No hospitals found</p>
           )}
         </ul>
-        <div>
+        <div className="page-buttons">
           {renderPageNumbers()}
         </div>
       </div>
