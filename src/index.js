@@ -6,7 +6,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import Login from './pages/Login';
 import Register from './pages/user/Register';
-import AdminPage from './pages/user/AdminPage';
 import SymptomAsk from './pages/SymptomAsk'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot } from 'recoil';
@@ -17,9 +16,7 @@ import HospitalList from './pages/Hospital/HospitalList';
 import MapComponent from './pages/Hospital/MapComponent';
 import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
-import AdminPage from './pages/user/AdminPage';
-import SymptomAsk from './pages/SymptomAsk'
-
+import AdminPage from './pages/admin/AdminPage';
 
 
 const queryClient = new QueryClient();
