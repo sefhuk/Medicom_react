@@ -2,6 +2,7 @@ import React from 'react';
 import DepartmentSuggestion from './subModals/DepartmentSuggestion';
 import { useRecoilState } from 'recoil';
 import { userauthState } from '../../../utils/atom';
+import ExitChatRoom from './subModals/ExitChatRoom';
 
 function AdvancedModal({ sendMessage, setOpens }) {
   const [auth] = useRecoilState(userauthState);
@@ -10,6 +11,7 @@ function AdvancedModal({ sendMessage, setOpens }) {
       {auth.role === 'DOCTOR' && (
         <DepartmentSuggestion sendMessage={sendMessage} setOpens={setOpens} />
       )}
+      <ExitChatRoom />
     </React.Fragment>
   );
 }
