@@ -1,14 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ProfileImage from './ProfileImage';
 import styled from 'styled-components';
 import { fromatDate, isToday } from '../../utils/time';
-import { Button } from '@mui/material';
+import { Box, Button, Modal } from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
 import { useRecoilState } from 'recoil';
 import { userauthState } from '../../utils/atom';
+import EditModal from './modal/EditModal';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4
+};
 
 function Message({ data, repeat, self }) {
   const [auth] = useRecoilState(userauthState);
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    if (auth.userId !== Number(data.user.id)) return;
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
 
   const messageTime = () => {
     let date = fromatDate(new Date(data.createdAt));
@@ -31,35 +51,48 @@ function Message({ data, repeat, self }) {
   };
 
   return (
-    <Container self={self}>
-      {self || (
-        <TopContainer repeat={repeat} self={self}>
-          {repeat || <ProfileImage url={data.user.image} insert={false} self={self} />}
-          {repeat || <Author self={self}>{data.user.name}</Author>}
-        </TopContainer>
-      )}
-      <BottomContainer self={self}>
-        <Content self={self}>
-          {data.content.startsWith('dpt: ') ? (
-            <>
-              <p>진료과 추천 정보가 제공되었습니다</p>
-              <Button variant='contained' onClick={requestHospital}>
-                {' '}
-                {data.content.split(' ')[1]}
-              </Button>
-            </>
-          ) : (
-            data.content.split('\\n').map(e => (
-              <span>
-                {e}
-                <br />
-              </span>
-            ))
-          )}
-        </Content>
-        <Time self={self}>{messageTime()}</Time>
-      </BottomContainer>
-    </Container>
+    <>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='parent-modal-title'
+        aria-describedby='parent-modal-description'
+      >
+        <Box sx={{ ...style, width: '60%' }}>
+          <h2 id='parent-modal-title'>메시지 옵션</h2>
+          <EditModal msgId={data.id} />
+        </Box>
+      </Modal>
+      <Container self={self}>
+        {self || (
+          <TopContainer repeat={repeat} self={self}>
+            {repeat || <ProfileImage url={data.user.image} insert={false} self={self} />}
+            {repeat || <Author self={self}>{data.user.name}</Author>}
+          </TopContainer>
+        )}
+        <BottomContainer self={self}>
+          <Content self={self} onDoubleClick={handleOpen}>
+            {data.content.startsWith('dpt: ') ? (
+              <>
+                <p>진료과 추천 정보가 제공되었습니다</p>
+                <Button variant='contained' onClick={requestHospital}>
+                  {' '}
+                  {data.content.split(' ')[1]}
+                </Button>
+              </>
+            ) : (
+              data.content.split('\\n').map(e => (
+                <span>
+                  {e}
+                  <br />
+                </span>
+              ))
+            )}
+          </Content>
+          <Time self={self}>{messageTime()}</Time>
+        </BottomContainer>
+      </Container>
+    </>
   );
 }
 
