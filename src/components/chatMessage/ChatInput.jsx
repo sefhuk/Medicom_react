@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import DepartmentModal from './modal/DepartmentModal';
+import AdvancedModal from './modal/AdvancedModal';
 import { useRecoilState } from 'recoil';
 import { userauthState } from '../../utils/atom';
 
@@ -66,9 +66,7 @@ function ChatInput({ sendMessage, status }) {
       >
         <Box sx={{ ...style, width: '60%' }}>
           <h2 id='parent-modal-title'>추가 기능</h2>
-          {auth.role === 'DOCTOR' && (
-            <DepartmentModal sendMessage={sendMessage} setOpens={setOpen} />
-          )}
+          <AdvancedModal sendMessage={sendMessage} setOpens={setOpen} />
         </Box>
       </Modal>
       <Button

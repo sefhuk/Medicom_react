@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { Autocomplete, Box, Button, createFilterOptions, Modal, TextField } from '@mui/material';
+import React, { useState } from 'react';
 
 const style = {
   position: 'absolute',
@@ -70,17 +70,9 @@ const filterOptions = createFilterOptions({
   stringify: option => option.title
 });
 
-function DepartmentModal({ sendMessage, setOpens }) {
+function DepartmentSuggestion({ sendMessage, setOpens }) {
   const [value, setValue] = useState(null);
   const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleButtonClick = () => {
     const isConfirmed = window.confirm('해당 진료과로 제공하시겠습니까?');
@@ -96,8 +88,16 @@ function DepartmentModal({ sendMessage, setOpens }) {
     setOpens(false);
   };
 
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <React.Fragment>
+    <>
       <Button onClick={handleOpen}>진료과목 정보 제공하기</Button>
       <Modal
         open={open}
@@ -120,8 +120,8 @@ function DepartmentModal({ sendMessage, setOpens }) {
           </Button>
         </Box>
       </Modal>
-    </React.Fragment>
+    </>
   );
 }
 
-export default DepartmentModal;
+export default DepartmentSuggestion;
