@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PostCodeModal from '../../components/PostCodeModal';
+import { useRecoilValue } from 'recoil';
 
 const theme = createTheme({
   palette: {
@@ -24,13 +25,19 @@ const theme = createTheme({
 });
 
 const MyPage = () => {
+  const navigate = useNavigate();
+
+  const auth = useRecoilValue(userauthState);
+  if(!auth.isLoggedIn)
+    navigate('/login');
+
   const [userInfo, setUserInfo] = useState(null);
   const [editField, setEditField] = useState(null);
   const [formData, setFormData] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [postcodeOpen, setPostcodeOpen] = useState(false);
   const [addressData, setAddressData] = useState({ address: '', addressDetail: '' });
-  const navigate = useNavigate();
+  
   const setAuthState = useSetRecoilState(userauthState);
 
   useEffect(() => {
