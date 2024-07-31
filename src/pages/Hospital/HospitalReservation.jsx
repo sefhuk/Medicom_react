@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import MainContainer from '../components/global/MainContainer';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import MainContainer from '../../components/global/MainContainer';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -16,7 +17,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import axios from 'axios';
 import { format } from 'date-fns'; // 날짜 형식 변환
-import { CustomScrollBox } from '../components/CustomScrollBox';
+import { CustomScrollBox } from '../../components/CustomScrollBox';
 
 const CustomFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
   '& .MuiTypography-root': {
@@ -40,7 +41,9 @@ const generateTimeSlots = (startHour, endHour, interval) => {
 
 
 function HospitalReservation() {
-  const [selectedDepartment, setSelectedDepartment] = useState(null); // 단일 진료과 선택
+  const { hospitalId } = useParams(); // URL에서 병원 id 가져오기
+  const [departments, setDepartments] = useState([]); // 부서 목록 상태
+  const [selectedDepartment, setSelectedDepartment] = useState(null); // 진료과 선택
   const [selectedDate, setSelectedDate] = useState(null); // 날짜 선택
   const [selectedTime, setSelectedTime] = useState(null); // 예약 시간 선택
   const [expanded, setExpanded] = useState({
@@ -48,6 +51,17 @@ function HospitalReservation() {
     panel2: false,
     panel3: false,
   }); // accordion 열림 상태 초기에 false로 설정
+
+  useEffect(() => {
+    // department 데이터 가져오기
+    axios.get('http://localhost:8080/api/departments/detail')
+      .then(response => {
+        setDepartments(response.data);
+      })
+      .catch(error => {
+        console.error('department 데이터를 가져오는 데에 실패했습니다.:', error);
+      });
+  }, []);
 
   // 진료과 선택 핸들러
   const handleDepartmentChange = (event) => {
@@ -79,7 +93,7 @@ function HospitalReservation() {
     }));
   };
 
-  // 시간 슬롯 배열
+  // 시간 슬롯
   const timeSlots = generateTimeSlots(8, 18, 30); // 8:00 ~ 18:00, 30분 간격
 
   // 예약 제출 핸들러
@@ -117,28 +131,28 @@ function HospitalReservation() {
           </AccordionSummary>
           <AccordionDetails>
             <Box>
-              {['option1', 'option2', 'option3'].map((option) => (
-                <CustomFormControlLabel
-                  key={option}
-                  control={
-                    <Checkbox
-                      value={option}
-                      checked={selectedDepartment === option}
-                      onChange={handleDepartmentChange}
-                    />
-                  }
-                  label={`옵션 ${option.slice(-1)}`}
-                  sx={{
-                    backgroundColor: selectedDepartment === option ? 'lightblue' : 'transparent',
-                    borderRadius: '4px',
-                    padding: '8px',
-                    marginBottom: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                />
-              ))}
-            </Box>
+                {departments.map((department) => (
+                  <CustomFormControlLabel
+                    key={hospitalId.department.id} // 각 부서가 고유한 `id`를 가진다고 가정
+                    control={
+                      <Checkbox
+                        value={hospitalId.department.name} // 부서의 이름을 값으로 사용
+                        checked={selectedDepartment === department.name}
+                        onChange={handleDepartmentChange}
+                      />
+                    }
+                    label={department.name} // 부서 이름 표시
+                    sx={{
+                      backgroundColor: selectedDepartment === department.name ? 'lightblue' : 'transparent',
+                      borderRadius: '4px',
+                      padding: '8px',
+                      marginBottom: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  />
+                ))}
+              </Box>
           </AccordionDetails>
         </Accordion>
 

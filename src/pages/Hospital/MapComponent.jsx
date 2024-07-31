@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainContainer from '../../components/global/MainContainer';
 import axios from 'axios';
 
@@ -15,6 +16,7 @@ const MapComponent = () => {
   const [showReservationForm, setShowReservationForm] = useState(false);
   const [showHospitalList, setShowHospitalList] = useState(false);
   const [reservationData, setReservationData] = useState({ name: '', contact: '' });
+  const navigate = useNavigate();
 
   // 사용자 위치 가져오기
   useEffect(() => {
@@ -184,11 +186,12 @@ const MapComponent = () => {
   // 병원 예약 처리
   const handleReservation = () => {
     if (selectedHospital) {
-      setShowReservationForm(true);
+      navigate(`${selectedHospital.id}/reservation`);
     } else {
       setError('예약할 병원을 선택해주세요.');
     }
   };
+
 
   return (
     <MainContainer>
