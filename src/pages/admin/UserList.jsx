@@ -6,6 +6,7 @@ import { axiosInstance } from "../../utils/axios";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from "react-router";
+import { GetUserRoleString } from "../../utils/stringUtil";
 
 
 function stringToColor(string) {
@@ -55,14 +56,6 @@ const UserList = () =>{
     };
     GetUserList();
   }, []);
-
-  const GetUserRoleString = (role) => {
-    if(role === 'USER'){
-      return '일반 회원';
-    } else if(role === 'DOCTOR'){
-      return '의사';
-    } else return '관리자';
-  }
 
   const UserListComponent = (list) =>{
     return list.map(user => (
