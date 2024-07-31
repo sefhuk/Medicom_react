@@ -31,7 +31,9 @@ function ChatRoomDetail({ data, selectedIndex }) {
           ) : data.user2 ? (
             <>
               {data.user2.role === 'DOCTOR' ? '(의사) ' : '(관리자) '} {data.user2.name}
-              {data.user2.role === 'DOCTOR' && <HospitalName>병원 이름</HospitalName>}
+              {data.user2.role === 'DOCTOR' && (
+                <HospitalName>{data.doctorProfile.hospitalName}</HospitalName>
+              )}
             </>
           ) : (
             data.type.type
