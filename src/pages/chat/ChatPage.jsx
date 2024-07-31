@@ -91,6 +91,7 @@ function ChatPage() {
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
+      <div style={{ height: '3dvh' }} />
       {error && <div>{error}</div>}
       {chatRoom.rooms[`ch_${params.chatRoomId}`] === '수락 대기' && (
         <div

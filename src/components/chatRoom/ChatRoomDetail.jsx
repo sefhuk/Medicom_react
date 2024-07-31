@@ -54,6 +54,7 @@ function ChatRoomDetail({ data, selectedIndex }) {
               ? data.user2?.image
               : data.user1?.image
         }
+        size={'6rem'}
       />
     </Container>
   );
@@ -80,7 +81,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 80%;
+  width: 70%;
   height: 100%;
 `;
 
@@ -88,7 +89,7 @@ const Title = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
 `;
 
@@ -98,6 +99,10 @@ const HospitalName = styled.div`
   font-weight: 400;
 `;
 
-const Preview = styled.div``;
+const Preview = styled.div`
+  width: 70%;
+  font-size: 1.5rem;
+  overflow: hidden;
+`;
 
 export default ChatRoomDetail;

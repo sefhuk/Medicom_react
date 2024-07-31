@@ -65,7 +65,9 @@ function Message({ data, repeat, self }) {
       <Container self={self}>
         {self || (
           <TopContainer repeat={repeat} self={self}>
-            {repeat || <ProfileImage url={data.user.image} insert={false} self={self} />}
+            {repeat || (
+              <ProfileImage url={data.user.image} insert={false} self={self} size={'3rem'} />
+            )}
             {repeat || <Author self={self}>{data.user.name}</Author>}
           </TopContainer>
         )}
@@ -106,7 +108,8 @@ const TopContainer = styled.div`
   display: flex;
   justify-content: ${({ self }) => (self ? 'flex-end' : 'flex-start')};
   max-width: 100%;
-  margin-left: ${({ repeat }) => (repeat ? '3.6rem' : '0px')};
+  margin-left: ${({ repeat }) => (repeat ? '3.6rem' : '0.5rem')};
+  margin-bottom: 10px;
 `;
 
 const BottomContainer = styled.div`
