@@ -31,7 +31,6 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
 
   return (
     <CommentListContainer>
-    <br/>
       <CommentsUl>
         {comments.map(comment => (
           <CommentListItem key={comment.id}>
@@ -49,7 +48,10 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
                 {comment.content}
                 <button onClick={() => handleEditClick(comment)}>Edit</button>
                 <button onClick={() => onDelete(comment.id)}>Delete</button>
-                <button onClick={() => handleReplyClick(comment)}>Reply</button>
+                {/* 대댓글에는 Reply 버튼을 표시하지 않음 */}
+                {comment.parentId === null && (
+                  <button onClick={() => handleReplyClick(comment)}>Reply</button>
+                )}
               </>
             )}
             {replyCommentId === comment.id && (
@@ -62,8 +64,13 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
                 <button onClick={handleReply}>Add Reply</button>
               </div>
             )}
-            {comment.replies && comment.replies.length > 0 && (
-              <CommentList comments={comment.replies} onDelete={onDelete} onUpdate={onUpdate} onReply={onReply} />
+            {Array.isArray(comment.replies) && comment.replies.length > 0 && (
+              <CommentList
+                comments={comment.replies}
+                onDelete={onDelete}
+                onUpdate={onUpdate}
+                onReply={onReply}
+              />
             )}
           </CommentListItem>
         ))}

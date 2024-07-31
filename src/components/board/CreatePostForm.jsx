@@ -1,14 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-function PostForm({ initialValues = {}, onSubmit }) {
-  const [title, setTitle] = useState(initialValues.title || '');
-  const [content, setContent] = useState(initialValues.content || '');
-
-  useEffect(() => {
-    setTitle(initialValues.title || '');
-    setContent(initialValues.content || '');
-  }, [initialValues]);
+function CreatePostForm({ onSubmit }) {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,7 +12,7 @@ function PostForm({ initialValues = {}, onSubmit }) {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <h1>{initialValues.id ? 'Update Post' : 'Create Post'}</h1>
+      <h1>Create Post</h1>
       <Label>
         Title:
         <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -26,9 +21,7 @@ function PostForm({ initialValues = {}, onSubmit }) {
         Content:
         <TextArea value={content} onChange={(e) => setContent(e.target.value)} />
       </Label>
-      <SubmitButton type="submit">
-        {initialValues.id ? 'Update Post' : 'Create Post'}
-      </SubmitButton>
+      <SubmitButton type="submit">Create Post</SubmitButton>
     </Form>
   );
 }
@@ -75,4 +68,4 @@ const SubmitButton = styled.button`
   }
 `;
 
-export default PostForm;
+export default CreatePostForm;

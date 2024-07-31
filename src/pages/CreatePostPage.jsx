@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import PostForm from '../components/board/PostForm';
+import CreatePostForm from '../components/board/CreatePostForm';
 import MainContainer from '../components/global/MainContainer';
 
 function CreatePostPage() {
@@ -19,7 +19,7 @@ function CreatePostPage() {
 
   return (
     <MainContainer>
-      <PostForm onSubmit={handleSubmit} />
+      <CreatePostForm onSubmit={handleSubmit} />
     </MainContainer>
   );
 }

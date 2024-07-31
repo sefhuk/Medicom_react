@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import PostForm from '../components/board/PostForm';
+import UpdatePostForm from '../components/board/UpdatePostForm';
 import MainContainer from '../components/global/MainContainer';
 
 function UpdatePostPage() {
@@ -18,9 +18,7 @@ function UpdatePostPage() {
   const handleUpdatePost = async (postData) => {
     try {
       const updatedPostData = { ...postData, id: id };
-
-      const response = await axios.put(`http://localhost:8080/posts/${id}`, updatedPostData);
-      console.log('Post updated:', response.data);
+      await axios.put(`http://localhost:8080/posts/${id}`, updatedPostData);
       navigate(`/posts/${id}`);
     } catch (error) {
       console.error('Error updating post:', error);
@@ -29,7 +27,7 @@ function UpdatePostPage() {
 
   return (
     <MainContainer>
-      <PostForm initialValues={initialValues} onSubmit={handleUpdatePost} />
+      <UpdatePostForm initialValues={initialValues} onSubmit={handleUpdatePost} />
     </MainContainer>
   );
 }
