@@ -1,13 +1,12 @@
 import React from 'react';
-import { useRecoilState } from 'recoil';
-import { userauthState } from '../../../utils/atom';
-import RemoveMessage from './subModals/\bRemoveMessage';
+import ModifyMessage from './subModals/ModifyMessage';
+import RemoveMessage from './subModals/RemoveMessage';
 
-function EditModal({ msgId }) {
-  const [auth] = useRecoilState(userauthState);
+function EditModal({ msgId, msg }) {
   return (
     <React.Fragment>
       <RemoveMessage msgId={msgId} />
+      <ModifyMessage msgId={msgId} msg={msg} />
     </React.Fragment>
   );
 }
