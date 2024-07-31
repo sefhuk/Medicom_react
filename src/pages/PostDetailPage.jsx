@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import CommentList from '../components/board/CommentList';
+import Pagination from '../components/board/CommentPagination';
 import MainContainer from '../components/global/MainContainer';
 
 function PostDetailPage() {
@@ -9,23 +10,33 @@ function PostDetailPage() {
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
+
+  const fetchComments = useCallback((page) => {
+    axios.get(`http://localhost:8080/comments/post/${id}?page=${page}&size=6`)
+      .then(response => {
+        setComments(response.data.content); // 페이지 객체에서 댓글 콘텐츠 가져오기
+        setTotalPages(response.data.totalPages); // 총 페이지 수 가져오기
+        setCurrentPage(page); // 현재 페이지 업데이트
+      })
+      .catch(error => console.error('Error fetching comments:', error));
+  }, [id]);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/posts/${id}`)
       .then(response => setPost(response.data))
       .catch(error => console.error('Error fetching post:', error));
 
-    axios.get(`http://localhost:8080/comments/post/${id}`)
-      .then(response => setComments(response.data))
-      .catch(error => console.error('Error fetching comments:', error));
-  }, [id]);
+    fetchComments(0);  // Load the first page of comments initially
+  }, [id, fetchComments]);
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     axios.post('http://localhost:8080/comments', { postId: id, content: commentText })
       .then(response => {
-        setComments([...comments, response.data]);
+        setComments([response.data, ...comments]); // 새 댓글을 가장 상단에 추가
         setCommentText('');
       })
       .catch(error => console.error('Error adding comment:', error));
@@ -82,6 +93,10 @@ function PostDetailPage() {
     }
   };
 
+  const handlePageChange = (page) => {
+    fetchComments(page);
+  };
+
   if (!post) return <p>Loading...</p>;
 
   return (
@@ -101,6 +116,11 @@ function PostDetailPage() {
           <button type="submit">Add Comment</button>
         </form>
         <CommentList comments={comments} onDelete={handleDeleteComment} onUpdate={handleUpdateComment} onReply={handleReplyComment} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </MainContainer>
   );
