@@ -64,9 +64,6 @@ const Nav = () => {
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           네비게이션바
         </Typography>
-        <IconButton size='large' onClick={OnClickMyPage}>
-          <AccountCircleIcon/>
-        </IconButton>
         {auth.isLoggedIn ? (
           <LoginIcon/>
         ) : (
