@@ -3,7 +3,6 @@ import ProfileImage from './ProfileImage';
 import styled from 'styled-components';
 import { fromatDate, isToday } from '../../utils/time';
 import { Box, Button, Modal } from '@mui/material';
-import { axiosInstance } from '../../utils/axios';
 import { useRecoilState } from 'recoil';
 import { userauthState } from '../../utils/atom';
 import EditModal from './modal/EditModal';
@@ -60,7 +59,7 @@ function Message({ data, repeat, self }) {
       >
         <Box sx={{ ...style, width: '60%' }}>
           <h2 id='parent-modal-title'>메시지 옵션</h2>
-          <EditModal msgId={data.id} />
+          <EditModal msgId={data.id} msg={data.content} />
         </Box>
       </Modal>
       <Container self={self}>
