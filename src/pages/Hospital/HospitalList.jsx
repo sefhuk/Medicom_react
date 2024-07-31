@@ -22,12 +22,11 @@ const HospitalList = () => {
         const response = await axios.get('http://localhost:8080/api/departments/detail', {
           params: {
             page: currentPage,
-            size: pageSize,
-            department: selectedDepartment // 부서 필터 추가
+            size: pageSize
           }
         });
-        setHospitals(response.data || []);
-        setTotalPages(response.data.length ? 1 : 0); // 데이터가 없으면 총 페이지 수를 0으로 설정
+        setHospitals(response.data.content || []);
+        setTotalPages(response.data.totalPages || 0);
         setLoading(false);
       } catch (error) {
         setError(error);
@@ -43,7 +42,6 @@ const HospitalList = () => {
     const fetchDepartments = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/departments');
-        console.log('Fetched departments:', response.data); // 디버깅용 로그
         setDepartments(response.data || []);
       } catch (error) {
         console.error('Error fetching departments:', error);
