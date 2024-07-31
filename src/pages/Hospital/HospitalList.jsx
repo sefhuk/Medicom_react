@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
 import './HospitalList.css';
+import { CustomScrollBox } from '../../components/CustomScrollBox'
 
 // 페이지 경로 : http://localhost:3000/hospitals
 
@@ -109,6 +110,7 @@ const HospitalList = () => {
 
   return (
     <MainContainer>
+      <CustomScrollBox>
       <div className="container">
         <h1>병원 검색하기</h1>
         <h2>키워드 검색</h2>
@@ -159,6 +161,7 @@ const HospitalList = () => {
           {renderPageNumbers()}
         </div>
       </div>
+      </CustomScrollBox>
     </MainContainer>
   );
 };

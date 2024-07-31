@@ -16,6 +16,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import axios from 'axios';
 import { format } from 'date-fns'; // 날짜 형식 변환
+import { CustomScrollBox } from '../components/CustomScrollBox';
 
 const CustomFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
   '& .MuiTypography-root': {
@@ -31,34 +32,12 @@ const generateTimeSlots = (startHour, endHour, interval) => {
     for (let minute = 0; minute < 60; minute += interval) {
       const time = new Date();
       time.setHours(hour, minute, 0, 0);
-      slots.push(format(time, 'HH:mm')); // 시간을 'HH:mm' 형식으로 변환하여 저장
+      slots.push(format(time, 'HH:mm')); // 시간을 hh:mm 형식으로 변환 저장
     }
   }
   return slots;
 };
 
-// 스크롤바 스타일
-const CustomScrollBox = styled(Box)(({ theme }) => ({
-  maxHeight: '80vh',
-  overflowY: 'auto',
-  position: 'relative',
-  '&::-webkit-scrollbar': {
-    width: '10px',
-    opacity: 1,
-  },
-  '&::-webkit-scrollbar-track': {
-    backgroundColor: 'transparent',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    boxShadow: '0 0 8px rgba(0, 0, 0, 0.3)',
-    transition: 'background-color 0.3s',
-  },
-  '&:hover::-webkit-scrollbar-thumb': {
-    backgroundColor: '#f1f1f1', // hover 시 색상
-  },
-}));
 
 function HospitalReservation() {
   const [selectedDepartment, setSelectedDepartment] = useState(null); // 단일 진료과 선택
@@ -237,4 +216,3 @@ function HospitalReservation() {
 }
 
 export default HospitalReservation;
-
