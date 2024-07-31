@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import MainContainer from '../../components/global/MainContainer';
 import axios from 'axios';
 
-//페이지 경로 : http://localhost:3000/hospitals/maps
-
 const MapComponent = () => {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [hospitals, setHospitals] = useState([]);
@@ -111,7 +109,11 @@ const MapComponent = () => {
         });
 
         window.naver.maps.Event.addListener(marker, 'click', function() {
-          setSelectedHospital(hospital);
+          if (selectedHospital && selectedHospital.id === hospital.id) {
+            setSelectedHospital(null); // 이미 선택된 병원을 다시 클릭하면 선택 해제
+          } else {
+            setSelectedHospital(hospital);
+          }
         });
 
         return marker;
@@ -119,7 +121,7 @@ const MapComponent = () => {
 
       setMarkers(newMarkers); // 새 마커 저장
     }
-  }, [map, filteredHospitals]);
+  }, [map, filteredHospitals, selectedHospital]);
 
   // 지도 스크립트 로드
   useEffect(() => {
@@ -188,18 +190,9 @@ const MapComponent = () => {
     }
   };
 
-
-
   return (
     <MainContainer>
-      <div style={{ display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '80%',
-  height: '50%',
-  position: 'relative',
-  margin: '0 auto' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80%', height: '50%', position: 'relative', margin: '0 auto' }}>
         <div>
           <label htmlFor="locationInput">위치를 입력하세요:</label>
           <input 

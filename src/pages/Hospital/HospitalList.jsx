@@ -19,15 +19,15 @@ const HospitalList = () => {
   useEffect(() => {
     const fetchHospitals = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/hospitals', {
+        const response = await axios.get('http://localhost:8080/api/departments/detail', {
           params: {
             page: currentPage,
             size: pageSize,
             department: selectedDepartment // 부서 필터 추가
           }
         });
-        setHospitals(response.data.content || []);
-        setTotalPages(response.data.totalPages || 0);
+        setHospitals(response.data || []);
+        setTotalPages(response.data.length ? 1 : 0); // 데이터가 없으면 총 페이지 수를 0으로 설정
         setLoading(false);
       } catch (error) {
         setError(error);
@@ -139,7 +139,18 @@ const HospitalList = () => {
           {hospitals.length > 0 ? (
             hospitals.map(hospital => (
               <li key={hospital.id}>
-                {hospital.name} - {hospital.district} {hospital.subDistrict} - {hospital.telephoneNumber}
+                <strong>{hospital.name}</strong> - {hospital.district} {hospital.subDistrict} - {hospital.telephoneNumber}
+                <ul>
+                  {hospital.departments && hospital.departments.length > 0 ? (
+                    hospital.departments.map(department => (
+                      <li key={department.id}>
+                        {department.name}
+                      </li>
+                    ))
+                  ) : (
+                    <li>No departments available</li>
+                  )}
+                </ul>
               </li>
             ))
           ) : (
