@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import MainContainer from "../../components/global/MainContainer";
-import { Paper, Typography, Box, Button, IconButton } from "@mui/material";
+import { Paper, Typography, Box, Button, IconButton, Tab } from "@mui/material";
 import Avatar from '@mui/material/Avatar';
 import { axiosInstance } from "../../utils/axios";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from "react-router";
 import { GetUserRoleString } from "../../utils/stringUtil";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 
 
 function stringToColor(string) {
@@ -42,6 +43,13 @@ const UserList = () =>{
 
   const [userList, setUserList] = useState(null);
   const [pageSelect, setPageSelect] = useState(0);
+  const [tabValue, setTabValue] = useState('0');
+
+  
+  const handleChange = (e, value) => {
+    setTabValue(value);
+  };
+
 
   const navigate = useNavigate();
 
@@ -74,18 +82,8 @@ const UserList = () =>{
     return UserListComponent(userList);
   }
 
-  const NormalUserList = () => {
-    let list = userList.filter(user => user.role === 'USER');
-    return UserListComponent(list);
-  }
-
-  const DoctorUserList = () => {
-    let list = userList.filter(user => user.role === 'DOCTOR');
-    return UserListComponent(list);
-  }
-
-  const AdminUserList = () => {
-    let list = userList.filter(user => user.role === 'ADMIN');
+  const FilterUserList = (props) => {
+    let list = userList.filter(user => user.role === props.role);
     return UserListComponent(list);
   }
 
@@ -101,20 +99,27 @@ const UserList = () =>{
         <Typography variant='h5' sx={{display: 'inline', color: '#6E6E6E'}}>
           관리자 페이지
         </Typography>
-        <Box sx={{margin: '40px 0px 15px 0px', border: '1px solid grey' }}></Box>
-        
-        {(pageSelect === 0 ) ? <Button startIcon={<CheckIcon/>} sx={{color: '#858584', fontWeight: 'bolder'}}>전체</Button> :
-          <Button onClick={(e)=>{setPageSelect(0)}} sx={{color: '#858584'}}>전체</Button>}
-        {(pageSelect === 1 ) ? <Button startIcon={<CheckIcon/>} sx={{color: '#858584', fontWeight: 'bolder'}}>일반 회원</Button> :
-          <Button onClick={(e)=>{setPageSelect(1)}} sx={{color: '#858584'}}>일반 회원</Button>}
-        {(pageSelect === 2 ) ? <Button startIcon={<CheckIcon/>} sx={{color: '#858584', fontWeight: 'bolder'}}>의사</Button> :
-          <Button onClick={(e)=>{setPageSelect(2)}} sx={{color: '#858584'}}>의사</Button>}
-         {(pageSelect === 3 ) ? <Button startIcon={<CheckIcon/>} sx={{color: '#858584', fontWeight: 'bolder'}}>관리자</Button> :
-          <Button onClick={(e)=>{setPageSelect(3)}} sx={{color: '#858584'}}>관리자</Button>}
-
-        {(pageSelect === 0 && userList) ? <AllUserList /> : (pageSelect === 1 && userList) ? <NormalUserList /> : 
-          (pageSelect === 2 && userList) ? <DoctorUserList /> : (pageSelect === 3 && userList) ? <AdminUserList /> : 
-          <Typography variant='body1'>Loading..</Typography>}
+        <TabContext value={tabValue}>
+          <TabList onChange={handleChange} sx={{margin: '20px 0 auto'}}>
+            <Tab label='전체' value='0' sx={{minWidth: '40px'}}/>
+            <Tab label='일반 회원' value='1' sx={{minWidth: '40px'}}/>
+            <Tab label='의사' value='2' sx={{minWidth: '40px'}}/>
+            <Tab label='관리자' value='3' sx={{minWidth: '40px'}}/>
+          </TabList>
+          <Box sx={{border: '1px solid grey' }}></Box>
+            <TabPanel value='0' sx={{padding: '0'}}>
+            {userList ? <AllUserList /> : <Typography variant='body1'>Loading..</Typography>}
+            </TabPanel>
+            <TabPanel value='1' sx={{padding: '0'}}>
+            {userList ? <FilterUserList role='USER' /> : <Typography variant='body1'>Loading..</Typography>}
+            </TabPanel>    
+            <TabPanel value='2' sx={{padding: '0'}}>
+            {userList ? <FilterUserList role='DOCTOR' /> : <Typography variant='body1'>Loading..</Typography>}
+            </TabPanel>      
+            <TabPanel value='3' sx={{padding: '0'}}>
+            {userList ? <FilterUserList role='ADMIN' /> : <Typography variant='body1'>Loading..</Typography>}
+            </TabPanel>  
+        </TabContext>
       </Paper>
     </MainContainer>
   );

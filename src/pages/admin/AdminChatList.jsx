@@ -55,18 +55,18 @@ const AdminChatList = () => {
       </Typography>
       <TabContext value={tabValue}>
         <TabList onChange={handleChange} sx={{margin: '20px 0 auto'}}>
-            <Tab label='전체' value='1'/>
-            <Tab label='상담' value='2'/>
-            <Tab label='문의' value='3'/>
+            <Tab label='전체' value='0' sx={{minWidth: '40px'}}/>
+            <Tab label='상담' value='1' sx={{minWidth: '40px'}}/>
+            <Tab label='문의' value='2' sx={{minWidth: '40px'}}/>
           </TabList>
         <Box sx={{border: '1px solid grey' }}></Box>
-        <TabPanel value='1' sx={{padding: '0'}}>
+        <TabPanel value='0' sx={{padding: '0'}}>
           {chatList ? <ChatRoomListAll /> : <Typography variant='body1'>Loading..</Typography>}
         </TabPanel>
-        <TabPanel value='2'>
+        <TabPanel value='1' sx={{padding: '0'}}>
         {chatList ? <ChatRoomFilter type='의사 상담'/> : <Typography variant='body1'>Loading..</Typography>}
         </TabPanel>    
-        <TabPanel value='3'>
+        <TabPanel value='2' sx={{padding: '0'}}>
         {chatList ? <ChatRoomFilter type='서비스센터 상담'/> : <Typography variant='body1'>Loading..</Typography>}
         </TabPanel>      
       </TabContext>
