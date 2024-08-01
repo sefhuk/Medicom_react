@@ -209,8 +209,7 @@ const MapComponent = () => {
         {selectedHospital && (
           <div style={{
             position: 'absolute',
-            top: '80vw',
-
+            top: '35vw',
             width: '80%',
             backgroundColor: 'white',
             padding: '20px',
