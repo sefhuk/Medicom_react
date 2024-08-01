@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ProfileImage from './ProfileImage';
 import { axiosInstance } from '../../utils/axios';
 import { useRecoilState } from 'recoil';
@@ -32,6 +32,13 @@ function InsertMessage() {
   const handleButtonClick = e => {
     createChatRoom(e.target.getAttribute('type'), navigate);
   };
+
+  useEffect(() => {
+    if (!auth.isLoggedIn) {
+      alert('잘못된 접근입니다');
+      navigate('/');
+    }
+  }, []);
 
   return (
     <Container>
