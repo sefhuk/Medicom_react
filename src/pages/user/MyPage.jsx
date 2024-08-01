@@ -25,11 +25,7 @@ const theme = createTheme({
 });
 
 const MyPage = () => {
-  const navigate = useNavigate();
 
-  const auth = useRecoilValue(userauthState);
-  if(!auth.isLoggedIn)
-    navigate('/login');
 
   const [userInfo, setUserInfo] = useState(null);
   const [editField, setEditField] = useState(null);
@@ -37,8 +33,14 @@ const MyPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [postcodeOpen, setPostcodeOpen] = useState(false);
   const [addressData, setAddressData] = useState({ address: '', addressDetail: '' });
-  
+  const navigate = useNavigate();
   const setAuthState = useSetRecoilState(userauthState);
+  const auth = useRecoilValue(userauthState);
+  useEffect(() => {
+    if (!auth.isLoggedIn) {
+      navigate('/login');
+    }
+  }, [auth, navigate]);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -107,6 +109,7 @@ const MyPage = () => {
     setFormData({ ...userInfo });
     setEditField(null);
     setDialogOpen(false);
+    setPostcodeOpen(false);
   };
 
   const handleInputChange = (e) => {
@@ -261,7 +264,7 @@ const MyPage = () => {
                   }}
                 />
                 <Button variant="contained" onClick={() => setPostcodeOpen(true)} sx={{ height: '40px', marginLeft: '10px' }}>
-                  검색
+                  주소 검색
                 </Button>
               </Box>
               <TextField
