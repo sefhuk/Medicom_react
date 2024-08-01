@@ -63,9 +63,8 @@ function ChatListPage() {
         }
       );
       const chatRooms = {};
-      response.data = response.data.map(e => {
-        chatRooms[`ch_${e.id}`] = e.status.status;
-        return {
+      response.data.forEach(e => {
+        const room = {
           ...e,
           lastMessage: e.lastMessage
             ? {
@@ -74,16 +73,16 @@ function ChatListPage() {
               }
             : null
         };
+        chatRooms[`ch_${e.id}`] = room;
       });
       setChatRoom(m => ({ ...m, rooms: chatRooms }));
       setData(
-        response.data.sort((a, b) => {
+        Object.values(chatRooms).sort((a, b) => {
           if (a.user2 === null) return 1;
           if (a.user2 !== null) return -1;
         })
       );
     } catch (err) {
-      console.log('err', err);
       setError(err.response.data.message);
     } finally {
       setIsLoading(false);

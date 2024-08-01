@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import AdvancedModal from '../chatRoom/modal/AdvancedModal';
-import { useRecoilState } from 'recoil';
-import { userauthState } from '../../utils/atom';
 
 const style = {
   position: 'absolute',
@@ -19,19 +17,17 @@ const style = {
   p: 4
 };
 
-function ChatInput({ sendMessage, status }) {
-  const [input, setInput] = useState(status === '진행' ? '' : '입력할 수 없습니다');
+function ChatInput({ sendMessage, enable }) {
+  const [input, setInput] = useState(enable ? '' : '입력할 수 없습니다');
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [auth] = useRecoilState(userauthState);
-
   const button = useRef(null);
 
   const handleInput = e => {
-    if (status !== '진행') return;
+    if (!enable) return;
 
     if (!e.nativeEvent.isComposing)
       if (e.key === 'Enter') {
@@ -44,7 +40,7 @@ function ChatInput({ sendMessage, status }) {
   };
 
   const handleClick = () => {
-    if (status !== '진행') return;
+    if (!enable) return;
 
     if (/^\s*$/.test(input)) {
       alert('공백 메시지는 전송이 불가능합니다');
@@ -80,7 +76,7 @@ function ChatInput({ sendMessage, status }) {
         value={input}
         onChange={e => setInput(e.target.value)}
         onKeyDown={handleInput}
-        readOnly={status !== '진행'}
+        readOnly={!enable}
       />
       <Button variant='contained' ref={button} onClick={handleClick} sx={{ width: '3%' }}>
         전송

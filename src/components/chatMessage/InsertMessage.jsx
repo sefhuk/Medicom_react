@@ -20,7 +20,8 @@ function InsertMessage() {
         chatRoomType: chatRoomType
       });
       setChatRoom(e => ({
-        rooms: { ...e.rooms, [`ch_${response.data.id}`]: response.data.status.status }
+        ...e,
+        rooms: { ...e.rooms, [`ch_${response.data.id}`]: response.data }
       }));
       navigate(`/chat/${response.data.id}/messages`);
     } catch (err) {
