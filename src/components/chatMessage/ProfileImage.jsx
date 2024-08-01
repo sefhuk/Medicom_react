@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import profileDefaultImage from '../../assets/user-profile-default.png';
 import adminDefaultImage from '../../assets/admin-profile-default.png';
 import { useState } from 'react';
-import DoctorProfile from '../DoctorSimpleProfile';
 import { Box, Modal } from '@mui/material';
+import SimpleProfile from '../SimpleProfile';
 
 const style = {
   position: 'absolute',
@@ -39,7 +39,7 @@ function ProfileImage(props) {
         aria-describedby='child-modal-description'
       >
         <Box sx={{ ...style, width: '50%', maxWidth: '600px' }}>
-          <DoctorProfile imgUrl={props.url} user={props.user} />
+          <SimpleProfile imgUrl={props.url} user={props.user} />
         </Box>
       </Modal>
       <Image
