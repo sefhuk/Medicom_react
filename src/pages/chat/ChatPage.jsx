@@ -126,7 +126,7 @@ function ChatPage() {
           )}
         </div>
       )}
-      {chatRoom.messages.length !== 0 &&
+      {chatRoom.messages &&
         chatRoom.messages.map((e, idx) => {
           return e.user.id === Number(auth.userId) ? (
             <Message

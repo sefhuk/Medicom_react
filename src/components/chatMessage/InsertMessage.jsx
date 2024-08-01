@@ -63,7 +63,7 @@ function InsertMessage() {
           type='AI'
           variant='contained'
           style={{ marginBottom: '4px' }}
-          onClick={handleButtonClick}
+          onClick={() => alert('API 연결 전')}
         >
           AI 상담
         </Button>
