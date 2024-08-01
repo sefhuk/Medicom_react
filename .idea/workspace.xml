@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="d26a9700-fc39-4e27-828e-fd848045fd0d" name="Changes" comment="" />
+    <list default="true" id="d26a9700-fc39-4e27-828e-fd848045fd0d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/components/board/BoardForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/board/BoardList.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/board/CommentList.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/board/CommentPagination.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/board/CreatePostForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/board/Pagination.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/board/PostList.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/board/ReplyList.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/board/SearchBar.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/board/UpdatePostForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/firebase.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Nav.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +38,9 @@
   &quot;associatedIndex&quot;: 2
 }</component>
   <component name="ProjectId" id="2jalmZ5t5iI46kS7dVzub81P98s" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -27,12 +51,23 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/git/hospital_here_spring&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/rhkdg/OneDrive/바탕 화면/project_front/src/pages/board&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\rhkdg\OneDrive\바탕 화면\project_front\src\pages\board" />
+      <recent name="C:\Users\rhkdg\OneDrive\바탕 화면\project_front\src\components\board" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\rhkdg\OneDrive\바탕 화면\project_front\src" />
+      <recent name="C:\Users\rhkdg\OneDrive\바탕 화면\project_front\src\components\board\firebase" />
+      <recent name="C:\Users\rhkdg\OneDrive\바탕 화면\project_front\src\components\board" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -43,7 +78,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="452527f8-1e73-4ede-930d-1f441ff083ef" name="Changes" comment="" />
+      <changelist id="d26a9700-fc39-4e27-828e-fd848045fd0d" name="Changes" comment="" />
       <created>1721633228009</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />

@@ -16,6 +16,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.2",
     "eslint-config-react-app": "^7.0.1",
+    "firebase": "^10.12.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-google-login": "^5.2.2",

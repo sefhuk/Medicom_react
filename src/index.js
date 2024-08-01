@@ -17,6 +17,13 @@ import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
 import AdminPage from './pages/user/AdminPage';
 import SymptomAsk from './pages/SymptomAsk'
+import BoardListPage from './pages/board/BoardListPage';
+import CreateBoardPage from './pages/board/CreateBoardPage';
+import BoardDetailPage from './pages/board/BoardDetailPage';
+import CreatePostPage from './pages/board/CreatePostPage';
+import PostDetailPage from './pages/board/PostDetailPage';
+import UpdateBoardPage from './pages/board/UpdateBoardPage';
+import UpdatePostPage from './pages/board/UpdatePostPage';
 
 
 
@@ -62,7 +69,15 @@ const router = createBrowserRouter([
         path: "my-page",
         element: <MyPage />
 
-      }
+      },
+      //board
+      { path: 'boards', element: <BoardListPage /> },
+      { path: 'boards/create', element: <CreateBoardPage /> },
+      { path: 'boards/:id', element: <BoardDetailPage /> },
+      { path: 'posts/create/:boardId', element: <CreatePostPage /> },
+      { path: 'posts/:id', element: <PostDetailPage /> },
+      { path: 'boards/update/:id', element: <UpdateBoardPage /> },
+      { path: 'posts/update/:id', element: <UpdatePostPage /> }
 
     ]
   }
