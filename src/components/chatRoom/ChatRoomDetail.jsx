@@ -3,16 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ProfileImage from '../chatMessage/ProfileImage';
 import { useRecoilState } from 'recoil';
-import { authState } from '../../utils/atom';
+import { userauthState } from '../../utils/atom';
 
-function ChatRoomDetail({ data }) {
+function ChatRoomDetail({ data, selectedIndex }) {
   const navigate = useNavigate();
 
-  const [auth] = useRecoilState(authState);
+  const [auth] = useRecoilState(userauthState);
 
   const [isHovered, setIsHovered] = useState(false);
 
   const handleWrapperClick = () => {
+    if (auth.role === 'ADMIN' && data.type.type !== '서비스센터 상담') {
+      return;
+    }
+
     navigate(`/chat/${Number(data.id)}/messages`, { state: { status: data.status.status } });
   };
 
@@ -22,36 +26,61 @@ function ChatRoomDetail({ data }) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleWrapperClick}
+        selectedIndex={selectedIndex}
       >
         <Title>
-          {data.type.type !== '의사 상담' ? (
-            data.type.type
+          {selectedIndex === 2 ? (
+            data.user2 ? (
+              <>
+                {data.user1.name}님과 {data.user2.name}님의 대화
+              </>
+            ) : (
+              <>{data.user1.name}님의 대기 중인 상담</>
+            )
+          ) : selectedIndex === 1 ? (
+            data.user1.name
+          ) : auth.role !== 'USER' ? (
+            data.user1.name
           ) : data.user2 ? (
             <>
-              {auth.userId === data.user1.id ? 'Doc.' : ''}{' '}
-              {auth.userId === data.user1.id ? data.user2.name : data.user1.name}
-              {auth.userId === data.user1.id && <HospitalName>병원 이름</HospitalName>}
+              {data.user2.role === 'DOCTOR' ? '(의사) ' : '(관리자) '} {data.user2.name}
+              {data.user2.role === 'DOCTOR' && (
+                <HospitalName>{data.doctorProfile.hospitalName}</HospitalName>
+              )}
             </>
           ) : (
-            '매칭된 의사가 없습니다'
+            data.type.type
           )}
+          {selectedIndex === 2 && <ChatType>{data.type.type}</ChatType>}
         </Title>
         <Preview>
-          {data.status.status !== '진행' && `(${data.status.status})`}{' '}
-          {data.lastMessage !== null
-            ? data.lastMessage.content.replace(/\n/g, ' ')
-            : '메시지가 없습니다'}
+          {selectedIndex !== 2 ? (
+            <>
+              {data.status.status !== '진행' && `(${data.status.status})`}{' '}
+              {data.lastMessage !== null
+                ? data.lastMessage.content.replace(/\n/g, ' ')
+                : '메시지가 없습니다'}
+            </>
+          ) : (
+            <div style={{ display: 'flex' }}>
+              <ProfileImage url={data.user1.image} size={'3rem'} />
+              {data.user2 ? <ProfileImage url={data.user2?.image} size={'3rem'} /> : null}
+            </div>
+          )}
         </Preview>
       </Wrapper>
-      <ProfileImage
-        url={
-          data.status.status === '수락 대기'
-            ? null
-            : data.user1.id === auth.userId
-              ? data.user2.image
-              : data.user1.image
-        }
-      />
+      {selectedIndex !== 2 && (
+        <ProfileImage
+          user={
+            selectedIndex === 1
+              ? data.user1
+              : auth.userId === data.user1.id
+                ? data.user2
+                : data.user1
+          }
+          size={'6rem'}
+        />
+      )}
     </Container>
   );
 }
@@ -77,7 +106,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 80%;
+  width: ${({ selectedIndex }) => (selectedIndex !== 2 ? '70%' : '100%')};
   height: 100%;
 `;
 
@@ -85,8 +114,11 @@ const Title = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const HospitalName = styled.div`
@@ -95,6 +127,21 @@ const HospitalName = styled.div`
   font-weight: 400;
 `;
 
-const Preview = styled.div``;
+const ChatType = styled.p`
+  color: #706c6c;
+  font-size: 1.2rem;
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+`;
+
+const Preview = styled.div`
+  width: 70%;
+  font-size: 1.5rem;
+  overflow: hidden;
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+`;
 
 export default ChatRoomDetail;
