@@ -7,16 +7,17 @@ import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
-import { authState, chatRoomState } from '../../utils/atom';
+import { chatRoomState, userauthState } from '../../utils/atom';
+import { Button } from '@mui/material';
 
-const fetchData = async (id, setMessages, setError) => {
+const fetchData = async (id, setChatRoom, setError) => {
   try {
     const response = await axiosInstance.get(`/chatmessages`, {
       params: {
         chatRoomId: id
       }
     });
-    setMessages(response.data);
+    setChatRoom(m => ({ ...m, messages: response.data }));
   } catch (err) {
     setError(err.response.message);
     alert('잘못된 접근입니다');
@@ -26,16 +27,29 @@ const fetchData = async (id, setMessages, setError) => {
 function ChatPage() {
   const params = useParams();
 
-  const [auth] = useRecoilState(authState);
-  const [chatRoom] = useRecoilState(chatRoomState);
+  const [auth] = useRecoilState(userauthState);
+  const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
 
-  const [messages, setMessages] = useState([]);
   const [error, setError] = useState(null);
   const [stompClient, setStompClient] = useState(null);
 
   const navigate = useNavigate();
 
   const tmp = useRef(null);
+
+  const acceptChatRoom = async () => {
+    const confirmed = window.confirm('채팅을 수락하시겠습니까?');
+    if (!confirmed) return;
+
+    try {
+      const response = await axiosInstance.post(
+        `/chatrooms/${Number(params.chatRoomId)}/users/${auth.userId}`
+      );
+      navigate('/chatlist');
+    } catch (err) {
+      alert(err);
+    }
+  };
 
   const sendMessage = input => {
     const body = JSON.stringify({
@@ -48,7 +62,7 @@ function ChatPage() {
 
   useEffect(() => {
     try {
-      fetchData(params.chatRoomId, setMessages, setError);
+      fetchData(params.chatRoomId, setChatRoom, setError);
     } catch (err) {
       alert('잘못된 접근입니다');
     }
@@ -61,7 +75,7 @@ function ChatPage() {
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
         data.content = data.content.replace(/\\n/g, '\n');
-        setMessages(m => [...m, data]);
+        setChatRoom(m => ({ ...m, messages: [...m.messages, data] }));
       });
     });
 
@@ -73,40 +87,66 @@ function ChatPage() {
 
   useEffect(() => {
     if (tmp != null) tmp.current.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [chatRoom.messages]);
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
-      <button onClick={() => navigate('/chatlist')}>리스트로 이동</button>
+      <div style={{ height: '3dvh' }} />
       {error && <div>{error}</div>}
       {chatRoom.rooms[`ch_${params.chatRoomId}`] === '수락 대기' && (
         <div
           style={{
-            height: '50dvh',
-            fontWeight: 'bold',
-            fontSize: '2.5rem',
-            lineHeight: '50dvh',
-            textAlign: 'center'
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: '76dvh',
+            margin: 'auto'
           }}
         >
-          매칭을 기다리고 있습니다
+          <div
+            style={{
+              height: '40%',
+              fontWeight: 'bold',
+              fontSize: '1.5rem',
+              lineHeight: '50dvh',
+              textAlign: 'center'
+            }}
+          >
+            매칭을 기다리고 있습니다
+          </div>
+          {auth.role !== 'USER' && (
+            <Button
+              type='SERVICE'
+              variant='contained'
+              style={{ width: '50%', marginBottom: '4px' }}
+              onClick={acceptChatRoom}
+            >
+              채팅 수락
+            </Button>
+          )}
         </div>
       )}
-      {messages.length !== 0 &&
-        messages.map((e, idx) => {
+      {chatRoom.messages.length !== 0 &&
+        chatRoom.messages.map((e, idx) => {
           return e.user.id === Number(auth.userId) ? (
             <Message
               key={e.id}
               self={true}
               data={e}
-              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+              repeat={
+                e.user.id ===
+                (chatRoom.messages[idx - 1] ? chatRoom.messages[idx - 1].user.id : '0')
+              }
             />
           ) : (
             <Message
               key={e.id}
               self={false}
               data={e}
-              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+              repeat={
+                e.user.id ===
+                (chatRoom.messages[idx - 1] ? chatRoom.messages[idx - 1].user.id : '0')
+              }
             />
           );
         })}

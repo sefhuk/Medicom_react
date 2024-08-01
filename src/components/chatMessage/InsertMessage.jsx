@@ -3,22 +3,26 @@ import React from 'react';
 import ProfileImage from './ProfileImage';
 import { axiosInstance } from '../../utils/axios';
 import { useRecoilState } from 'recoil';
-import { authState } from '../../utils/atom';
+import { chatRoomState, userauthState } from '../../utils/atom';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 function InsertMessage() {
-  const [auth] = useRecoilState(authState);
+  const [auth] = useRecoilState(userauthState);
+  const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
 
   const navigate = useNavigate();
 
   const createChatRoom = async (chatRoomType, navigate) => {
     try {
-      await axiosInstance.post(`/chatrooms`, {
+      const response = await axiosInstance.post(`/chatrooms`, {
         userId: Number(auth.userId) || 0,
         chatRoomType: chatRoomType
       });
-      navigate(`/chatlist`);
+      setChatRoom(e => ({
+        rooms: { ...e.rooms, [`ch_${response.data.id}`]: response.data.status.status }
+      }));
+      navigate(`/chat/${response.data.id}/messages`);
     } catch (err) {
       alert(err.response.data.message);
       navigate('/');
@@ -31,25 +35,30 @@ function InsertMessage() {
 
   return (
     <Container>
-      <ProfileImage insert={true} self={true} />
-      <ButtonWrapper className='flex flex-col border-black border-2 mt-2 p-2 w-[60%] rounded-xl order-2'>
+      <ProfileImage insert={true} self={true} size={'3rem'} />
+      <ButtonWrapper>
         <p className='mb-2'>채팅을 선택해주세요!</p>
-        <Button
-          type='DOCTOR'
-          variant='contained'
-          style={{ marginBottom: '4px' }}
-          onClick={handleButtonClick}
-        >
-          증상 간편 상담 (의사)
-        </Button>
-        <Button
-          type='SERVICE'
-          variant='contained'
-          style={{ marginBottom: '4px' }}
-          onClick={handleButtonClick}
-        >
-          고객 센터
-        </Button>
+        {auth.role !== 'DOCTOR' && (
+          <Button
+            type='DOCTOR'
+            variant='contained'
+            ㅎ
+            style={{ marginBottom: '4px' }}
+            onClick={handleButtonClick}
+          >
+            증상 간편 상담 (의사)
+          </Button>
+        )}
+        {auth.role !== 'ADMIN' && (
+          <Button
+            type='SERVICE'
+            variant='contained'
+            style={{ marginBottom: '4px' }}
+            onClick={handleButtonClick}
+          >
+            고객 센터
+          </Button>
+        )}
         <Button
           type='AI'
           variant='contained'
