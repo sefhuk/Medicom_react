@@ -76,7 +76,12 @@ function ChatListPage() {
         };
       });
       setChatRoom(m => ({ ...m, rooms: chatRooms }));
-      setData(response.data);
+      setData(
+        response.data.sort((a, b) => {
+          if (a.user2 === null) return 1;
+          if (a.user2 !== null) return -1;
+        })
+      );
     } catch (err) {
       console.log('err', err);
       setError(err.response.data.message);
