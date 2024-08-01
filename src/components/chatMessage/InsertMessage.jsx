@@ -35,7 +35,7 @@ function InsertMessage() {
 
   return (
     <Container>
-      <ProfileImage insert={true} self={true} />
+      <ProfileImage insert={true} self={true} size={'3rem'} />
       <ButtonWrapper>
         <p className='mb-2'>채팅을 선택해주세요!</p>
         {auth.role !== 'DOCTOR' && (
