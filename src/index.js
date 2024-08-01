@@ -19,6 +19,7 @@ import AdminPage from './pages/admin/AdminPage';
 import SymptomAsk from './pages/SymptomAsk';
 import UserList from './pages/admin/UserList';
 import AdminUserListDetail from './pages/admin/AdminUserListDetail';
+import AdminChatList from './pages/admin/AdminChatList';
 
 
 const queryClient = new QueryClient();
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: 'admin-page',
         element: <AdminPage />,
+      },
+      {
+        path: 'admin-page/chat-list',
+        element: <AdminChatList />
       },
       {
         path: 'admin-page/user-list',

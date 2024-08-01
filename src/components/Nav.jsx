@@ -31,7 +31,6 @@ const Nav = () => {
 
   const LoginIcon = () => {
     return(
-
     <>
       {auth.role==='ADMIN' ? (
         <IconButton>
