@@ -142,6 +142,10 @@ const MyPage = () => {
     navigate('/');
   };
 
+  const handleMyActivity = () => {
+    navigate('/my-activity');
+  }
+
   return (
     <MainContainer>
       <Paper elevation={6} sx={{ margin: '10px', padding: 3, borderRadius: '10px' }}>
@@ -149,7 +153,7 @@ const MyPage = () => {
           <Typography variant='h5' sx={{ display: 'inline', color: '#6E6E6E' }}>
             마이페이지
           </Typography>
-          <Button variant="contained" color="black" sx={{ float: 'right' }}>
+          <Button variant="contained" color="black" sx={{ float: 'right' }} onClick={handleMyActivity}>
             나의 활동내역
           </Button>
           <Box sx={{ margin: '20px 0', borderBottom: '1px solid grey' }}></Box>

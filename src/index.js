@@ -20,6 +20,7 @@ import SymptomAsk from './pages/SymptomAsk';
 import UserList from './pages/admin/UserList';
 import AdminUserListDetail from './pages/admin/AdminUserListDetail';
 import AdminChatList from './pages/admin/AdminChatList';
+import MyActivity from './pages/user/MyActivity';
 
 
 const queryClient = new QueryClient();
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
       {
         path: "my-page",
         element: <MyPage />,
+      },
+      {
+        path: "my-activity",
+        element: <MyActivity />
       },
     ]
   }
