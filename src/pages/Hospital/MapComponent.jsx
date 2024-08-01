@@ -40,7 +40,7 @@ const MapComponent = () => {
   useEffect(() => {
     const fetchHospitalsData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/hospitals/json');
+        const response = await axios.get('http://localhost:8080/api/hospitals/all');
         setHospitals(response.data);
         console.log('병원 데이터를 가져왔습니다:', response.data);
       } catch (error) {
