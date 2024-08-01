@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ProfileImage from './ProfileImage';
 import { axiosInstance } from '../../utils/axios';
 import { useRecoilState } from 'recoil';
@@ -30,6 +30,11 @@ function InsertMessage() {
   };
 
   const handleButtonClick = e => {
+    const isConfirmed = window.confirm(`'${e.target.innerText}'을(를) 선택하시겠습니까?`);
+    if (!isConfirmed) {
+      return;
+    }
+
     createChatRoom(e.target.getAttribute('type'), navigate);
   };
 
