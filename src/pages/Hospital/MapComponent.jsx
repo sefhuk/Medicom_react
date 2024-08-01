@@ -40,7 +40,7 @@ const MapComponent = () => {
   useEffect(() => {
     const fetchHospitalsData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/departments/json');
+        const response = await axios.get('http://localhost:8080/api/hospitals/json');
         setHospitals(response.data);
         console.log('병원 데이터를 가져왔습니다:', response.data);
       } catch (error) {
@@ -68,8 +68,8 @@ const MapComponent = () => {
       };
 
       const filtered = hospitals.filter(hospital => {
-        const hospitalLat = hospital.hospital.latitude;
-        const hospitalLng = hospital.hospital.longitude;
+        const hospitalLat = hospital.latitude;
+        const hospitalLng = hospital.longitude;
         return distance(userLat, userLng, hospitalLat, hospitalLng) <= 5;
       });
 
@@ -97,9 +97,9 @@ const MapComponent = () => {
       
       const newMarkers = filteredHospitals.map(item => {
         const marker = new window.naver.maps.Marker({
-          position: new window.naver.maps.LatLng(item.hospital.latitude, item.hospital.longitude),
+          position: new window.naver.maps.LatLng(item.latitude, item.longitude),
           map: map,
-          title: item.hospital.name
+          title: item.name
         });
 
         window.naver.maps.Event.addListener(marker, 'click', function() {
@@ -182,7 +182,7 @@ const MapComponent = () => {
 
   return (
     <MainContainer>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80%', height: '50%', position: 'relative', margin: '0 auto' }}>
+      <div style={{ position: 'relative', width: '100%', height: '50%' }}>
         <div>
           <label htmlFor="locationInput">위치를 입력하세요:</label>
           <input 
@@ -204,36 +204,50 @@ const MapComponent = () => {
             {showHospitalList ? '병원 리스트 숨기기' : '병원 리스트 보기'}
           </button>
         </div>
-        <div id="map" style={{ width: '100%', height: '100%', top:'4vw' }}></div>
+        <div id="map" style={{ width: '100%', height: '100%' }}></div>
         {error && <div style={{ color: 'red' }}>{error}</div>}
         {selectedHospital && (
           <div style={{
             position: 'absolute',
-            bottom: '-35vw',
-            left: '0',
-            width: '100%',
+            top: '80vw',
+
+            width: '80%',
             backgroundColor: 'white',
-            padding: '10px',
-            boxShadow: '0px -2px 5px rgba(0,0,0,0.3)',
+            padding: '20px',
+            boxShadow: '0px -4px 8px rgba(0,0,0,0.2)',
+            borderTop: '2px solid #007BFF',
             zIndex: 1
           }}>
             <h3>병원 정보</h3>
-            <p><strong>이름:</strong> {selectedHospital.hospital.name}</p>
-            <p><strong>주소:</strong> {selectedHospital.hospital.address}</p>
-            <p><strong>부서:</strong> {selectedHospital.department.name}</p>
-            <button onClick={handleReservation}>
+            <p><strong>이름:</strong> {selectedHospital.name}</p>
+            <p><strong>주소:</strong> {selectedHospital.address}</p>
+            <p><strong>부서:</strong></p>
+            <ul>
+              {selectedHospital.departments.map(department => (
+                <li key={department.id}>{department.name}</li>
+              ))}
+            </ul>
+            <button onClick={handleReservation} style={{
+              backgroundColor: '#007BFF',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '10px 15px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              marginTop: '10px'
+            }}>
               병원 예약
             </button>
           </div>
         )}
-
         {showHospitalList && (
           <div style={{ marginTop: '20px' }}>
             <h3>병원 리스트</h3>
             <ul>
               {hospitals.map(hospital => (
                 <li key={hospital.id}>
-                  {hospital.hospital.name} - {hospital.department.name} - {hospital.hospital.address}
+                  {hospital.name} - {hospital.departments.map(department => department.name).join(', ')} - {hospital.address}
                 </li>
               ))}
             </ul>
