@@ -60,12 +60,18 @@ function ChatListPage() {
         chatRooms[`ch_${e.id}`] = e.status.status;
         return {
           ...e,
-          lastMessage: { ...e.lastMessage, content: e.lastMessage.content.replace(/\\n/g, ' ') }
+          lastMessage: e.lastMessage
+            ? {
+                ...e.lastMessage,
+                content: e.lastMessage.content.replace(/\\n/g, ' ')
+              }
+            : null
         };
       });
       setChatRoom(m => ({ ...m, rooms: chatRooms }));
       setData(response.data);
     } catch (err) {
+      console.log('err', err);
       setError(err.response.data.message);
     } finally {
       setIsLoading(false);
