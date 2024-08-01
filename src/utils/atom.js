@@ -1,9 +1,8 @@
 import { atom } from 'recoil';
 
-
 export const chatRoomState = atom({
   key: 'chatRoomState',
-  default: { rooms: {} }
+  default: { rooms: {}, messages: [] }
 });
 
 //오류나서 추가한 코드
@@ -19,6 +18,5 @@ export const userauthState = atom({
     isLoggedIn: !!localStorage.getItem('token'),
     userId: null,
     role: null
-  },
+  }
 });
-

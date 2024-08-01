@@ -1,12 +1,14 @@
 import styled from 'styled-components';
+import profileDefaultImage from '../../assets/user-profile-default.png';
+import adminDefaultImage from '../../assets/admin-profile-default.png';
 
 function ProfileImage(props) {
-  return <Image insert={props.insert} url={props.url} />;
+  return <Image insert={props.insert} url={props.url} size={props.size} />;
 }
 
 const Image = styled.div`
-  width: 3rem;
-  height: 3rem;
+  width: ${({ size }) => size};
+  height: ${({ size }) => size};
   border-radius: 50%;
   border: 1px solid black;
   background-repeat: no-repeat;
@@ -15,10 +17,10 @@ const Image = styled.div`
   margin-left: ${({ self }) => (self ? '10px' : '0px')};
   background-image: ${({ insert, url }) =>
     insert === true
-      ? 'url("https://cdn-icons-png.flaticon.com/512/2942/2942813.png")'
+      ? `url(${adminDefaultImage})`
       : url
         ? `url(${url})`
-        : 'url("https://w7.pngwing.com/pngs/306/70/png-transparent-computer-icons-management-admin-silhouette-black-and-white-neck.png")'};
+        : `url(${profileDefaultImage})`};
   &:hover {
     cursor: pointer;
     border: 3px solid red;
