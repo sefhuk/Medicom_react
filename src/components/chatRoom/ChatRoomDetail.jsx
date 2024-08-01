@@ -71,12 +71,12 @@ function ChatRoomDetail({ data, selectedIndex }) {
       </Wrapper>
       {selectedIndex !== 2 && (
         <ProfileImage
-          url={
+          user={
             selectedIndex === 1
-              ? data.user1.image
+              ? data.user1
               : auth.userId === data.user1.id
-                ? data.user2?.image
-                : data.user1?.image
+                ? data.user2
+                : data.user1
           }
           size={'6rem'}
         />
