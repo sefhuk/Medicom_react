@@ -112,11 +112,16 @@ const Input = styled.textarea`
   width: 80%;
   border-radius: 10px;
   background-color: #e8e0e0;
-  padding: 0.6rem 15px;
-  font-size: 1.2rem;
+  padding: 1rem 15px;
+  font-size: 3rem;
   line-height: 5dvh;
   resize: none;
   white-space: pre-line;
+  @media (max-width: 481px) {
+    font-size: 1.5rem;
+    /* padding: 1rem 15px; */
+    line-height: 3dvh;
+  }
 `;
 
 export default ChatInput;

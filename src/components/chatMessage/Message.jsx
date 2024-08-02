@@ -117,13 +117,19 @@ const BottomContainer = styled.div`
   height: 100%;
   margin-right: ${({ self }) => (self ? '0px' : '3rem')};
   margin-left: ${({ self }) => (self ? '0px' : '3rem')};
+  @media (min-width: 481px) {
+    font-size: 2rem;
+    line-height: 3dvh;
+  }
 `;
 
 const Author = styled.p`
-  /* margin-top: 0.6rem; */
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
   order: ${({ self }) => (self ? 1 : 2)};
+  @media (min-width: 481px) {
+    font-size: 1.4rem;
+  }
 `;
 
 const Content = styled.div`
