@@ -17,6 +17,10 @@ import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
 import AdminPage from './pages/admin/AdminPage';
 import SymptomAsk from './pages/SymptomAsk'
+import HospitalReservation from './pages/Hospital/HospitalReservation.jsx';
+
+
+
 import UserList from './pages/admin/UserList';
 import AdminUserListDetail from './pages/admin/AdminUserListDetail';
 import AdminChatList from './pages/admin/AdminChatList';
@@ -27,6 +31,7 @@ import CreatePostPage from './pages/board/CreatePostPage';
 import PostDetailPage from './pages/board/PostDetailPage';
 import UpdateBoardPage from './pages/board/UpdateBoardPage';
 import UpdatePostPage from './pages/board/UpdatePostPage';
+
 
 const queryClient = new QueryClient();
 
@@ -48,7 +53,7 @@ const router = createBrowserRouter([
       
       //hospitalpage
       {path: '/symptoms', element: <SymptomAsk />},
-
+      {path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation />},
       {
         path: 'login',
         element: <Login />

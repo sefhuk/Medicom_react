@@ -7,17 +7,17 @@ import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
-import { chatRoomState, userauthState } from '../../utils/atom';
+import { chatRoomState, stompState, userauthState } from '../../utils/atom';
 import { Button } from '@mui/material';
 
-const fetchData = async (id, setChatRoom, setError) => {
+const fetchData = async (id, setMessages, setError) => {
   try {
     const response = await axiosInstance.get(`/chatmessages`, {
       params: {
         chatRoomId: id
       }
     });
-    setChatRoom(m => ({ ...m, messages: response.data }));
+    setMessages(response.data);
   } catch (err) {
     setError(err.response.message);
     alert('잘못된 접근입니다');
@@ -29,9 +29,11 @@ function ChatPage() {
 
   const [auth] = useRecoilState(userauthState);
   const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
+  const [stomp, setStomp] = useRecoilState(stompState);
 
   const [error, setError] = useState(null);
   const [stompClient, setStompClient] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   const navigate = useNavigate();
 
@@ -45,24 +47,31 @@ function ChatPage() {
       const response = await axiosInstance.post(
         `/chatrooms/${Number(params.chatRoomId)}/users/${auth.userId}`
       );
-      navigate('/chatlist');
+      setChatRoom(m => ({
+        ...m,
+        rooms: { ...m.rooms, [`ch_${response.data.id}`]: response.data }
+      }));
+      navigate(`/chat/${params.chatRoomId}/messages`, {
+        replace: true
+      });
     } catch (err) {
       alert(err);
     }
   };
 
-  const sendMessage = input => {
+  const sendMessage = (id, input) => {
     const body = JSON.stringify({
+      id: Number(id) || null,
       userId: Number(auth.userId),
       chatRoomId: Number(params.chatRoomId),
-      content: input.replace(/\n/g, '\\n')
+      content: input?.replace(/\n/g, '\\n') || null
     });
     stompClient.publish({ destination: `/app/chat/${Number(params.chatRoomId)}`, body });
   };
 
   useEffect(() => {
     try {
-      fetchData(params.chatRoomId, setChatRoom, setError);
+      fetchData(params.chatRoomId, setMessages, setError);
     } catch (err) {
       alert('잘못된 접근입니다');
     }
@@ -74,8 +83,31 @@ function ChatPage() {
     stomp.connect({}, () => {
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
-        data.content = data.content.replace(/\\n/g, '\n');
-        setChatRoom(m => ({ ...m, messages: [...m.messages, data] }));
+
+        if (!data.content) {
+          // 메시지 삭제
+          setMessages(m => m.filter(e => e.id !== data.id));
+        } else {
+          data.content = data.content.replace(/\\n/g, '\n');
+
+          // 메시지 추가 & 삭제
+          setMessages(m => {
+            let isModified = false;
+            const newMessages = m.map(e => {
+              if (e.id === data.id) {
+                e.content = data.content;
+                isModified = true;
+              }
+              return e;
+            });
+
+            if (!isModified) {
+              newMessages.push(data);
+            }
+
+            return newMessages;
+          });
+        }
       });
     });
 
@@ -87,19 +119,43 @@ function ChatPage() {
 
   useEffect(() => {
     if (tmp != null) tmp.current.scrollIntoView({ behavior: 'smooth' });
-  }, [chatRoom.messages]);
+  }, [messages]);
+
+  useEffect(() => {
+    if (stompClient) {
+      setStomp({ sendMessage: sendMessage });
+    }
+  }, [stompClient]);
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
       <div style={{ height: '3dvh' }} />
       {error && <div>{error}</div>}
-      {chatRoom.rooms[`ch_${params.chatRoomId}`] === '수락 대기' && (
+      {messages &&
+        messages.map((e, idx) => {
+          return e.user.id === Number(auth.userId) ? (
+            <Message
+              key={e.id}
+              self={true}
+              data={e}
+              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+            />
+          ) : (
+            <Message
+              key={e.id}
+              self={false}
+              data={e}
+              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+            />
+          );
+        })}
+      {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' && (
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            height: '76dvh',
+            height: '20dvh',
             margin: 'auto'
           }}
         >
@@ -108,7 +164,7 @@ function ChatPage() {
               height: '40%',
               fontWeight: 'bold',
               fontSize: '1.5rem',
-              lineHeight: '50dvh',
+              lineHeight: '10dvh',
               textAlign: 'center'
             }}
           >
@@ -126,32 +182,15 @@ function ChatPage() {
           )}
         </div>
       )}
-      {chatRoom.messages &&
-        chatRoom.messages.map((e, idx) => {
-          return e.user.id === Number(auth.userId) ? (
-            <Message
-              key={e.id}
-              self={true}
-              data={e}
-              repeat={
-                e.user.id ===
-                (chatRoom.messages[idx - 1] ? chatRoom.messages[idx - 1].user.id : '0')
-              }
-            />
-          ) : (
-            <Message
-              key={e.id}
-              self={false}
-              data={e}
-              repeat={
-                e.user.id ===
-                (chatRoom.messages[idx - 1] ? chatRoom.messages[idx - 1].user.id : '0')
-              }
-            />
-          );
-        })}
       <div ref={tmp} />
-      <ChatInput sendMessage={sendMessage} status={chatRoom.rooms[`ch_${params.chatRoomId}`]} />
+      <ChatInput
+        sendMessage={sendMessage}
+        enable={
+          (chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId ||
+            chatRoom.rooms[`ch_${params.chatRoomId}`]?.user2?.id === auth.userId) &&
+          chatRoom.rooms[`ch_${params.chatRoomId}`].status.status !== '비활성화'
+        }
+      />
     </MainContainer>
   );
 }

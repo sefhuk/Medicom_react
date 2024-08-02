@@ -59,28 +59,30 @@ function Message({ data, repeat, self }) {
       >
         <Box sx={{ ...style, width: '60%' }}>
           <h2 id='parent-modal-title'>메시지 옵션</h2>
-          <EditModal msgId={data.id} msg={data.content} />
+          <EditModal msgId={data.id} msg={data.content} setOpens={setOpen} />
         </Box>
       </Modal>
       <Container self={self}>
         {self || (
           <TopContainer repeat={repeat} self={self}>
-            {repeat || (
-              <ProfileImage url={data.user.image} insert={false} self={self} size={'3rem'} />
-            )}
+            {repeat || <ProfileImage user={data.user} insert={false} self={self} size={'3rem'} />}
             {repeat || <Author self={self}>{data.user.name}</Author>}
           </TopContainer>
         )}
         <BottomContainer self={self}>
           <Content self={self} onDoubleClick={handleOpen}>
             {data.content.startsWith('dpt: ') ? (
-              <>
-                <p>진료과 추천 정보가 제공되었습니다</p>
-                <Button variant='contained' onClick={requestHospital}>
+              <Suggestion>
+                <p style={{ margin: '4px 0 20px' }}>진료과 추천 정보가 제공되었습니다</p>
+                <Button
+                  variant='contained'
+                  onClick={requestHospital}
+                  sx={{ width: '40%', backgroundColor: '#272424', fontSize: '1rem' }}
+                >
                   {' '}
                   {data.content.split(' ')[1]}
                 </Button>
-              </>
+              </Suggestion>
             ) : (
               data.content.split('\\n').map(e => (
                 <span>
@@ -119,26 +121,38 @@ const BottomContainer = styled.div`
   height: 100%;
   margin-right: ${({ self }) => (self ? '0px' : '3rem')};
   margin-left: ${({ self }) => (self ? '0px' : '3rem')};
+  @media (min-width: 481px) {
+    font-size: 2rem;
+    line-height: 3dvh;
+  }
 `;
 
 const Author = styled.p`
-  /* margin-top: 0.6rem; */
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
   order: ${({ self }) => (self ? 1 : 2)};
+  @media (min-width: 481px) {
+    font-size: 1.4rem;
+  }
 `;
 
 const Content = styled.div`
   background-color: ${({ self }) => (self ? '#3399ff' : '#99ddff')};
   padding: 10px;
   border-radius: 10px;
-  margin-right: 10px;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   order: ${({ self }) => (self ? 2 : 1)};
   white-space: pre-line;
   max-width: 70%;
   height: auto;
   overflow: hidden;
+`;
+
+const Suggestion = styled.p`
+  display: flex;
+  flex-direction: column;
+  @media (min-width: 481px) {
+  }
 `;
 
 const Time = styled.p`

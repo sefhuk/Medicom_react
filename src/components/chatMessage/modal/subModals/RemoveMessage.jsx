@@ -1,20 +1,14 @@
 import { Button } from '@mui/material';
 import React from 'react';
 import { axiosInstance } from '../../../../utils/axios';
-
 import { useRecoilState } from 'recoil';
-import { chatRoomState, userauthState } from '../../../../utils/atom';
+import { chatRoomState, stompState } from '../../../../utils/atom';
 
 function RemoveMessage({ msgId }) {
-  const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
+  const [stomp] = useRecoilState(stompState);
 
   const remove = async () => {
-    try {
-      await axiosInstance.delete(`/chatmessages/${msgId}`);
-      setChatRoom(m => ({ ...m, messages: m.messages.filter(e => e.id !== Number(msgId)) }));
-    } catch (err) {
-      alert(err.response.data.message);
-    }
+    stomp.sendMessage(msgId, null);
   };
 
   const handleClick = () => {

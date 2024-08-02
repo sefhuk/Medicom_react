@@ -13,6 +13,10 @@ function ChatRoomDetail({ data, selectedIndex }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleWrapperClick = () => {
+    if (auth.role === 'ADMIN' && data.type.type !== '서비스센터 상담') {
+      return;
+    }
+
     navigate(`/chat/${Number(data.id)}/messages`, { state: { status: data.status.status } });
   };
 
@@ -22,9 +26,18 @@ function ChatRoomDetail({ data, selectedIndex }) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleWrapperClick}
+        selectedIndex={selectedIndex}
       >
         <Title>
-          {selectedIndex === 1 ? (
+          {selectedIndex === 2 ? (
+            data.user2 ? (
+              <>
+                {data.user1.name}님과 {data.user2.name}님의 대화
+              </>
+            ) : (
+              <>{data.user1.name}님의 대기 중인 상담</>
+            )
+          ) : selectedIndex === 1 ? (
             data.user1.name
           ) : auth.role !== 'USER' ? (
             data.user1.name
@@ -38,24 +51,36 @@ function ChatRoomDetail({ data, selectedIndex }) {
           ) : (
             data.type.type
           )}
+          {selectedIndex === 2 && <ChatType>{data.type.type}</ChatType>}
         </Title>
         <Preview>
-          {data.status.status !== '진행' && `(${data.status.status})`}{' '}
-          {data.lastMessage !== null
-            ? data.lastMessage.content.replace(/\n/g, ' ')
-            : '메시지가 없습니다'}
+          {selectedIndex !== 2 ? (
+            <>
+              {data.status.status !== '진행' && `(${data.status.status})`}{' '}
+              {data.lastMessage !== null
+                ? data.lastMessage.content.replace(/\n/g, ' ')
+                : '메시지가 없습니다'}
+            </>
+          ) : (
+            <div style={{ display: 'flex' }}>
+              <ProfileImage user={data.user1} size={'3rem'} />
+              {data.user2 ? <ProfileImage user={data.user2} size={'3rem'} /> : null}
+            </div>
+          )}
         </Preview>
       </Wrapper>
-      <ProfileImage
-        url={
-          selectedIndex === 1
-            ? data.user1.image
-            : auth.userId === data.user1.id
-              ? data.user2?.image
-              : data.user1?.image
-        }
-        size={'6rem'}
-      />
+      {selectedIndex !== 2 && (
+        <ProfileImage
+          user={
+            selectedIndex === 1
+              ? data.user1
+              : auth.userId === data.user1.id
+                ? data.user2
+                : data.user1
+          }
+          size={'6rem'}
+        />
+      )}
     </Container>
   );
 }
@@ -81,7 +106,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 70%;
+  width: ${({ selectedIndex }) => (selectedIndex !== 2 ? '70%' : '100%')};
   height: 100%;
 `;
 
@@ -91,6 +116,9 @@ const Title = styled.div`
   justify-content: center;
   font-size: 2rem;
   font-weight: bold;
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const HospitalName = styled.div`
@@ -99,10 +127,21 @@ const HospitalName = styled.div`
   font-weight: 400;
 `;
 
+const ChatType = styled.p`
+  color: #706c6c;
+  font-size: 1.2rem;
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+`;
+
 const Preview = styled.div`
   width: 70%;
   font-size: 1.5rem;
   overflow: hidden;
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 export default ChatRoomDetail;

@@ -22,14 +22,19 @@ function ChatListPage() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [options, setOptions] = useState(['상담 진행 목록']);
+  const [options, setOptions] = useState([
+    '상담 진행 목록',
+    ...(auth.role !== 'USER' ? ['상담 수락 대기 목록'] : []),
+    ...(auth.role === 'ADMIN' ? ['전체 상담 목록'] : [])
+  ]);
 
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(chatRoom.selectedIndex);
 
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index);
+    setChatRoom(m => ({ ...m, selectedIndex: index }));
     setOpen(false);
   };
 
@@ -50,15 +55,17 @@ function ChatListPage() {
     setData([]);
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(`/chatrooms${selectedIndex === 1 ? '/wait' : ''}`, {
-        params: {
-          userId: auth.userId || 0
+      const response = await axiosInstance.get(
+        `${selectedIndex === 2 ? '/admin' : ''}/chatrooms${selectedIndex === 1 ? '/wait' : ''}`,
+        {
+          params: {
+            userId: auth.userId || 0
+          }
         }
-      });
+      );
       const chatRooms = {};
-      response.data = response.data.map(e => {
-        chatRooms[`ch_${e.id}`] = e.status.status;
-        return {
+      response.data.forEach(e => {
+        const room = {
           ...e,
           lastMessage: e.lastMessage
             ? {
@@ -67,22 +74,21 @@ function ChatListPage() {
               }
             : null
         };
+        chatRooms[`ch_${e.id}`] = room;
       });
       setChatRoom(m => ({ ...m, rooms: chatRooms }));
-      setData(response.data);
+      setData(
+        Object.values(chatRooms).sort((a, b) => {
+          if (a.user2 === null) return 1;
+          if (a.user2 !== null) return -1;
+        })
+      );
     } catch (err) {
-      console.log('err', err);
       setError(err.response.data.message);
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (auth.role !== 'USER') {
-      setOptions(o => [...o, '상담 수락 대기 목록']);
-    }
-  }, []);
 
   useEffect(() => {
     fetchData();
@@ -133,7 +139,6 @@ function ChatListPage() {
                     {options.map((option, index) => (
                       <MenuItem
                         key={option}
-                        disabled={index === 2}
                         selected={index === selectedIndex}
                         onClick={event => handleMenuItemClick(event, index)}
                       >

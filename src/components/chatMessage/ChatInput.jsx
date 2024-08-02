@@ -1,11 +1,11 @@
 import { Button } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import AdvancedModal from '../chatRoom/modal/AdvancedModal';
 import { useRecoilState } from 'recoil';
-import { userauthState } from '../../utils/atom';
+import { stompState } from '../../utils/atom';
 
 const style = {
   position: 'absolute',
@@ -19,19 +19,19 @@ const style = {
   p: 4
 };
 
-function ChatInput({ sendMessage, status }) {
-  const [input, setInput] = useState(status === '진행' ? '' : '입력할 수 없습니다');
+function ChatInput({ sendMessage, enable }) {
+  const [stomp] = useRecoilState(stompState);
+
+  const [input, setInput] = useState(enable ? '' : '입력할 수 없습니다');
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [auth] = useRecoilState(userauthState);
-
   const button = useRef(null);
 
   const handleInput = e => {
-    if (status !== '진행') return;
+    if (!enable) return;
 
     if (!e.nativeEvent.isComposing)
       if (e.key === 'Enter') {
@@ -44,7 +44,7 @@ function ChatInput({ sendMessage, status }) {
   };
 
   const handleClick = () => {
-    if (status !== '진행') return;
+    if (!enable) return;
 
     if (/^\s*$/.test(input)) {
       alert('공백 메시지는 전송이 불가능합니다');
@@ -52,9 +52,13 @@ function ChatInput({ sendMessage, status }) {
       return;
     }
 
-    sendMessage(input);
+    stomp.sendMessage(null, input);
     setInput('');
   };
+
+  useEffect(() => {
+    setInput(enable ? '' : '입력할 수 없습니다');
+  }, [enable]);
 
   return (
     <Container>
@@ -80,7 +84,7 @@ function ChatInput({ sendMessage, status }) {
         value={input}
         onChange={e => setInput(e.target.value)}
         onKeyDown={handleInput}
-        readOnly={status !== '진행'}
+        readOnly={!enable}
       />
       <Button variant='contained' ref={button} onClick={handleClick} sx={{ width: '3%' }}>
         전송
@@ -108,11 +112,16 @@ const Input = styled.textarea`
   width: 80%;
   border-radius: 10px;
   background-color: #e8e0e0;
-  padding: 0.6rem 15px;
-  font-size: 1.2rem;
+  padding: 1rem 15px;
+  font-size: 3rem;
   line-height: 5dvh;
   resize: none;
   white-space: pre-line;
+  @media (max-width: 481px) {
+    font-size: 1.5rem;
+    /* padding: 1rem 15px; */
+    line-height: 3dvh;
+  }
 `;
 
 export default ChatInput;
