@@ -9,7 +9,7 @@ const SearchBar = ({ onSearch, searchType }) => {
             const params = { page: 0, size: 6 };
             params[searchType === 'posts' ? 'title' : 'name'] = searchTerm;
 
-            const response = await axios.get(`/api/${searchType}/search`, { params });
+            const response = await axios.get(`http://localhost:8080/${searchType}/search`, { params });
 
             if (response.data.content.length === 0) {
                 alert("No results found");
