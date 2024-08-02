@@ -15,8 +15,11 @@ import HospitalList from './pages/Hospital/HospitalList';
 import MapComponent from './pages/Hospital/MapComponent';
 import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
-import AdminPage from './pages/user/AdminPage';
+import AdminPage from './pages/admin/AdminPage';
 import SymptomAsk from './pages/SymptomAsk'
+import UserList from './pages/admin/UserList';
+import AdminUserListDetail from './pages/admin/AdminUserListDetail';
+import AdminChatList from './pages/admin/AdminChatList';
 import BoardListPage from './pages/board/BoardListPage';
 import CreateBoardPage from './pages/board/CreateBoardPage';
 import BoardDetailPage from './pages/board/BoardDetailPage';
@@ -24,13 +27,6 @@ import CreatePostPage from './pages/board/CreatePostPage';
 import PostDetailPage from './pages/board/PostDetailPage';
 import UpdateBoardPage from './pages/board/UpdateBoardPage';
 import UpdatePostPage from './pages/board/UpdatePostPage';
-
-import AdminPage from './pages/admin/AdminPage';
-import SymptomAsk from './pages/SymptomAsk';
-import UserList from './pages/admin/UserList';
-import AdminUserListDetail from './pages/admin/AdminUserListDetail';
-import AdminChatList from './pages/admin/AdminChatList';
-
 
 const queryClient = new QueryClient();
 
@@ -94,10 +90,8 @@ const router = createBrowserRouter([
       { path: 'posts/create/:boardId', element: <CreatePostPage /> },
       { path: 'posts/:id', element: <PostDetailPage /> },
       { path: 'boards/update/:id', element: <UpdateBoardPage /> },
-      { path: 'posts/update/:id', element: <UpdatePostPage /> }
+      { path: 'posts/update/:id', element: <UpdatePostPage /> },
 
-        element: <MyPage />,
-      },
     ]
   }
 ]);
