@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cd04ed95-9a52-4e1e-8f12-9296a9941ca8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Nav.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/board/CommentList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/CommentList.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/board/CreatePostForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/CreatePostForm.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/board/ReplyList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/ReplyList.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/board/BoardDetailPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/BoardDetailPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/board/BoardListPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/BoardListPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/board/CreatePostPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/CreatePostPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/board/PostDetailPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/PostDetailPage.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="cd04ed95-9a52-4e1e-8f12-9296a9941ca8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
