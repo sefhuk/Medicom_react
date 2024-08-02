@@ -18,7 +18,9 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import axios from 'axios';
 import { format } from 'date-fns'; // 날짜 형식 변환
 import { CustomScrollBox } from '../../components/CustomScrollBox';
+import { axiosInstance } from '../../utils/axios';
 
+// 스타일링된 컴포넌트
 const CustomFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
   '& .MuiTypography-root': {
     display: 'flex',
@@ -39,11 +41,12 @@ const generateTimeSlots = (startHour, endHour, interval) => {
   return slots;
 };
 
-
 function HospitalReservation() {
-  const { hospitalId } = useParams(); // URL에서 병원 id 가져오기
-  const [departments, setDepartments] = useState([]); // 부서 목록 상태
-  const [selectedDepartment, setSelectedDepartment] = useState(null); // 진료과 선택
+  const { hospitalid } = useParams(); // URL에서 병원 id 가져오기
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedDepartment, setSelectedDepartment] = useState(""); // 진료과 선택
   const [selectedDate, setSelectedDate] = useState(null); // 날짜 선택
   const [selectedTime, setSelectedTime] = useState(null); // 예약 시간 선택
   const [expanded, setExpanded] = useState({
@@ -53,25 +56,28 @@ function HospitalReservation() {
   }); // accordion 열림 상태 초기에 false로 설정
 
   useEffect(() => {
-    // department 데이터 가져오기
-    axios.get('http://localhost:8080/api/departments/detail')
-      .then(response => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/hospitals/${hospitalid}/departments`);
         setDepartments(response.data);
-      })
-      .catch(error => {
-        console.error('department 데이터를 가져오는 데에 실패했습니다.:', error);
-      });
-  }, []);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchDepartments();
+  }, [hospitalid]);
 
   // 진료과 선택 핸들러
   const handleDepartmentChange = (event) => {
-    setSelectedDepartment(event.target.value);
-  };
-
-  // 예약 시간 체크박스 중복 불가
-  const handleTimeChange = (event) => {
     const { value, checked } = event.target;
-    setSelectedTime(checked ? value : null); // 중복 선택 불가
+    if (checked) {
+      setSelectedDepartment(value);
+    } else {
+      setSelectedDepartment("");
+    }
   };
 
   // 날짜 선택 핸들러
@@ -106,7 +112,8 @@ function HospitalReservation() {
       // 날짜를 UTC로 변환
       const utcDate = format(selectedDate, 'yyyy-MM-dd');
 
-      const response = await axios.post('http://localhost:8080/api/reservations', {
+      //instance
+      const response = await axiosInstance.post('http://localhost:8080/api/reservations', {
         department: selectedDepartment,
         date: utcDate, // UTC로 변환된 날짜를 전송
         timeSlot: selectedTime
@@ -131,28 +138,28 @@ function HospitalReservation() {
           </AccordionSummary>
           <AccordionDetails>
             <Box>
-                {departments.map((department) => (
-                  <CustomFormControlLabel
-                    key={hospitalId.department.id} // 각 부서가 고유한 `id`를 가진다고 가정
-                    control={
-                      <Checkbox
-                        value={hospitalId.department.name} // 부서의 이름을 값으로 사용
-                        checked={selectedDepartment === department.name}
-                        onChange={handleDepartmentChange}
-                      />
-                    }
-                    label={department.name} // 부서 이름 표시
-                    sx={{
-                      backgroundColor: selectedDepartment === department.name ? 'lightblue' : 'transparent',
-                      borderRadius: '4px',
-                      padding: '8px',
-                      marginBottom: '4px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  />
-                ))}
-              </Box>
+              {departments.map((department) => (
+                <CustomFormControlLabel
+                  key={department.id} // 각 부서가 고유한 `id`를 가진다고 가정
+                  control={
+                    <Checkbox
+                      value={department.name}
+                      checked={selectedDepartment === department.name}
+                      onChange={handleDepartmentChange}
+                    />
+                  }
+                  label={department.name} // 부서 이름 표시
+                  sx={{
+                    backgroundColor: selectedDepartment === department.name ? 'lightblue' : 'transparent',
+                    borderRadius: '4px',
+                    padding: '8px',
+                    marginBottom: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                />
+              ))}
+            </Box>
           </AccordionDetails>
         </Accordion>
 
@@ -198,7 +205,7 @@ function HospitalReservation() {
                         <Checkbox
                           value={slot}
                           checked={selectedTime === slot}
-                          onChange={handleTimeChange}
+                          onChange={(event) => setSelectedTime(event.target.checked ? slot : null)}
                         />
                       }
                       label={slot}
