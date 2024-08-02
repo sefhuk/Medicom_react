@@ -106,7 +106,7 @@ export const AdminCreateDoctorProfile = () =>{
       <Box fullWidth sx={{height: '125px', padding: '10px', margin: '15px 0 auto', border: '1px solid #BCBDBC' }}>
         <Typography variant="body1">{hospital.name}</Typography>
         <Typography variant="body1" sx={{margin: '5px 0 auto'}}>{hospital.address}</Typography>
-        <Button variant="contained" color='black' onClick={(e) => {OnClickSelectHospital(hospital.id, hospital.name)}} sx={{margin: '10px 0 auto'}}>선택</Button>
+        <Button variant="contained" color='black' onClick={(e) => {OnClickSelectHospital(hospital.id, hospital.name)}} sx={{margin: '30px 0 auto', float: 'right'}}>선택</Button>
       </Box>
     ));
   }
@@ -130,7 +130,7 @@ export const AdminCreateDoctorProfile = () =>{
         <Paper elevation={6} sx={{margin: '10px', padding: 3, borderRadius: '10px' }}>
           <DialogTitle>검색할 병원 이름을 입력해 주세요.</DialogTitle>
             <TextField fullWidth label='검색할 병원 이름' onChange={(e) => {setName(e.target.value)}}></TextField>
-            <Button variant="contained" color='black' sx={{margin: '10px 0 auto'}} onClick={(e) => {
+            <Button variant="contained" color='black' sx={{margin: '10px 0 auto', float: 'right'}} onClick={(e) => {
               OnClickSearchButton(name);
             }} >검색</Button>
             <Loading open={loading}/>
@@ -153,8 +153,9 @@ export const AdminCreateDoctorProfile = () =>{
         <ThemeProvider theme={theme}>
           <TextField disabled label='병원' required sx={{display: 'inline-block'}} value={selectHospital.name} />
           <Button variant="contained" color='black' sx={{margin: '10px 0px 0px 15px'}} onClick={(e) => {setSearchHospitalDialogOpen(true)}}>병원 검색</Button>
+          <Box />
           <TextField disabled label='전공' required sx={{margin: '15px 0 auto', display: 'inline-block'}} value={selectDepartment.name} />
-          <Button variant="contained" color='black' sx={{margin: '25px 0px 0px 15px'}} onClick={(e) => {setDepartmentDialogOpen(true)}}>전공 선택</Button>
+          <Button variant="contained" color='black' sx={{margin: '25px 0px 0px 15px', display: 'inline-block'}} onClick={(e) => {setDepartmentDialogOpen(true)}}>전공 선택</Button>
           <Button variant="contained" fullWidth sx={{margin: '15px 0 auto'}} color="black" onClick={OnClickCreateProfile}>생성 및 권한 변경</Button>
           <SearchHospitalDialog />
           <HospitalSelectDialog />
