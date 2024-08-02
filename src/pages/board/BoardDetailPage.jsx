@@ -53,7 +53,7 @@ function BoardDetailPage() {
     } else {
       setPosts(data.content);
       setTotalPages(data.totalPages);
-      setCurrentPage(0); // Reset to first page on new search
+      setCurrentPage(0); // Reset
     }
   };
 

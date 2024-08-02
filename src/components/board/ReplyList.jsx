@@ -37,7 +37,7 @@ function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
             </div>
           ) : (
             <>
-              {reply.content}
+              <ReplyContent>{reply.content}</ReplyContent>
               <button onClick={() => handleEditClick(reply)}>Edit</button>
               <button onClick={() => onDelete(reply.id)}>Delete</button>
             </>
@@ -66,18 +66,10 @@ const ReplyListItem = styled.div`
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
-  button {
-    margin-left: 10px;
-    background-color: #4682B4;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    &:hover {
-      background-color: #4169E1;
-    }
-  }
+`;
+
+const ReplyContent = styled.div`
+  margin-bottom: 10px;
 `;
 
 export default ReplyList;

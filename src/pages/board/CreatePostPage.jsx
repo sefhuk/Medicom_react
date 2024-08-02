@@ -10,7 +10,7 @@ function CreatePostPage() {
 
   const handleSubmit = async (data) => {
     try {
-      await axios.post(`http://localhost:8080/posts`, { ...data, boardId }); // boardId와 함께 포스트 생성 요청
+      await axios.post(`http://localhost:8080/posts`, { ...data, boardId });
       navigate(`/boards/${boardId}`);
     } catch (error) {
       console.error('포스트 생성 오류:', error);
