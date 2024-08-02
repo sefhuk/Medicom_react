@@ -1,8 +1,7 @@
 import { Box, Button, Modal, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { chatRoomState, userauthState } from '../../../../utils/atom';
-import { axiosInstance } from '../../../../utils/axios';
+import { stompState } from '../../../../utils/atom';
 
 const style = {
   position: 'absolute',
@@ -19,8 +18,7 @@ const style = {
 };
 
 function ModifyMessage({ msgId, msg }) {
-  const [auth] = useRecoilState(userauthState);
-  const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
+  const [stomp] = useRecoilState(stompState);
 
   const [message, setMessage] = useState(msg);
 
@@ -33,29 +31,7 @@ function ModifyMessage({ msgId, msg }) {
   };
 
   const modify = async e => {
-    try {
-      const response = await axiosInstance.patch(`/chatmessages/${msgId}`, {
-        userId: Number(auth.userId),
-        content: message
-      });
-
-      setChatRoom(e => ({
-        ...e,
-        messages: e.messages.map(m => {
-          if (m.id === Number(msgId)) {
-            return { ...m, content: response.data.content };
-          }
-
-          return m;
-        })
-      }));
-    } catch (err) {
-      alert(err);
-      console.log(err);
-      setOpen(false);
-    } finally {
-      setOpen(false);
-    }
+    stomp.sendMessage(msgId, message);
   };
 
   const handleModifyClick = () => {

@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import AdvancedModal from '../chatRoom/modal/AdvancedModal';
+import { useRecoilState } from 'recoil';
+import { stompState } from '../../utils/atom';
 
 const style = {
   position: 'absolute',
@@ -18,6 +20,8 @@ const style = {
 };
 
 function ChatInput({ sendMessage, enable }) {
+  const [stomp] = useRecoilState(stompState);
+
   const [input, setInput] = useState(enable ? '' : '입력할 수 없습니다');
 
   const [open, setOpen] = useState(false);
@@ -48,7 +52,7 @@ function ChatInput({ sendMessage, enable }) {
       return;
     }
 
-    sendMessage(input);
+    stomp.sendMessage(null, input);
     setInput('');
   };
 
