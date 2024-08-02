@@ -30,10 +30,11 @@ function ChatListPage() {
 
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(chatRoom.selectedIndex);
 
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index);
+    setChatRoom(m => ({ ...m, selectedIndex: index }));
     setOpen(false);
   };
 
