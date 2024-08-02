@@ -7,8 +7,11 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
+import { useNavigate } from 'react-router';
 
 function MainPage() {
+
+  const navigate=useNavigate();
 
   /**
    * mui 테스트용
@@ -19,7 +22,10 @@ function MainPage() {
         <Typography variant="h4" component="h1" gutterBottom>
           글자 테스트
         </Typography>
-        <Button variant="contained" color="primary" sx={{ mb: 2 }}>
+        <Button onClick={(e) => navigate('/chat/new')} variant="contained" color="primary" sx={{ mb: 2 }}>
+          버튼 테스트
+        </Button>
+        <Button onClick={(e) => navigate('/chatlist')} variant="contained" color="primary" sx={{ mb: 2 }}>
           버튼 테스트
         </Button>
         <Stack spacing={2} sx={{ width: 300 }}>

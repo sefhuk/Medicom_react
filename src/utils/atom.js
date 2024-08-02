@@ -2,7 +2,7 @@ import { atom } from 'recoil';
 
 export const chatRoomState = atom({
   key: 'chatRoomState',
-  default: { rooms: {}, messages: [] }
+  default: { rooms: {}, messages: [], selectedIndex: 0 }
 });
 
 //오류나서 추가한 코드

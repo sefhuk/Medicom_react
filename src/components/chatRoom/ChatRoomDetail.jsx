@@ -63,8 +63,8 @@ function ChatRoomDetail({ data, selectedIndex }) {
             </>
           ) : (
             <div style={{ display: 'flex' }}>
-              <ProfileImage url={data.user1.image} size={'3rem'} />
-              {data.user2 ? <ProfileImage url={data.user2?.image} size={'3rem'} /> : null}
+              <ProfileImage user={data.user1} size={'3rem'} />
+              {data.user2 ? <ProfileImage user={data.user2} size={'3rem'} /> : null}
             </div>
           )}
         </Preview>

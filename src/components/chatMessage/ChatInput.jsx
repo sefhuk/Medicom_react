@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -51,6 +51,10 @@ function ChatInput({ sendMessage, enable }) {
     sendMessage(input);
     setInput('');
   };
+
+  useEffect(() => {
+    setInput(enable ? '' : '입력할 수 없습니다');
+  }, [enable]);
 
   return (
     <Container>

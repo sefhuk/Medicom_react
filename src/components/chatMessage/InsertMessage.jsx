@@ -16,15 +16,16 @@ function InsertMessage() {
   const createChatRoom = async (chatRoomType, navigate) => {
     try {
       const response = await axiosInstance.post(`/chatrooms`, {
-        userId: Number(auth.userId) || 0,
-        chatRoomType: chatRoomType
+        chatRoomType
       });
+      console.log(response);
       setChatRoom(e => ({
         ...e,
         rooms: { ...e.rooms, [`ch_${response.data.id}`]: response.data }
       }));
       navigate(`/chat/${response.data.id}/messages`);
     } catch (err) {
+      console.log(err);
       alert(err.response.data.message);
       navigate('/');
     }

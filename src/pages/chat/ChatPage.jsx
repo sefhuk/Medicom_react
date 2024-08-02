@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { axiosInstance } from '../../utils/axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import MainContainer from '../../components/global/MainContainer';
 import Message from '../../components/chatMessage/Message';
 import { Stomp } from '@stomp/stompjs';
@@ -45,7 +45,13 @@ function ChatPage() {
       const response = await axiosInstance.post(
         `/chatrooms/${Number(params.chatRoomId)}/users/${auth.userId}`
       );
-      navigate('/chatlist');
+      setChatRoom(m => ({
+        ...m,
+        rooms: { ...m.rooms, [`ch_${response.data.id}`]: response.data }
+      }));
+      navigate(`/chat/${params.chatRoomId}/messages`, {
+        replace: true
+      });
     } catch (err) {
       alert(err);
     }
