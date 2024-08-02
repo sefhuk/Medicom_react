@@ -1,4 +1,3 @@
-// PostDetailPage.js
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
@@ -18,7 +17,6 @@ function PostDetailPage() {
   const fetchComments = useCallback((page) => {
     axios.get(`http://localhost:8080/comments/post/${id}?page=${page}&size=6`)
       .then(response => {
-        // 댓글을 생성일 기준으로 오름차순으로 정렬
         const sortedComments = response.data.content.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         setComments(sortedComments);
         setTotalPages(response.data.totalPages);
@@ -29,7 +27,10 @@ function PostDetailPage() {
 
   useEffect(() => {
     axios.get(`http://localhost:8080/posts/${id}`)
-      .then(response => setPost(response.data))
+      .then(response => {
+        console.log('Fetched post data:', response.data);
+        setPost(response.data);
+      })
       .catch(error => console.error('포스트 가져오기 오류:', error));
 
     fetchComments(0);
@@ -39,7 +40,7 @@ function PostDetailPage() {
     e.preventDefault();
     axios.post('http://localhost:8080/comments', { postId: id, content: commentText })
       .then(response => {
-        // 새 댓글을 댓글 배열의 맨 아래에 추가
+        console.log('New comment added:', response.data);
         setComments([...comments, response.data]);
         setCommentText('');
       })
@@ -49,6 +50,7 @@ function PostDetailPage() {
   const handleDeletePost = async () => {
     try {
       await axios.delete(`http://localhost:8080/posts/${id}`);
+      console.log('Post deleted successfully');
       navigate('/boards');
     } catch (error) {
       console.error('포스트 삭제 오류:', error);
@@ -58,6 +60,7 @@ function PostDetailPage() {
   const handleDeleteComment = async (commentId) => {
     try {
       await axios.delete(`http://localhost:8080/comments/${commentId}`);
+      console.log('Comment deleted successfully:', commentId);
       setComments(comments.filter(comment => comment.id !== commentId));
     } catch (error) {
       console.error('댓글 삭제 오류:', error);
@@ -70,6 +73,7 @@ function PostDetailPage() {
         postId: id,
         content: content,
       });
+      console.log('Comment updated successfully:', response.data);
       setComments(comments.map(comment => comment.id === commentId ? response.data : comment));
     } catch (error) {
       console.error('댓글 업데이트 오류:', error);
@@ -83,6 +87,7 @@ function PostDetailPage() {
         content: content,
         parentId: parentId
       });
+      console.log('Reply added successfully:', response.data);
       setComments(comments.map(comment => {
         if (comment.id === parentId) {
           return {
@@ -108,11 +113,11 @@ function PostDetailPage() {
       <div>
         <h1>{post.title}</h1>
         <p>{post.content}</p>
-        {post.imageUrl && (
+        {post.imageUrls && post.imageUrls.length > 0 && (
           <img
-            src={post.imageUrl}
+            src={post.imageUrls[0].link} // 첫 번째 이미지 링크를 사용
             alt="Post"
-            style={{ maxWidth: '50%', height: 'auto' }}
+            style={{ maxWidth: '100%', height: 'auto' }}
           />
         )}
         <Link to={`/posts/update/${id}`}>

@@ -36,12 +36,12 @@ function BoardListPage() {
     } else {
       setBoards(data.content);
       setTotalPages(data.totalPages);
-      setCurrentPage(0); // Reset to first page on new search
+      setCurrentPage(0);
     }
   };
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setCurrentPage(page); //리셋
   };
 
   return (

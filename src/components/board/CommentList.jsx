@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import ReplyList from './ReplyList';
 
 function CommentList({ comments, onDelete, onUpdate, onReply }) {
   const [editCommentId, setEditCommentId] = useState(null);
@@ -45,10 +46,9 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
               </div>
             ) : (
               <>
-                {comment.content}
+                <CommentContent>{comment.content}</CommentContent>
                 <button onClick={() => handleEditClick(comment)}>Edit</button>
                 <button onClick={() => onDelete(comment.id)}>Delete</button>
-                {/* 대댓글에는 Reply 버튼을 표시하지 않음 */}
                 {comment.parentId === null && (
                   <button onClick={() => handleReplyClick(comment)}>Reply</button>
                 )}
@@ -64,12 +64,13 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
                 <button onClick={handleReply}>Add Reply</button>
               </div>
             )}
-            {Array.isArray(comment.replies) && comment.replies.length > 0 && (
-              <CommentList
-                comments={comment.replies}
+            {comment.replies && comment.replies.length > 0 && (
+              <ReplyList
+                replies={comment.replies}
                 onDelete={onDelete}
                 onUpdate={onUpdate}
                 onReply={onReply}
+                parentId={comment.id}
               />
             )}
           </CommentListItem>
@@ -95,18 +96,10 @@ const CommentListItem = styled.li`
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
-  button {
-    margin-left: 10px;
-    background-color: #4682B4;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    &:hover {
-      background-color: #4169E1;
-    }
-  }
+`;
+
+const CommentContent = styled.div`
+  margin-bottom: 10px;
 `;
 
 export default CommentList;
