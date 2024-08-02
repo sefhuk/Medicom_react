@@ -20,10 +20,7 @@ import SymptomAsk from './pages/SymptomAsk'
 import UserList from './pages/admin/UserList';
 import AdminUserListDetail from './pages/admin/AdminUserListDetail';
 import AdminChatList from './pages/admin/AdminChatList';
-<<<<<<< HEAD
 import MyActivity from './pages/user/MyActivity';
-
-=======
 import BoardListPage from './pages/board/BoardListPage';
 import CreateBoardPage from './pages/board/CreateBoardPage';
 import BoardDetailPage from './pages/board/BoardDetailPage';
@@ -31,7 +28,7 @@ import CreatePostPage from './pages/board/CreatePostPage';
 import PostDetailPage from './pages/board/PostDetailPage';
 import UpdateBoardPage from './pages/board/UpdateBoardPage';
 import UpdatePostPage from './pages/board/UpdatePostPage';
->>>>>>> e16499819f5c64771a1106d1c27d1db02b5578c8
+
 
 const queryClient = new QueryClient();
 
