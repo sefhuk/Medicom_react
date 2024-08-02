@@ -72,13 +72,17 @@ function Message({ data, repeat, self }) {
         <BottomContainer self={self}>
           <Content self={self} onDoubleClick={handleOpen}>
             {data.content.startsWith('dpt: ') ? (
-              <>
-                <p>진료과 추천 정보가 제공되었습니다</p>
-                <Button variant='contained' onClick={requestHospital}>
+              <Suggestion>
+                <p style={{ margin: '4px 0 20px' }}>진료과 추천 정보가 제공되었습니다</p>
+                <Button
+                  variant='contained'
+                  onClick={requestHospital}
+                  sx={{ width: '40%', backgroundColor: '#272424', fontSize: '1rem' }}
+                >
                   {' '}
                   {data.content.split(' ')[1]}
                 </Button>
-              </>
+              </Suggestion>
             ) : (
               data.content.split('\\n').map(e => (
                 <span>
@@ -136,13 +140,19 @@ const Content = styled.div`
   background-color: ${({ self }) => (self ? '#3399ff' : '#99ddff')};
   padding: 10px;
   border-radius: 10px;
-  margin-right: 10px;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   order: ${({ self }) => (self ? 2 : 1)};
   white-space: pre-line;
   max-width: 70%;
   height: auto;
   overflow: hidden;
+`;
+
+const Suggestion = styled.p`
+  display: flex;
+  flex-direction: column;
+  @media (min-width: 481px) {
+  }
 `;
 
 const Time = styled.p`
