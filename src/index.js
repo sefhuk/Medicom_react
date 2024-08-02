@@ -20,6 +20,7 @@ import SymptomAsk from './pages/SymptomAsk';
 import UserList from './pages/admin/UserList';
 import AdminUserListDetail from './pages/admin/AdminUserListDetail';
 import AdminChatList from './pages/admin/AdminChatList';
+import { AdminCreateDoctorProfile } from './pages/admin/AdminCreateDoctorProfile';
 
 
 const queryClient = new QueryClient();
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: 'admin-page/user-list/user-detail',
         element: <AdminUserListDetail />
+      },
+      {
+        path: 'admin-page/user-list/user-detail/doctor-profile',
+        element: <AdminCreateDoctorProfile />
       },
       {
 

@@ -41,7 +41,8 @@ const DeleteDialog = (props) => {
 const RoleDialog = (props) => {
 
   const {open, OnClose, userDetail} = props;
-  
+  const navigate = useNavigate();
+
   const OnCloseHandler = () => {
     OnClose(false);
   }
@@ -56,12 +57,17 @@ const RoleDialog = (props) => {
     }
   }
 
+  const OnClickDoctorRole = () => {    
+    navigate('/admin-page/user-list/user-detail/doctor-profile', {state: {userDetail: userDetail}})
+  }
+
   return(
     <Dialog open={open} onClose={OnCloseHandler}>
       <DialogTitle fontSize='large'>변경하려는 권한을 선택하세요.</DialogTitle>
       <List sx={{pt:0}}>
         <ListItemButton onClick={(e) => OnClickRole('USER')}>일반 회원</ListItemButton>
         <ListItemButton onClick={(e) => OnClickRole('ADMIN')}>관리자</ListItemButton>
+        <ListItemButton onClick={OnClickDoctorRole}>의사</ListItemButton>
       </List>
     </Dialog>
   );

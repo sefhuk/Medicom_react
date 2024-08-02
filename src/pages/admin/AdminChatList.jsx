@@ -51,7 +51,7 @@ const AdminChatList = () => {
     <MainContainer>
       <Paper elevation={6} sx={{margin: '10px', padding: 3, borderRadius: '10px' }}>
       <Typography variant='h5' sx={{display: 'inline', color: '#6E6E6E'}}>
-        채팅 리스트
+        채팅 목록
       </Typography>
       <TabContext value={tabValue}>
         <TabList onChange={handleChange} sx={{margin: '20px 0 auto'}}>
