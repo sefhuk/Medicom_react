@@ -17,7 +17,7 @@ const style = {
   pb: 3
 };
 
-function ModifyMessage({ msgId, msg }) {
+function ModifyMessage({ msgId, msg, setOpens }) {
   const [stomp] = useRecoilState(stompState);
 
   const [message, setMessage] = useState(msg);
@@ -25,6 +25,7 @@ function ModifyMessage({ msgId, msg }) {
   const [open, setOpen] = useState(false);
   const handleClose = () => {
     setOpen(false);
+    setOpens(false);
   };
   const handleClick = () => {
     setOpen(true);
@@ -51,6 +52,7 @@ function ModifyMessage({ msgId, msg }) {
     }
 
     modify();
+    setOpens(false);
   };
 
   return (

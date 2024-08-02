@@ -59,7 +59,7 @@ function Message({ data, repeat, self }) {
       >
         <Box sx={{ ...style, width: '60%' }}>
           <h2 id='parent-modal-title'>메시지 옵션</h2>
-          <EditModal msgId={data.id} msg={data.content} />
+          <EditModal msgId={data.id} msg={data.content} setOpens={setOpen} />
         </Box>
       </Modal>
       <Container self={self}>
