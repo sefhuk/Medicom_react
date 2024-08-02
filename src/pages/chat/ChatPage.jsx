@@ -7,7 +7,8 @@ import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
-import { authState, chatRoomState } from '../../utils/atom';
+import { chatRoomState, stompState, userauthState } from '../../utils/atom';
+import { Button } from '@mui/material';
 
 const fetchData = async (id, setMessages, setError) => {
   try {
@@ -26,22 +27,44 @@ const fetchData = async (id, setMessages, setError) => {
 function ChatPage() {
   const params = useParams();
 
-  const [auth] = useRecoilState(authState);
-  const [chatRoom] = useRecoilState(chatRoomState);
+  const [auth] = useRecoilState(userauthState);
+  const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
+  const [stomp, setStomp] = useRecoilState(stompState);
 
-  const [messages, setMessages] = useState([]);
   const [error, setError] = useState(null);
   const [stompClient, setStompClient] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   const navigate = useNavigate();
 
   const tmp = useRef(null);
 
-  const sendMessage = input => {
+  const acceptChatRoom = async () => {
+    const confirmed = window.confirm('채팅을 수락하시겠습니까?');
+    if (!confirmed) return;
+
+    try {
+      const response = await axiosInstance.post(
+        `/chatrooms/${Number(params.chatRoomId)}/users/${auth.userId}`
+      );
+      setChatRoom(m => ({
+        ...m,
+        rooms: { ...m.rooms, [`ch_${response.data.id}`]: response.data }
+      }));
+      navigate(`/chat/${params.chatRoomId}/messages`, {
+        replace: true
+      });
+    } catch (err) {
+      alert(err);
+    }
+  };
+
+  const sendMessage = (id, input) => {
     const body = JSON.stringify({
+      id: Number(id) || null,
       userId: Number(auth.userId),
       chatRoomId: Number(params.chatRoomId),
-      content: input.replace(/\n/g, '\\n')
+      content: input?.replace(/\n/g, '\\n') || null
     });
     stompClient.publish({ destination: `/app/chat/${Number(params.chatRoomId)}`, body });
   };
@@ -60,8 +83,31 @@ function ChatPage() {
     stomp.connect({}, () => {
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
-        data.content = data.content.replace(/\\n/g, '\n');
-        setMessages(m => [...m, data]);
+
+        if (!data.content) {
+          // 메시지 삭제
+          setMessages(m => m.filter(e => e.id !== data.id));
+        } else {
+          data.content = data.content.replace(/\\n/g, '\n');
+
+          // 메시지 추가 & 삭제
+          setMessages(m => {
+            let isModified = false;
+            const newMessages = m.map(e => {
+              if (e.id === data.id) {
+                e.content = data.content;
+                isModified = true;
+              }
+              return e;
+            });
+
+            if (!isModified) {
+              newMessages.push(data);
+            }
+
+            return newMessages;
+          });
+        }
       });
     });
 
@@ -75,24 +121,17 @@ function ChatPage() {
     if (tmp != null) tmp.current.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  useEffect(() => {
+    if (stompClient) {
+      setStomp({ sendMessage: sendMessage });
+    }
+  }, [stompClient]);
+
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
-      <button onClick={() => navigate('/chatlist')}>리스트로 이동</button>
+      <div style={{ height: '3dvh' }} />
       {error && <div>{error}</div>}
-      {chatRoom.rooms[`ch_${params.chatRoomId}`] === '수락 대기' && (
-        <div
-          style={{
-            height: '50dvh',
-            fontWeight: 'bold',
-            fontSize: '2.5rem',
-            lineHeight: '50dvh',
-            textAlign: 'center'
-          }}
-        >
-          매칭을 기다리고 있습니다
-        </div>
-      )}
-      {messages.length !== 0 &&
+      {messages &&
         messages.map((e, idx) => {
           return e.user.id === Number(auth.userId) ? (
             <Message
@@ -110,8 +149,48 @@ function ChatPage() {
             />
           );
         })}
+      {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' && (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: '20dvh',
+            margin: 'auto'
+          }}
+        >
+          <div
+            style={{
+              height: '40%',
+              fontWeight: 'bold',
+              fontSize: '1.5rem',
+              lineHeight: '10dvh',
+              textAlign: 'center'
+            }}
+          >
+            매칭을 기다리고 있습니다
+          </div>
+          {auth.role !== 'USER' && (
+            <Button
+              type='SERVICE'
+              variant='contained'
+              style={{ width: '50%', marginBottom: '4px' }}
+              onClick={acceptChatRoom}
+            >
+              채팅 수락
+            </Button>
+          )}
+        </div>
+      )}
       <div ref={tmp} />
-      <ChatInput sendMessage={sendMessage} status={chatRoom.rooms[`ch_${params.chatRoomId}`]} />
+      <ChatInput
+        sendMessage={sendMessage}
+        enable={
+          (chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId ||
+            chatRoom.rooms[`ch_${params.chatRoomId}`]?.user2?.id === auth.userId) &&
+          chatRoom.rooms[`ch_${params.chatRoomId}`].status.status !== '비활성화'
+        }
+      />
     </MainContainer>
   );
 }
