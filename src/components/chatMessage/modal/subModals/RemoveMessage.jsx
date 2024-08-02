@@ -1,9 +1,8 @@
 import { Button } from '@mui/material';
 import React from 'react';
 import { axiosInstance } from '../../../../utils/axios';
-
 import { useRecoilState } from 'recoil';
-import { chatRoomState, userauthState } from '../../../../utils/atom';
+import { chatRoomState } from '../../../../utils/atom';
 
 function RemoveMessage({ msgId }) {
   const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);

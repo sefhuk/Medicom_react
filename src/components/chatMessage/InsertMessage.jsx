@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import ProfileImage from './ProfileImage';
 import { axiosInstance } from '../../utils/axios';
 import { useRecoilState } from 'recoil';
@@ -20,7 +20,8 @@ function InsertMessage() {
       });
       console.log(response);
       setChatRoom(e => ({
-        rooms: { ...e.rooms, [`ch_${response.data.id}`]: response.data.status.status }
+        ...e,
+        rooms: { ...e.rooms, [`ch_${response.data.id}`]: response.data }
       }));
       navigate(`/chat/${response.data.id}/messages`);
     } catch (err) {
@@ -31,8 +32,20 @@ function InsertMessage() {
   };
 
   const handleButtonClick = e => {
+    const isConfirmed = window.confirm(`'${e.target.innerText}'을(를) 선택하시겠습니까?`);
+    if (!isConfirmed) {
+      return;
+    }
+
     createChatRoom(e.target.getAttribute('type'), navigate);
   };
+
+  useEffect(() => {
+    if (!auth.isLoggedIn) {
+      alert('잘못된 접근입니다');
+      navigate('/');
+    }
+  }, []);
 
   return (
     <Container>
