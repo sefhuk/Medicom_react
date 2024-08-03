@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import {Typography, Card, CardContent, CardActions, Button, Paper, Box, TextField, IconButton} from "@mui/material";
 import { Star, StarBorder } from "@mui/icons-material";
-import { axiosInstance, fetchUserReviews } from "../../utils/axios";
+import {
+  axiosInstance,
+  fetchUserReviews,
+  userInformation
+} from '../../utils/axios';
 import MainContainer from "../../components/global/MainContainer";
 
 const MyReviews = () => {
@@ -17,9 +21,11 @@ const MyReviews = () => {
       try {
         const userId = localStorage.getItem("userId");
         const userReviews = await fetchUserReviews(userId);
+        const name = await userInformation(localStorage.getItem('token'));
         setState((prevState) => ({
           ...prevState,
           reviews: userReviews,
+          username: name
         }));
       } catch (error) {
         console.error(error);
@@ -33,7 +39,12 @@ const MyReviews = () => {
     const checkDelete = window.confirm("정말 삭제하시겠습니까?");
     if (!checkDelete) return;
     try {
-      await axiosInstance.delete(`/review/${reviewId}`);
+      const token = localStorage.getItem('token');
+      await axiosInstance.delete(`/review/${reviewId}`, {
+        headers: {
+          Authorization: `${token}`,
+        }
+      } );
       setState((prevState) => ({
         ...prevState,
         reviews: prevState.reviews.filter((review) => review.id !== reviewId),
@@ -64,9 +75,14 @@ const MyReviews = () => {
 
   const saveEditedReview = async (reviewId) => {
     try {
+      const token = localStorage.getItem('token');
       await axiosInstance.put(`/review/${reviewId}`, {
         content: state.editedContent,
         rating: state.editedRating,
+      }, {
+        headers: {
+          Authorization: `${token}`,
+        }
       });
       setState((prevState) => ({
         ...prevState,
@@ -128,7 +144,7 @@ const MyReviews = () => {
     return [...filledStars, ...emptyStars];
   };
 
-  const { reviews, editingReviewId, editedContent, editedRating } = state;
+  const { reviews, editingReviewId, editedContent, editedRating, username } = state;
 
   return (
     <MainContainer>
@@ -170,7 +186,7 @@ const MyReviews = () => {
                   <Typography variant="h6">{review.content}</Typography>
                 )}
                 <Typography variant="body2" color="textSecondary">
-                  병원: {review.hospitalName} | 작성일: {review.created_at}
+                  병원: {review.hospitalName} | 작성일: {review.created_at} | 작성자: {username}
                 </Typography>
               </CardContent>
               <CardActions>

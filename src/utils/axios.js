@@ -48,7 +48,7 @@ export const userLogin = async (email, password) => {
 
 export const fetchUserReviews = async (userId) => {
   try {
-    const response = await axiosInstance.get(`/review/${userId}`);
+    const response = await axiosInstance.get(`/review/users/${userId}`);
     const reviews = response.data;
     const reviewsWithHospitalName = await Promise.all(
       reviews.map(async (review) => {
@@ -65,6 +65,20 @@ export const fetchUserReviews = async (userId) => {
     console.error(error);
   }
 };
+
+export const userInformation = async (token) => {
+  try {
+    const response = await axiosInstance.get('/users/my-page', {
+      headers: {
+        Authorization: `${token}`
+      }
+    });
+    const username = response.data.name;
+    return username;
+  }catch (error){
+    console.error(error);
+  }
+}
 
 
 
