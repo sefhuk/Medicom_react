@@ -1,23 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { axiosInstance } from '../../utils/axios';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import MainContainer from '../../components/global/MainContainer';
 import Message from '../../components/chatMessage/Message';
 import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
-import { chatRoomState, userauthState } from '../../utils/atom';
+import { chatRoomState, stompState, userauthState } from '../../utils/atom';
 import { Button } from '@mui/material';
 
-const fetchData = async (id, setChatRoom, setError) => {
+const fetchData = async (id, setMessages, setError) => {
   try {
     const response = await axiosInstance.get(`/chatmessages`, {
       params: {
         chatRoomId: id
       }
     });
-    setChatRoom(m => ({ ...m, messages: response.data }));
+    setMessages(response.data);
   } catch (err) {
     setError(err.response.message);
     alert('잘못된 접근입니다');
@@ -29,9 +29,11 @@ function ChatPage() {
 
   const [auth] = useRecoilState(userauthState);
   const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
+  const [stomp, setStomp] = useRecoilState(stompState);
 
   const [error, setError] = useState(null);
   const [stompClient, setStompClient] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   const navigate = useNavigate();
 
@@ -57,18 +59,19 @@ function ChatPage() {
     }
   };
 
-  const sendMessage = input => {
+  const sendMessage = (id, input) => {
     const body = JSON.stringify({
+      id: Number(id) || null,
       userId: Number(auth.userId),
       chatRoomId: Number(params.chatRoomId),
-      content: input.replace(/\n/g, '\\n')
+      content: input?.replace(/\n/g, '\\n') || null
     });
     stompClient.publish({ destination: `/app/chat/${Number(params.chatRoomId)}`, body });
   };
 
   useEffect(() => {
     try {
-      fetchData(params.chatRoomId, setChatRoom, setError);
+      fetchData(params.chatRoomId, setMessages, setError);
     } catch (err) {
       alert('잘못된 접근입니다');
     }
@@ -80,8 +83,31 @@ function ChatPage() {
     stomp.connect({}, () => {
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
-        data.content = data.content.replace(/\\n/g, '\n');
-        setChatRoom(m => ({ ...m, messages: [...m.messages, data] }));
+
+        if (!data.content) {
+          // 메시지 삭제
+          setMessages(m => m.filter(e => e.id !== data.id));
+        } else {
+          data.content = data.content.replace(/\\n/g, '\n');
+
+          // 메시지 추가 & 삭제
+          setMessages(m => {
+            let isModified = false;
+            const newMessages = m.map(e => {
+              if (e.id === data.id) {
+                e.content = data.content;
+                isModified = true;
+              }
+              return e;
+            });
+
+            if (!isModified) {
+              newMessages.push(data);
+            }
+
+            return newMessages;
+          });
+        }
       });
     });
 
@@ -93,33 +119,33 @@ function ChatPage() {
 
   useEffect(() => {
     if (tmp != null) tmp.current.scrollIntoView({ behavior: 'smooth' });
-  }, [chatRoom.messages]);
+  }, [messages]);
+
+  useEffect(() => {
+    if (stompClient) {
+      setStomp({ sendMessage: sendMessage });
+    }
+  }, [stompClient]);
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
       <div style={{ height: '3dvh' }} />
       {error && <div>{error}</div>}
-      {chatRoom.messages &&
-        chatRoom.messages.map((e, idx) => {
+      {messages &&
+        messages.map((e, idx) => {
           return e.user.id === Number(auth.userId) ? (
             <Message
               key={e.id}
               self={true}
               data={e}
-              repeat={
-                e.user.id ===
-                (chatRoom.messages[idx - 1] ? chatRoom.messages[idx - 1].user.id : '0')
-              }
+              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
             />
           ) : (
             <Message
               key={e.id}
               self={false}
               data={e}
-              repeat={
-                e.user.id ===
-                (chatRoom.messages[idx - 1] ? chatRoom.messages[idx - 1].user.id : '0')
-              }
+              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
             />
           );
         })}

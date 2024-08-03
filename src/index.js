@@ -17,6 +17,10 @@ import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
 import AdminPage from './pages/admin/AdminPage';
 import SymptomAsk from './pages/SymptomAsk'
+import HospitalReservation from './pages/Hospital/HospitalReservation.jsx';
+
+
+
 import UserList from './pages/admin/UserList';
 import AdminUserListDetail from './pages/admin/AdminUserListDetail';
 import AdminChatList from './pages/admin/AdminChatList';
@@ -50,7 +54,7 @@ const router = createBrowserRouter([
       
       //hospitalpage
       {path: '/symptoms', element: <SymptomAsk />},
-
+      {path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation />},
       {
         path: 'login',
         element: <Login />

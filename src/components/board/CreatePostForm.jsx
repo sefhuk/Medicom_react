@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ref, uploadBytes, getDownloadURL } from '../../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase'; // Firebase 설정 가져오기
 
 function CreatePostForm({ onSubmit }) {
@@ -11,12 +11,14 @@ function CreatePostForm({ onSubmit }) {
 
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
-      setImage(e.target.files[0]);
+      const file = e.target.files[0];
+      console.log('Selected file:', file);
+      setImage(file);
 
       // 선택된 이미지 파일을 미리보기 위해 Blob URL 생성
-      const file = e.target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
+        console.log('Preview URL:', reader.result);
         setPreviewUrl(reader.result);
       };
       reader.readAsDataURL(file);
@@ -29,14 +31,19 @@ function CreatePostForm({ onSubmit }) {
     let imageUrl = '';
     if (image) {
       const imageRef = ref(storage, `images/${image.name}`);
+      console.log('Uploading to:', imageRef.fullPath);
+
       try {
-        await uploadBytes(imageRef, image);
+        const snapshot = await uploadBytes(imageRef, image);
+        console.log('Upload snapshot:', snapshot);
+
         imageUrl = await getDownloadURL(imageRef);
+        console.log('Downloaded image URL:', imageUrl);
       } catch (error) {
         console.error('이미지 업로드 오류:', error);
       }
     }
-    console.log('Uploaded Image URL:', imageUrl);
+    console.log('Final Image URL:', imageUrl);
 
     onSubmit({ title, content, imageUrl });
   };
