@@ -31,17 +31,17 @@ const Nav = () => {
 
   const LoginIcon = () => {
     return(
-    <>
-      {auth.role==='ADMIN' ? (
-        <IconButton>
-          <HttpsIcon fontSize='large' onClick={OnClickAdminPage}></HttpsIcon>
+      <>
+        {auth.role==='ADMIN' ? (
+          <IconButton>
+            <HttpsIcon fontSize='large' onClick={OnClickAdminPage}></HttpsIcon>
+          </IconButton>
+        ) : (<></>)}
+        <IconButton onClick={OnClickMyPage}>
+          <AccountCircleIcon fontSize='large'/>
         </IconButton>
-      ) : (<></>)}
-      <IconButton onClick={OnClickMyPage}>
-        <AccountCircleIcon fontSize='large'/>
-      </IconButton>
-      <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
-    </>
+        <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
+      </>
     );
   }
 
