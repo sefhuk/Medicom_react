@@ -32,6 +32,7 @@ import CreatePostPage from './pages/board/CreatePostPage';
 import PostDetailPage from './pages/board/PostDetailPage';
 import UpdateBoardPage from './pages/board/UpdateBoardPage';
 import UpdatePostPage from './pages/board/UpdatePostPage';
+import MyReviews from './pages/user/MyReivews';
 
 
 const queryClient = new QueryClient();
@@ -103,6 +104,11 @@ const router = createBrowserRouter([
       { path: 'posts/:id', element: <PostDetailPage /> },
       { path: 'boards/update/:id', element: <UpdateBoardPage /> },
       { path: 'posts/update/:id', element: <UpdatePostPage /> },
+
+      {
+        path: 'my-reviews', // 새로운 경로 추가
+        element: <MyReviews />
+      },
 
     ]
   }

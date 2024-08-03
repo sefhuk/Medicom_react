@@ -6,12 +6,11 @@ import { axiosInstance } from '../../utils/axios';
 import MainContainer from "../../components/global/MainContainer";
 import { deleteCookie } from '../../utils/cookies';
 import { userauthState } from '../../utils/atom';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PostCodeModal from '../../components/PostCodeModal';
-import { useRecoilValue } from 'recoil';
 
 const theme = createTheme({
   palette: {
@@ -25,17 +24,19 @@ const theme = createTheme({
 });
 
 const MyPage = () => {
+  const [state, setState] = useState({
+    userInfo: null,
+    editField: null,
+    formData: {},
+    dialogOpen: false,
+    postcodeOpen: false,
+    addressData: { address: '', addressDetail: '' },
+  });
 
-
-  const [userInfo, setUserInfo] = useState(null);
-  const [editField, setEditField] = useState(null);
-  const [formData, setFormData] = useState({});
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [postcodeOpen, setPostcodeOpen] = useState(false);
-  const [addressData, setAddressData] = useState({ address: '', addressDetail: '' });
   const navigate = useNavigate();
   const setAuthState = useSetRecoilState(userauthState);
   const auth = useRecoilValue(userauthState);
+
   useEffect(() => {
     if (!auth.isLoggedIn) {
       navigate('/login');
@@ -51,8 +52,11 @@ const MyPage = () => {
             Authorization: `${token}`
           }
         });
-        setUserInfo(response.data);
-        setFormData(response.data);
+        setState((prevState) => ({
+          ...prevState,
+          userInfo: response.data,
+          formData: response.data,
+        }));
       } catch (error) {
         console.error(error);
         navigate('/login');
@@ -63,38 +67,42 @@ const MyPage = () => {
   }, [navigate]);
 
   const handleEditClick = (field) => {
-    setEditField(field);
-    if (field === 'address') {
-      setAddressData({ address: formData.address, addressDetail: formData.addressDetail });
-    }
-    setDialogOpen(true);
+    setState((prevState) => ({
+      ...prevState,
+      editField: field,
+      dialogOpen: true,
+      addressData: field === 'address' ? { address: prevState.formData.address, addressDetail: prevState.formData.addressDetail } : prevState.addressData,
+    }));
   };
 
   const handleSaveClick = async (field) => {
     try {
-      let dataToSend = { [field]: formData[field] };
+      let dataToSend = { [field]: state.formData[field] };
       let endpoint = `/users/my-page/${field}`;
 
       if (field === 'address') {
-        dataToSend = addressData;
+        dataToSend = state.addressData;
         endpoint = '/users/my-page/address';
       } else if (field === 'phoneNumber') {
         endpoint = '/users/my-page/phoneNumber';
       } else if (field === 'password') {
         dataToSend = {
-          verifyPassword: formData.verifyPassword,
-          alterPassword: formData.alterPassword,
+          verifyPassword: state.formData.verifyPassword,
+          alterPassword: state.formData.alterPassword,
         };
         endpoint = '/users/my-page/password';
       }
 
       await axiosInstance.put(endpoint, dataToSend);
-      setUserInfo({
-        ...userInfo,
-        ...dataToSend
-      });
-      setEditField(null);
-      setDialogOpen(false);
+      setState((prevState) => ({
+        ...prevState,
+        userInfo: {
+          ...prevState.userInfo,
+          ...dataToSend
+        },
+        editField: null,
+        dialogOpen: false,
+      }));
       window.location.reload();  // 새로고침
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -106,33 +114,45 @@ const MyPage = () => {
   };
 
   const handleCancelClick = () => {
-    setFormData({ ...userInfo });
-    setEditField(null);
-    setDialogOpen(false);
-    setPostcodeOpen(false);
+    setState((prevState) => ({
+      ...prevState,
+      formData: { ...prevState.userInfo },
+      editField: null,
+      dialogOpen: false,
+      postcodeOpen: false,
+    }));
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setState((prevState) => ({
+      ...prevState,
+      formData: {
+        ...prevState.formData,
+        [name]: value,
+      },
+    }));
   };
 
   const handleDialogInputChange = (e) => {
     const { name, value } = e.target;
-    setAddressData({
-      ...addressData,
-      [name]: value,
-    });
+    setState((prevState) => ({
+      ...prevState,
+      addressData: {
+        ...prevState.addressData,
+        [name]: value,
+      },
+    }));
   };
 
   const handleAddressComplete = (fullAddress) => {
-    setAddressData({
-      ...addressData,
-      address: fullAddress
-    });
+    setState((prevState) => ({
+      ...prevState,
+      addressData: {
+        ...prevState.addressData,
+        address: fullAddress
+      },
+    }));
   };
 
   const handleLogoutClick = () => {
@@ -145,6 +165,8 @@ const MyPage = () => {
   const handleMyActivity = () => {
     navigate('/my-activity');
   }
+
+  const { userInfo, editField, formData, dialogOpen, postcodeOpen, addressData } = state;
 
   return (
     <MainContainer>
@@ -267,7 +289,7 @@ const MyPage = () => {
                     readOnly: true,
                   }}
                 />
-                <Button variant="contained" onClick={() => setPostcodeOpen(true)} sx={{ height: '40px', marginLeft: '10px' }}>
+                <Button variant="contained" onClick={() => setState((prevState) => ({ ...prevState, postcodeOpen: true }))} sx={{ height: '40px', marginLeft: '10px' }}>
                   주소 검색
                 </Button>
               </Box>
@@ -323,7 +345,7 @@ const MyPage = () => {
         </DialogActions>
       </Dialog>
 
-      <PostCodeModal open={postcodeOpen} onClose={() => setPostcodeOpen(false)} onComplete={handleAddressComplete} />
+      <PostCodeModal open={postcodeOpen} onClose={() => setState((prevState) => ({ ...prevState, postcodeOpen: false }))} onComplete={handleAddressComplete} />
     </MainContainer>
   );
 };
