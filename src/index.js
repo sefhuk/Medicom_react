@@ -18,9 +18,6 @@ import MyPage from './pages/user/MyPage';
 import AdminPage from './pages/admin/AdminPage';
 import SymptomAsk from './pages/SymptomAsk'
 import HospitalReservation from './pages/Hospital/HospitalReservation.jsx';
-
-
-
 import UserList from './pages/admin/UserList';
 import AdminUserListDetail from './pages/admin/AdminUserListDetail';
 import AdminChatList from './pages/admin/AdminChatList';
@@ -33,6 +30,8 @@ import PostDetailPage from './pages/board/PostDetailPage';
 import UpdateBoardPage from './pages/board/UpdateBoardPage';
 import UpdatePostPage from './pages/board/UpdatePostPage';
 import MyReviews from './pages/user/MyReivews';
+import { AdminCreateDoctorProfile } from './pages/admin/AdminCreateDoctorProfile';
+
 
 
 const queryClient = new QueryClient();
@@ -79,6 +78,10 @@ const router = createBrowserRouter([
       {
         path: 'admin-page/user-list/user-detail',
         element: <AdminUserListDetail />
+      },
+      {
+        path: 'admin-page/user-list/user-detail/doctor-profile',
+        element: <AdminCreateDoctorProfile />
       },
       {
 
