@@ -46,6 +46,40 @@ export const userLogin = async (email, password) => {
     }
 };
 
+export const fetchUserReviews = async (userId) => {
+  try {
+    const response = await axiosInstance.get(`/review/users/${userId}`);
+    const reviews = response.data;
+    const reviewsWithHospitalName = await Promise.all(
+      reviews.map(async (review) => {
+        const hospitalResponse = await axiosInstance.get(`/api/hospitals/${review.hospitalId}`);
+        const hospitalName = hospitalResponse.data.name;
+        return {
+          ...review,
+          hospitalName
+        };
+      })
+    );
+    return reviewsWithHospitalName;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const userInformation = async (token) => {
+  try {
+    const response = await axiosInstance.get('/users/my-page', {
+      headers: {
+        Authorization: `${token}`
+      }
+    });
+    const username = response.data.name;
+    return username;
+  }catch (error){
+    console.error(error);
+  }
+}
+
 
 
 

@@ -20,7 +20,7 @@ const AdminPage = () => {
 
   const navigate = useNavigate();
   const userListLink = '/admin-page/user-list';
-  const chatListLink = '/admin-page/chat-list';
+  const chatListLink = '/chatlist';
 
   const OnClickUserList = (link) => {
     navigate(link);
