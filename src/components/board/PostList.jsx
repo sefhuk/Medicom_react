@@ -1,63 +1,48 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { Link as RouterLink } from 'react-router-dom';
+import { Box, Button, Typography, List, ListItem, Link } from '@mui/material';
 
 function PostList({ posts, boardId }) {
   return (
-    <PostListContainer>
-      <h2>Posts</h2>
-      <Link to={`/posts/create/${boardId}`}>
-        <CreateButton>Create New Post</CreateButton>
-      </Link>
-      <PostListUl>
+    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Posts
+      </Typography>
+      <Button
+        component={RouterLink}
+        to={`/posts/create/${boardId}`}
+        variant="contained"
+        color="error"
+        sx={{ mb: 2 }}
+      >
+        Create New Post
+      </Button>
+      <List>
         {posts.map(post => (
-          <PostListItem key={post.id}>
-            <Link to={`/posts/${post.id}`}>{post.title}</Link>
-          </PostListItem>
+          <ListItem
+            key={post.id}
+            sx={{
+              bgcolor: '#fff',
+              border: '1px solid #ddd',
+              borderRadius: 1,
+              p: 2,
+              mb: 1,
+            }}
+          >
+            <Link
+              component={RouterLink}
+              to={`/posts/${post.id}`}
+              variant="body1"
+              color="primary"
+              sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
+              {post.title}
+            </Link>
+          </ListItem>
         ))}
-      </PostListUl>
-    </PostListContainer>
+      </List>
+    </Box>
   );
 }
-
-const PostListContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const CreateButton = styled.button`
-  background-color: #ff6347; /* Tomato */
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  font-size: 1em;
-  &:hover {
-    background-color: #e5533f; /* Darker Tomato */
-  }
-`;
-
-const PostListUl = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const PostListItem = styled.li`
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px;
-  margin-bottom: 10px;
-  a {
-    text-decoration: none;
-    color: #4682B4;
-    font-size: 1.2em;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
 
 export default PostList;

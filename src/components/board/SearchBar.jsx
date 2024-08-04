@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TextField, Button, Box } from '@mui/material';
 import axios from 'axios';
 
 const SearchBar = ({ onSearch, searchType }) => {
@@ -22,15 +23,16 @@ const SearchBar = ({ onSearch, searchType }) => {
     };
 
     return (
-        <div>
-            <input
-                type="text"
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <TextField
+                variant="outlined"
+                label={`Search ${searchType}`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder={`Search ${searchType}`}
+                sx={{ mr: 1 }}
             />
-            <button onClick={handleSearch}>Search</button>
-        </div>
+            <Button variant="contained" color="primary" onClick={handleSearch}>Search</Button>
+        </Box>
     );
 };
 

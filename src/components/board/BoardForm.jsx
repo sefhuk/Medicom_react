@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import { TextField, Button, Container, Typography, Box } from '@mui/material';
 
 function BoardForm({ initialValues = {}, onSubmit }) {
   const [name, setName] = useState(initialValues.name || '');
@@ -10,51 +10,34 @@ function BoardForm({ initialValues = {}, onSubmit }) {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <h1>{initialValues.id ? 'Update Board' : 'Create Board'}</h1>
-      <Label>
-        Board Name:
-        <Input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-      </Label>
-      <SubmitButton type="submit">
-        {initialValues.id ? 'Update Board' : 'Create Board'}
-      </SubmitButton>
-    </Form>
+    <Container maxWidth="sm">
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{
+          mt: 3,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center', // 중앙 정렬
+          textAlign: 'center', // 텍스트 중앙 정렬
+        }}
+      >
+        <Typography variant="h4" gutterBottom>
+          {initialValues.id ? 'Update Board' : 'Create Board'}
+        </Typography>
+        <TextField
+          label="Board Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          fullWidth
+          margin="normal"
+        />
+        <Button variant="contained" color="primary" type="submit" fullWidth>
+          {initialValues.id ? 'Update Board' : 'Create Board'}
+        </Button>
+      </Box>
+    </Container>
   );
 }
-
-const Form = styled.form`
-  max-width: 600px;
-  margin: 0 auto;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const Label = styled.label`
-  display: block;
-  margin-bottom: 15px;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-`;
-
-const SubmitButton = styled.button`
-  background-color: #32CD32; /* LimeGreen */
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  &:hover {
-    background-color: #228B22; /* ForestGreen */
-  }
-`;
 
 export default BoardForm;

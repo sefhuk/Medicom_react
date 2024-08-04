@@ -5,6 +5,7 @@ import PostList from '../../components/board/PostList';
 import MainContainer from '../../components/global/MainContainer';
 import Pagination from '../../components/board/Pagination';
 import SearchBar from '../../components/board/SearchBar';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert } from '@mui/material';
 
 function BoardDetailPage() {
   const { id } = useParams();
@@ -13,9 +14,13 @@ function BoardDetailPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
 
   const fetchPosts = useCallback((page, query) => {
+    setLoading(true);
     axios.get(`http://localhost:8080/posts/board/${id}`, {
       params: {
         title: query,
@@ -27,13 +32,14 @@ function BoardDetailPage() {
         setPosts(response.data.content);
         setTotalPages(response.data.totalPages);
       })
-      .catch(error => console.error('Error fetching posts:', error));
+      .catch(error => setError('게시물을 가져오는 데 실패했습니다.'))
+      .finally(() => setLoading(false));
   }, [id]);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/boards/${id}`)
       .then(response => setBoard(response.data))
-      .catch(error => console.error('Error fetching board:', error));
+      .catch(error => setError('게시판 정보를 가져오는 데 실패했습니다.'));
 
     fetchPosts(currentPage, searchQuery);
   }, [id, currentPage, searchQuery, fetchPosts]);
@@ -43,17 +49,19 @@ function BoardDetailPage() {
       await axios.delete(`http://localhost:8080/boards/${id}`);
       navigate('/boards');
     } catch (error) {
-      console.error('Error deleting board:', error);
+      setError('게시판 삭제에 실패했습니다.');
+    } finally {
+      setOpenDialog(false);
     }
   };
 
   const handleSearch = (data) => {
     if (data.content.length === 0) {
-      alert("No results found");
+      alert("검색 결과가 없습니다.");
     } else {
       setPosts(data.content);
       setTotalPages(data.totalPages);
-      setCurrentPage(0); // Reset
+      setCurrentPage(0); // 페이지 리셋
     }
   };
 
@@ -61,18 +69,39 @@ function BoardDetailPage() {
     setCurrentPage(page);
   };
 
-  if (!board) return <p>Loading...</p>;
+  if (loading) return <CircularProgress />;
+  if (error) return <Alert severity="error">{error}</Alert>;
+  if (!board) return <p>게시판을 불러오는 중입니다...</p>;
 
   return (
     <MainContainer>
-      <h1>{board.name}</h1>
-      <button onClick={handleDeleteBoard}>Delete Board</button>
-      <Link to={`/boards/update/${id}`}>
-        <button>Edit Board</button>
-      </Link>
-      <SearchBar onSearch={handleSearch} searchType="posts" />
+    <br/>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+        <SearchBar onSearch={handleSearch} searchType="posts" />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h1>{board.name}</h1>
+        <div>
+          <Link to={`/boards/update/${id}`}>
+            <Button variant="contained" color="primary" style={{ marginRight: '8px' }}>UPDATE</Button>
+          </Link>
+          <Button variant="contained" color="error" onClick={() => setOpenDialog(true)}>Delete</Button>
+        </div>
+      </div>
       <PostList posts={posts} boardId={id} />
       <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
+
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+      >
+        <DialogTitle>게시판 삭제</DialogTitle>
+        <DialogContent>정말로 게시판을 삭제하시겠습니까?</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">취소</Button>
+          <Button onClick={handleDeleteBoard} color="error">삭제</Button>
+        </DialogActions>
+      </Dialog>
     </MainContainer>
   );
 }

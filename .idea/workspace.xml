@@ -6,8 +6,24 @@
   <component name="ChangeListManager">
     <list default="true" id="cd04ed95-9a52-4e1e-8f12-9296a9941ca8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Nav.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/BoardForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/BoardForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/BoardList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/BoardList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/CommentList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/CommentList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/CommentPagination.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/CommentPagination.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/CreatePostForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/CreatePostForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/Pagination.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/Pagination.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/PostList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/PostList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/ReplyList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/ReplyList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/SearchBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/SearchBar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/UpdatePostForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/UpdatePostForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/global/MainContainer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/global/MainContainer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/BoardDetailPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/BoardDetailPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/BoardListPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/BoardListPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/CreateBoardPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/CreateBoardPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/CreatePostPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/CreatePostPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/PostDetailPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/PostDetailPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/UpdateBoardPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/UpdateBoardPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/UpdatePostPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/UpdatePostPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

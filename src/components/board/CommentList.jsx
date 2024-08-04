@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import { Box, Button, TextField, Typography, List, ListItem, IconButton } from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon, Reply as ReplyIcon } from '@mui/icons-material';
 import ReplyList from './ReplyList';
 
 function CommentList({ comments, onDelete, onUpdate, onReply }) {
@@ -19,6 +20,11 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
     setEditContent('');
   };
 
+  const handleCancelEdit = () => {
+    setEditCommentId(null);
+    setEditContent('');
+  };
+
   const handleReplyClick = (comment) => {
     setReplyCommentId(comment.id);
     setReplyContent('');
@@ -30,76 +36,87 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
     setReplyContent('');
   };
 
+  const handleCancelReply = () => {
+    setReplyCommentId(null);
+    setReplyContent('');
+  };
+
   return (
-    <CommentListContainer>
-      <CommentsUl>
+    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 2 }}>
+      <List>
         {comments.map(comment => (
-          <CommentListItem key={comment.id}>
-            {editCommentId === comment.id ? (
-              <div>
-                <input
-                  type="text"
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
+          <ListItem
+            key={comment.id}
+            sx={{ mb: 2, bgcolor: '#f9f9f9', borderRadius: 1, p: 2, border: '1px solid #ddd' }}
+          >
+            <Box sx={{ flex: 1 }}>
+              {editCommentId === comment.id ? (
+                <Box>
+                  <TextField
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                    margin="normal"
+                  />
+                  <Button onClick={handleUpdate} variant="contained" color="primary">
+                    Update
+                  </Button>
+                  <Button onClick={handleCancelEdit} variant="outlined" color="secondary">
+                    Cancel
+                  </Button>
+                </Box>
+              ) : (
+                <Box>
+                  <Typography variant="body1" gutterBottom>
+                    {comment.content}
+                  </Typography>
+                  <IconButton onClick={() => handleEditClick(comment)} color="primary">
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => onDelete(comment.id)} color="error">
+                    <DeleteIcon />
+                  </IconButton>
+                  {comment.parentId === null && (
+                    <IconButton onClick={() => handleReplyClick(comment)} color="info">
+                      <ReplyIcon />
+                    </IconButton>
+                  )}
+                </Box>
+              )}
+              {replyCommentId === comment.id && (
+                <Box sx={{ mt: 2 }}>
+                  <TextField
+                    value={replyContent}
+                    onChange={(e) => setReplyContent(e.target.value)}
+                    fullWidth
+                    variant="outlined"
+                    margin="normal"
+                    placeholder="Add a reply..."
+                  />
+                  <Button onClick={handleReply} variant="contained" color="primary">
+                    Add Reply
+                  </Button>
+                  <Button onClick={handleCancelReply} variant="outlined" color="secondary">
+                    Cancel
+                  </Button>
+                </Box>
+              )}
+              {comment.replies && comment.replies.length > 0 && (
+                <ReplyList
+                  replies={comment.replies}
+                  onDelete={onDelete}
+                  onUpdate={onUpdate}
+                  onReply={onReply}
+                  parentId={comment.id}
                 />
-                <button onClick={handleUpdate}>Update</button>
-              </div>
-            ) : (
-              <>
-                <CommentContent>{comment.content}</CommentContent>
-                <button onClick={() => handleEditClick(comment)}>Edit</button>
-                <button onClick={() => onDelete(comment.id)}>Delete</button>
-                {comment.parentId === null && (
-                  <button onClick={() => handleReplyClick(comment)}>Reply</button>
-                )}
-              </>
-            )}
-            {replyCommentId === comment.id && (
-              <div>
-                <input
-                  type="text"
-                  value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                />
-                <button onClick={handleReply}>Add Reply</button>
-              </div>
-            )}
-            {comment.replies && comment.replies.length > 0 && (
-              <ReplyList
-                replies={comment.replies}
-                onDelete={onDelete}
-                onUpdate={onUpdate}
-                onReply={onReply}
-                parentId={comment.id}
-              />
-            )}
-          </CommentListItem>
+              )}
+            </Box>
+          </ListItem>
         ))}
-      </CommentsUl>
-    </CommentListContainer>
+      </List>
+    </Box>
   );
 }
-
-const CommentListContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const CommentsUl = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const CommentListItem = styled.li`
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-`;
-
-const CommentContent = styled.div`
-  margin-bottom: 10px;
-`;
 
 export default CommentList;

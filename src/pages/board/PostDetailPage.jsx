@@ -4,6 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import CommentList from '../../components/board/CommentList';
 import Pagination from '../../components/board/CommentPagination';
 import MainContainer from '../../components/global/MainContainer';
+import { Button, CircularProgress, Alert, TextField, Typography, Box } from '@mui/material';
 
 function PostDetailPage() {
   const { id } = useParams();
@@ -12,9 +13,15 @@ function PostDetailPage() {
   const [commentText, setCommentText] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // 새 상태 추가: 게시판 ID 저장
+  const [boardId, setBoardId] = useState(null);
+
   const fetchComments = useCallback((page) => {
+    setLoading(true);
     axios.get(`http://localhost:8080/comments/post/${id}?page=${page}&size=6`)
       .then(response => {
         const sortedComments = response.data.content.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
@@ -22,16 +29,17 @@ function PostDetailPage() {
         setTotalPages(response.data.totalPages);
         setCurrentPage(page);
       })
-      .catch(error => console.error('댓글 가져오기 오류:', error));
+      .catch(error => setError('댓글을 가져오는 데 실패했습니다.'))
+      .finally(() => setLoading(false));
   }, [id]);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/posts/${id}`)
       .then(response => {
-        console.log('Fetched post data:', response.data);
         setPost(response.data);
+        setBoardId(response.data.boardId); // 게시판 ID 저장
       })
-      .catch(error => console.error('포스트 가져오기 오류:', error));
+      .catch(error => setError('포스트를 가져오는 데 실패했습니다.'));
 
     fetchComments(0);
   }, [id, fetchComments]);
@@ -40,30 +48,31 @@ function PostDetailPage() {
     e.preventDefault();
     axios.post('http://localhost:8080/comments', { postId: id, content: commentText })
       .then(response => {
-        console.log('New comment added:', response.data);
         setComments([...comments, response.data]);
         setCommentText('');
       })
-      .catch(error => console.error('댓글 추가 오류:', error));
+      .catch(error => setError('댓글을 추가하는 데 실패했습니다.'));
   };
 
   const handleDeletePost = async () => {
     try {
       await axios.delete(`http://localhost:8080/posts/${id}`);
-      console.log('Post deleted successfully');
-      navigate('/boards');
+      if (boardId) {
+        navigate(`/boards/${boardId}`); // 게시판 상세 페이지로 이동
+      } else {
+        navigate('/boards'); // 게시판 ID가 없는 경우 기본 페이지로 이동
+      }
     } catch (error) {
-      console.error('포스트 삭제 오류:', error);
+      setError('포스트 삭제에 실패했습니다.');
     }
   };
 
   const handleDeleteComment = async (commentId) => {
     try {
       await axios.delete(`http://localhost:8080/comments/${commentId}`);
-      console.log('Comment deleted successfully:', commentId);
       setComments(comments.filter(comment => comment.id !== commentId));
     } catch (error) {
-      console.error('댓글 삭제 오류:', error);
+      setError('댓글 삭제에 실패했습니다.');
     }
   };
 
@@ -73,10 +82,9 @@ function PostDetailPage() {
         postId: id,
         content: content,
       });
-      console.log('Comment updated successfully:', response.data);
       setComments(comments.map(comment => comment.id === commentId ? response.data : comment));
     } catch (error) {
-      console.error('댓글 업데이트 오류:', error);
+      setError('댓글 업데이트에 실패했습니다.');
     }
   };
 
@@ -87,7 +95,6 @@ function PostDetailPage() {
         content: content,
         parentId: parentId
       });
-      console.log('Reply added successfully:', response.data);
       setComments(comments.map(comment => {
         if (comment.id === parentId) {
           return {
@@ -98,7 +105,7 @@ function PostDetailPage() {
         return comment;
       }));
     } catch (error) {
-      console.error('답글 추가 오류:', error);
+      setError('답글 추가에 실패했습니다.');
     }
   };
 
@@ -106,43 +113,56 @@ function PostDetailPage() {
     fetchComments(page);
   };
 
-  if (!post) return <p>Loading...</p>;
+  if (loading) return <CircularProgress />;
+  if (error) return <Alert severity="error">{error}</Alert>;
+  if (!post) return <p>포스트를 불러오는 중입니다...</p>;
 
   return (
     <MainContainer>
-      <div>
-        <h1>{post.title}</h1>
-        <p>{post.content}</p>
-        {post.imageUrls && post.imageUrls.length > 0 && (
-          <img
-            src={post.imageUrls[0].link} // 첫 번째 이미지 링크를 사용
-            alt="Post"
-            style={{ maxWidth: '100%', height: 'auto' }}
-          />
-        )}
+      <Box sx={{ textAlign: 'center', mb: 2 }}>
+        <Typography variant="h4">{post.title}</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Link to={`/posts/update/${id}`}>
-          <button>Edit Post</button>
+          <Button variant="contained" color="primary" sx={{ mr: 1 }}>UPDATE</Button>
         </Link>
-        <button onClick={handleDeletePost}>Delete Post</button>
-        <form onSubmit={handleCommentSubmit}>
-          <label>
-            Add Comment:
-            <textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} />
-          </label>
-          <button type="submit">Add Comment</button>
-        </form>
-        <CommentList
-          comments={comments}
-          onDelete={handleDeleteComment}
-          onUpdate={handleUpdateComment}
-          onReply={handleReplyComment}
+        <Button variant="contained" color="error" onClick={handleDeletePost}>DELETE</Button>
+      </Box>
+      <Typography variant="body1" paragraph>
+        {post.content}
+      </Typography>
+      {post.imageUrls && post.imageUrls.length > 0 && (
+        <img
+          src={post.imageUrls[0].link} // 첫 번째 이미지 링크를 사용
+          alt="image"
+          style={{ maxWidth: '100%', height: 'auto', marginTop: '16px' }}
         />
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
+      )}
+      <form onSubmit={handleCommentSubmit}>
+        <TextField
+          label="Add Comment..."
+          multiline
+          rows={2}
+          variant="outlined"
+          fullWidth
+          value={commentText}
+          onChange={(e) => setCommentText(e.target.value)}
         />
-      </div>
+        <Button type="submit" variant="contained" color="primary" style={{ marginTop: '16px' }}>
+          Comment
+        </Button>
+      </form>
+      <CommentList
+        comments={comments}
+        onDelete={handleDeleteComment}
+        onUpdate={handleUpdateComment}
+        onReply={handleReplyComment}
+      />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </MainContainer>
   );
 }

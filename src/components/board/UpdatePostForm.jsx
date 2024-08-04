@@ -1,6 +1,5 @@
-// UpdatePostForm.js
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import { TextField, Button, Box, Typography } from '@mui/material';
 
 function UpdatePostForm({ post, onUpdate }) {
   const [title, setTitle] = useState(post.title);
@@ -35,65 +34,61 @@ function UpdatePostForm({ post, onUpdate }) {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Label>
-        Title:
-        <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-      </Label>
-      <Label>
-        Content:
-        <TextArea value={content} onChange={(e) => setContent(e.target.value)} />
-      </Label>
-      <Label>
-        Image:
-        <Input type="file" onChange={handleImageChange} />
-        {previewUrl && <img src={previewUrl} alt="Image Preview" style={{ maxWidth: '100%', height: 'auto' }} />}
-      </Label>
-      <SubmitButton type="submit">Update Post</SubmitButton>
-    </Form>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        maxWidth: 600,
+        mx: 'auto',
+        p: 3,
+        backgroundColor: '#fff',
+        borderRadius: 2,
+        boxShadow: 3,
+        textAlign: 'center',
+        mt: 4,
+      }}
+    >
+      <Typography variant="h4" gutterBottom>Update Post</Typography>
+      <TextField
+        variant="outlined"
+        fullWidth
+        label="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        variant="outlined"
+        fullWidth
+        multiline
+        rows={4}
+        label="Content"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        sx={{ mb: 2 }}
+      />
+      <Button
+        variant="contained"
+        component="label"
+        sx={{ mb: 2, display: 'block', mx: 'auto' }}
+      >
+        Upload Image
+        <input
+          type="file"
+          hidden
+          onChange={handleImageChange}
+        />
+      </Button>
+      {previewUrl && (
+        <Box sx={{ mb: 2 }}>
+          <img src={previewUrl} alt="Image Preview" style={{ maxWidth: '100%', height: 'auto', borderRadius: 2 }} />
+        </Box>
+      )}
+      <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
+        Update Post
+      </Button>
+    </Box>
   );
 }
-
-const Form = styled.form`
-  max-width: 600px;
-  margin: 0 auto;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const Label = styled.label`
-  display: block;
-  margin-bottom: 15px;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-`;
-
-const TextArea = styled.textarea`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  min-height: 150px;
-`;
-
-const SubmitButton = styled.button`
-  background-color: #ff6347; /* Tomato */
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  &:hover {
-    background-color: #e5533f; /* Darker Tomato */
-  }
-`;
 
 export default UpdatePostForm;
