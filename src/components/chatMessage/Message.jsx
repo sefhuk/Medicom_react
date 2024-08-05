@@ -65,7 +65,15 @@ function Message({ data, repeat, self }) {
       <Container self={self}>
         {self || (
           <TopContainer repeat={repeat} self={self}>
-            {repeat || <ProfileImage user={data.user} insert={false} self={self} size={'3rem'} />}
+            {repeat || (
+              <ProfileImage
+                user={data.user}
+                insert={false}
+                self={self}
+                size={'3rem'}
+                doctorProfile={data.doctorProfile}
+              />
+            )}
             {repeat || <Author self={self}>{data.user.name}</Author>}
           </TopContainer>
         )}
