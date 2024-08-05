@@ -6,14 +6,14 @@ import MainContainer from '../../components/global/MainContainer';
 const getDistance = (lat1, lon1, lat2, lon2) => {
   const toRad = (value) => value * Math.PI / 180;
   const R = 6371; // 지구의 반경 (킬로미터)
-  
+
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
             Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+  return Math.abs(R * c); // 절댓값 적용
 };
 
 const HospitalList = () => {
@@ -99,7 +99,6 @@ const HospitalList = () => {
     }
   }, [mapLoaded, selectedHospital]);
 
-  // 현재 위치를 가져와서 상태에 저장
   useEffect(() => {
     const getCurrentLocation = () => {
       if (navigator.geolocation) {
@@ -121,6 +120,18 @@ const HospitalList = () => {
     getCurrentLocation();
   }, []);
 
+  // useEffect(() => {
+  //   const getCurrentLocation = () => {
+  //     // 임의의 위치 설정
+  //     const latitude = 37.5665;
+  //     const longitude = 126.9780;
+  //     console.log(`임의의 위치 - 위도: ${latitude}, 경도: ${longitude}`);
+  //     setCurrentLocation({ latitude, longitude });
+  //   };
+
+  //   getCurrentLocation();
+  // }, []);
+
   useEffect(() => {
     const fetchHospitals = async () => {
       if (!currentLocation) return;
@@ -137,7 +148,15 @@ const HospitalList = () => {
 
         console.log('API 응답 데이터:', response.data);
 
-        setHospitals(response.data.content);
+        // 거리 계산 후 정렬
+        const hospitalsWithDistance = response.data.content.map(hospital => ({
+          ...hospital,
+          distance: getDistance(currentLocation.latitude, currentLocation.longitude, hospital.latitude, hospital.longitude),
+        }));
+
+        const sortedHospitals = hospitalsWithDistance.sort((a, b) => a.distance - b.distance);
+
+        setHospitals(sortedHospitals);
         setTotalPages(response.data.totalPages || 0);
       } catch (error) {
         setError(error);
@@ -150,12 +169,11 @@ const HospitalList = () => {
     fetchHospitals();
   }, [searchParams, currentPage, currentLocation]);
 
-  // 리뷰 로드 함수 추가
   const fetchReviews = async (hospitalId, page) => {
     setReviewsLoading(prev => ({ ...prev, [hospitalId]: true }));
     try {
       const response = await axios.get(`http://localhost:8080/api/hospitals/${hospitalId}/reviews`, {
-        params: { page, size: pageSize }, // 페이지 크기는 조정하기
+        params: { page, size: pageSize },
       });
       
       setHospitalReviews(prev => ({
@@ -170,13 +188,11 @@ const HospitalList = () => {
     }
   };
 
-  // 리뷰 더보기 버튼 핸들러 추가
   const handleLoadMoreReviews = (hospitalId) => {
     const nextPage = (reviewsPage[hospitalId] || 0) + 1;
     fetchReviews(hospitalId, nextPage);
   };
 
-  // 리뷰 렌더링 함수
   const renderReviews = (hospitalId) => {
     const reviews = hospitalReviews[hospitalId] || [];
     const loading = reviewsLoading[hospitalId];
@@ -301,9 +317,9 @@ const HospitalList = () => {
           {hospitals.length > 0 ? (
             hospitals.map(hospital => (
               <li key={hospital.id}>
-                <strong>{hospital.name}</strong> - {hospital.district} {hospital.subDistrict} - {hospital.telephoneNumber} - 
-                {currentLocation && hospital.latitude !== null && hospital.longitude !== null
-                  ? `${getDistance(currentLocation.latitude, currentLocation.longitude, hospital.latitude, hospital.longitude).toFixed(2)} km`
+                <strong>{hospital.name}</strong><br />{hospital.district} {hospital.subDistrict} - {hospital.telephoneNumber} &nbsp;
+                {currentLocation && hospital.distance !== null
+                  ? `${Math.abs(hospital.distance).toFixed(2)} km`
                   : '거리 정보를 가져올 수 없습니다.'}
                 <ul>
                   {hospital.departments && hospital.departments.length > 0 ? (
@@ -322,7 +338,7 @@ const HospitalList = () => {
               </li>
             ))
           ) : (
-            <p>No hospitals found</p>
+            <p>병원이 없습니다</p>
           )}
         </ul>
         <div className="page-buttons">
