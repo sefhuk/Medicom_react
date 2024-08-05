@@ -1,5 +1,8 @@
+// UpdatePostForm.js
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
+import { storage } from '../../firebase'; // Firebase 설정 파일 가져오기
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 function UpdatePostForm({ post, onUpdate }) {
   const [title, setTitle] = useState(post.title);
@@ -17,7 +20,6 @@ function UpdatePostForm({ post, onUpdate }) {
     if (e.target.files[0]) {
       setImage(e.target.files[0]);
 
-      // 선택된 이미지 파일을 미리보기 위해 Blob URL 생성
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -27,9 +29,37 @@ function UpdatePostForm({ post, onUpdate }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleImageUpload = async () => {
+    if (!image) return null;
+
+    const storageRef = ref(storage, `images/${image.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, image);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        'state_changed',
+        null,
+        (error) => {
+          console.error('Image upload error:', error);
+          reject(error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadURL);
+        }
+      );
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedPost = { title, content, imageUrl: previewUrl }; // 수정된 정보
+    let imageUrl = previewUrl;
+
+    if (image) {
+      imageUrl = await handleImageUpload();
+    }
+
+    const updatedPost = { title, content, imageUrl };
     onUpdate(updatedPost);
   };
 

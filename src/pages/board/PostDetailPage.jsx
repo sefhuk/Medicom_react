@@ -46,6 +46,10 @@ function PostDetailPage() {
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
+    if (commentText.trim() === '') {
+      alert('댓글을 입력해주세요.');
+      return;
+    }
     axios.post('http://localhost:8080/comments', { postId: id, content: commentText })
       .then(response => {
         setComments([...comments, response.data]);
@@ -119,6 +123,7 @@ function PostDetailPage() {
 
   return (
     <MainContainer>
+    <br />
       <Box sx={{ textAlign: 'center', mb: 2 }}>
         <Typography variant="h4">{post.title}</Typography>
       </Box>

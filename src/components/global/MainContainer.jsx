@@ -8,7 +8,7 @@ function MainContainer({ children, isChat }) {
     <Container>
       <Nav />
       <Content isChat={isChat}>{children}</Content>
-      <Footer />
+
     </Container>
   );
 }
