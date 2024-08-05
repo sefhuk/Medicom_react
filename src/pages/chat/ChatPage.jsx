@@ -8,7 +8,7 @@ import SockJS from 'sockjs-client';
 import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
 import { chatRoomState, stompState, userauthState } from '../../utils/atom';
-import { Button } from '@mui/material';
+import { Button, ButtonGroup } from '@mui/material';
 
 const fetchData = async (id, setMessages, setError) => {
   try {
@@ -129,7 +129,19 @@ function ChatPage() {
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
-      <div style={{ height: '3dvh' }} />
+      <ButtonGroup
+        sx={{ width: '100%', marginTop: '10px' }}
+        variant='contained'
+        aria-label='Button group with a nested menu'
+      >
+        <Button
+          onClick={() => navigate('/chatlist')}
+          sx={{ width: '100%', fontSize: '1.2rem', backgroundColor: '#4f90de' }}
+        >
+          목록으로 돌아가기
+        </Button>
+      </ButtonGroup>
+      <div style={{ height: '1dvh' }} />
       {error && <div>{error}</div>}
       {messages &&
         messages.map((e, idx) => {
