@@ -14,10 +14,13 @@ import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
+import { useNavigate } from 'react-router';
 
 function ChatListPage() {
   const [auth] = useRecoilState(userauthState);
   const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
+
+  const navigate = useNavigate();
 
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,7 +101,17 @@ function ChatListPage() {
     <MainContainer>
       <Wrapper>
         <ButtonGroup
-          sx={{ width: '100%' }}
+          sx={{ width: '28%' }}
+          variant='contained'
+          ref={anchorRef}
+          aria-label='Button group with a nested menu'
+        >
+          <Button onClick={() => navigate('/chat/new')} sx={{ width: '100%', fontSize: '1.2rem' }}>
+            새로운 상담
+          </Button>
+        </ButtonGroup>
+        <ButtonGroup
+          sx={{ width: '70%' }}
           variant='contained'
           ref={anchorRef}
           aria-label='Button group with a nested menu'
@@ -116,6 +129,7 @@ function ChatListPage() {
             <ArrowDropDownIcon />
           </Button>
         </ButtonGroup>
+
         <Popper
           sx={{
             zIndex: 1
