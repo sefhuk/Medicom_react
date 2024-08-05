@@ -3,10 +3,13 @@ import { AppBar, Toolbar, Typography, Button} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { authState, userauthState } from '../utils/atom';
+import { userauthState } from '../utils/atom';
 import { deleteCookie } from '../utils/cookies';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
+import HttpsIcon from '@mui/icons-material/Https';
+import { axiosInstance } from '../utils/axios';
+
 
 
 const Nav = () => {
@@ -18,9 +21,10 @@ const Nav = () => {
     navigate('/login');
   };
 
-  const handleLogoutClick = () => {
+  const handleLogoutClick = async () => {
     setAuthState({ isLoggedIn: false });
     localStorage.removeItem('token');
+    await axiosInstance.post('/user-logout');
     deleteCookie('refreshToken');
     navigate('/');
   };
@@ -28,16 +32,27 @@ const Nav = () => {
   const LoginIcon = () => {
     return(
       <>
-      <IconButton size='large'>
-        <AccountCircleIcon/>
-      </IconButton>
-      <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
-    </>    
+        {auth.role==='ADMIN' ? (
+          <IconButton>
+            <HttpsIcon fontSize='large' onClick={OnClickAdminPage}></HttpsIcon>
+          </IconButton>
+        ) : (<></>)}
+        <IconButton onClick={OnClickMyPage}>
+          <AccountCircleIcon fontSize='large'/>
+        </IconButton>
+        <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
+      </>
     );
   }
 
-  const OnClicMyPage = () => {
-    navigate('my-page');
+  const OnClickMyPage = () => {
+    navigate('/my-page');
+
+  }
+
+  const OnClickAdminPage = () => {
+    navigate('/admin-page');
+
   }
 
 

@@ -1,9 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ProfileImage from './ProfileImage';
 import styled from 'styled-components';
 import { fromatDate, isToday } from '../../utils/time';
+import { Box, Button, Modal } from '@mui/material';
+import { useRecoilState } from 'recoil';
+import { userauthState } from '../../utils/atom';
+import EditModal from './modal/EditModal';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4
+};
 
 function Message({ data, repeat, self }) {
+  const [auth] = useRecoilState(userauthState);
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    if (auth.userId !== Number(data.user.id)) return;
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
+
   const messageTime = () => {
     let date = fromatDate(new Date(data.createdAt));
 
@@ -15,26 +40,62 @@ function Message({ data, repeat, self }) {
     return date;
   };
 
+  const requestHospital = async () => {
+    alert('API 연결 전');
+    // try {
+    //   await axiosInstance.get('');
+    // } catch (err) {
+    //   alert(err);
+    // }
+  };
+
   return (
-    <Container self={self}>
-      {self || (
-        <TopContainer repeat={repeat} self={self}>
-          {repeat || <ProfileImage url={data.user.image} insert={false} self={self} />}
-          {repeat || <Author self={self}>{data.user.userName}</Author>}
-        </TopContainer>
-      )}
-      <BottomContainer self={self}>
-        <Content self={self}>
-          {data.content.split('\\n').map(e => (
-            <span>
-              {e}
-              <br />
-            </span>
-          ))}
-        </Content>
-        <Time self={self}>{messageTime()}</Time>
-      </BottomContainer>
-    </Container>
+    <>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='parent-modal-title'
+        aria-describedby='parent-modal-description'
+      >
+        <Box sx={{ ...style, width: '60%' }}>
+          <h2 id='parent-modal-title'>메시지 옵션</h2>
+          <EditModal msgId={data.id} msg={data.content} setOpens={setOpen} />
+        </Box>
+      </Modal>
+      <Container self={self}>
+        {self || (
+          <TopContainer repeat={repeat} self={self}>
+            {repeat || <ProfileImage user={data.user} insert={false} self={self} size={'3rem'} />}
+            {repeat || <Author self={self}>{data.user.name}</Author>}
+          </TopContainer>
+        )}
+        <BottomContainer self={self}>
+          <Content self={self} onDoubleClick={handleOpen}>
+            {data.content.startsWith('dpt: ') ? (
+              <Suggestion>
+                <p style={{ margin: '4px 0 20px' }}>진료과 추천 정보가 제공되었습니다</p>
+                <Button
+                  variant='contained'
+                  onClick={requestHospital}
+                  sx={{ width: '40%', backgroundColor: '#272424', fontSize: '1rem' }}
+                >
+                  {' '}
+                  {data.content.split(' ')[1]}
+                </Button>
+              </Suggestion>
+            ) : (
+              data.content.split('\\n').map(e => (
+                <span>
+                  {e}
+                  <br />
+                </span>
+              ))
+            )}
+          </Content>
+          <Time self={self}>{messageTime()}</Time>
+        </BottomContainer>
+      </Container>
+    </>
   );
 }
 
@@ -49,7 +110,8 @@ const TopContainer = styled.div`
   display: flex;
   justify-content: ${({ self }) => (self ? 'flex-end' : 'flex-start')};
   max-width: 100%;
-  margin-left: ${({ repeat }) => (repeat ? '3.6rem' : '0px')};
+  margin-left: ${({ repeat }) => (repeat ? '3.6rem' : '0.5rem')};
+  margin-bottom: 10px;
 `;
 
 const BottomContainer = styled.div`
@@ -59,20 +121,26 @@ const BottomContainer = styled.div`
   height: 100%;
   margin-right: ${({ self }) => (self ? '0px' : '3rem')};
   margin-left: ${({ self }) => (self ? '0px' : '3rem')};
+  @media (min-width: 481px) {
+    font-size: 2rem;
+    line-height: 3dvh;
+  }
 `;
 
 const Author = styled.p`
-  margin-top: 0.6rem;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
   order: ${({ self }) => (self ? 1 : 2)};
+  @media (min-width: 481px) {
+    font-size: 1.4rem;
+  }
 `;
 
 const Content = styled.div`
-  background-color: skyblue;
+  background-color: ${({ self }) => (self ? '#3399ff' : '#99ddff')};
   padding: 10px;
   border-radius: 10px;
-  margin-right: 10px;
+  margin-right: ${({ self }) => (self ? '10px' : '0px')};
   order: ${({ self }) => (self ? 2 : 1)};
   white-space: pre-line;
   max-width: 70%;
@@ -80,8 +148,17 @@ const Content = styled.div`
   overflow: hidden;
 `;
 
+const Suggestion = styled.p`
+  display: flex;
+  flex-direction: column;
+  @media (min-width: 481px) {
+  }
+`;
+
 const Time = styled.p`
   order: ${({ self }) => (self ? 1 : 2)};
+  margin-top: 0px;
+  margin-bottom: 0px;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
 `;

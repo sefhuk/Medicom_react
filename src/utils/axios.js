@@ -14,10 +14,10 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axiosInstance.get('/refresh-token');
-        const newToken = data.token;
+        const newToken = data.headers['authorization'];
         localStorage.setItem('token', newToken);
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+        axiosInstance.defaults.headers.common['Authorization'] = `${newToken}`;
+        originalRequest.headers['Authorization'] = `${newToken}`;
         return axiosInstance(originalRequest);
       } catch (e) {
         return Promise.reject(e);
@@ -45,6 +45,40 @@ export const userLogin = async (email, password) => {
       throw error;
     }
 };
+
+export const fetchUserReviews = async (userId) => {
+  try {
+    const response = await axiosInstance.get(`/review/users/${userId}`);
+    const reviews = response.data;
+    const reviewsWithHospitalName = await Promise.all(
+      reviews.map(async (review) => {
+        const hospitalResponse = await axiosInstance.get(`/api/hospitals/${review.hospitalId}`);
+        const hospitalName = hospitalResponse.data.name;
+        return {
+          ...review,
+          hospitalName
+        };
+      })
+    );
+    return reviewsWithHospitalName;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const userInformation = async (token) => {
+  try {
+    const response = await axiosInstance.get('/users/my-page', {
+      headers: {
+        Authorization: `${token}`
+      }
+    });
+    const username = response.data.name;
+    return username;
+  }catch (error){
+    console.error(error);
+  }
+}
 
 
 

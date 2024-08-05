@@ -14,6 +14,8 @@ const SocialLoginSuccess = () => {
     const role = new URLSearchParams(location.search).get('role');
     if (token) {
       localStorage.setItem('token', token);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('role', role);
       setAuthState({ isLoggedIn: true, userId, role });
       navigate('/');
     } else {
