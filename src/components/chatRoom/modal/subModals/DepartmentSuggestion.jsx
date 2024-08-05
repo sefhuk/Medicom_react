@@ -101,7 +101,6 @@ function DepartmentSuggestion({ sendMessage, setOpens }) {
   const fetcDepartments = async () => {
     try {
       const response = await axiosInstance.get('/api/departments');
-      console.log(typeof response.data);
       setDepartments(response.data);
     } catch (err) {
       alert(err);

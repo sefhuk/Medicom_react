@@ -18,14 +18,12 @@ function InsertMessage() {
       const response = await axiosInstance.post(`/chatrooms`, {
         chatRoomType
       });
-      console.log(response);
       setChatRoom(e => ({
         ...e,
         rooms: { ...e.rooms, [`ch_${response.data.id}`]: response.data }
       }));
       navigate(`/chat/${response.data.id}/messages`);
     } catch (err) {
-      console.log(err);
       alert(err.response.data.message);
       navigate('/');
     }

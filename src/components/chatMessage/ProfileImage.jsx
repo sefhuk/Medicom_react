@@ -27,6 +27,8 @@ function ProfileImage(props) {
   };
 
   const handleImageClick = () => {
+    if (props.hover === 'no') return;
+
     if (props.user) setOpen(true);
   };
 
@@ -39,7 +41,11 @@ function ProfileImage(props) {
         aria-describedby='child-modal-description'
       >
         <Box sx={{ ...style, width: '50%', maxWidth: '600px' }}>
-          <SimpleProfile imgUrl={props.url} user={props.user} />
+          <SimpleProfile
+            imgUrl={props.url}
+            user={props.user}
+            doctorProfile={props?.doctorProfile}
+          />
         </Box>
       </Modal>
       <Image
