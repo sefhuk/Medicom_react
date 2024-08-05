@@ -71,14 +71,14 @@ function InsertMessage() {
             고객 센터
           </Button>
         )}
-        <Button
+        {/* <Button
           type='AI'
           variant='contained'
           style={{ marginBottom: '4px' }}
           onClick={() => alert('API 연결 전')}
         >
           AI 상담
-        </Button>
+        </Button> */}
       </ButtonWrapper>
     </Container>
   );
