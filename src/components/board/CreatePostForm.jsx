@@ -13,13 +13,30 @@ function CreatePostForm({ onSubmit }) {
     if (e.target.files[0]) {
       const file = e.target.files[0];
       setImage(file);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+      updatePreviewUrl(file);
     }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      setImage(file);
+      updatePreviewUrl(file);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const updatePreviewUrl = (file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
@@ -48,8 +65,12 @@ function CreatePostForm({ onSubmit }) {
           mt: 3,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center', // 중앙 정렬
-          textAlign: 'center', // 텍스트 중앙 정렬
+          alignItems: 'center',
+          textAlign: 'center',
+          backgroundColor: '#fff',
+          borderRadius: 2,
+          boxShadow: 3,
+          p: 3,
         }}
       >
         <Typography variant="h4" gutterBottom>Create Post</Typography>
@@ -61,32 +82,49 @@ function CreatePostForm({ onSubmit }) {
           margin="normal"
         />
         <TextField
-          label="Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          variant="outlined"
           fullWidth
           multiline
           rows={4}
-          margin="normal"
+          label="Content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          sx={{ mb: 2 }}
         />
-        <Button
-          variant="contained"
-          component="label"
-          sx={{ mt: 2, mb: 2 }}
+        <Box
+          sx={{
+            border: '2px dashed grey',
+            borderRadius: 1,
+            p: 2,
+            textAlign: 'center',
+            mb: 2,
+            width: '100%',
+            cursor: 'pointer',
+            position: 'relative'
+          }}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
         >
-          Upload Image
-          <input
-            type="file"
-            hidden
-            onChange={handleImageChange}
-          />
-        </Button>
+          <Typography>Drag & Drop your image here or click to select</Typography>
+          <Button
+            variant="contained"
+            component="label"
+            sx={{ mt: 2 }}
+          >
+            Upload Image
+            <input
+              type="file"
+              hidden
+              onChange={handleImageChange}
+            />
+          </Button>
+        </Box>
         {previewUrl && (
-          <Box sx={{ mt: 2 }}>
-            <img src={previewUrl} alt="Image Preview" style={{ maxWidth: '100%', height: 'auto' }} />
+          <Box sx={{ mb: 2 }}>
+            <img src={previewUrl} alt="Image Preview" style={{ maxWidth: '100%', height: 'auto', borderRadius: 2 }} />
           </Box>
         )}
-        <Button variant="contained" color="primary" type="submit" fullWidth>
+        <Button variant="contained" color="primary" type="submit" fullWidth sx={{ mt: 2 }}>
           Create Post
         </Button>
       </Box>

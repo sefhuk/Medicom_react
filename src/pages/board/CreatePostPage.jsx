@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CreatePostForm from '../../components/board/CreatePostForm';
 import MainContainer from '../../components/global/MainContainer';
-import { Button, CircularProgress } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 
 function CreatePostPage() {
   const { boardId } = useParams();
@@ -24,8 +24,11 @@ function CreatePostPage() {
 
   return (
     <MainContainer>
-      {loading ? <CircularProgress /> : <CreatePostForm onSubmit={handleSubmit} />}
-    <br />
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <CreatePostForm onSubmit={handleSubmit} />
+      )}
     </MainContainer>
   );
 }
