@@ -1,44 +1,71 @@
-import React from 'react';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import MainContainer from '../components/global/MainContainer';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import Stack from '@mui/material/Stack';
 import { useNavigate } from 'react-router';
+import { Container, Typography, Box } from '@mui/material';
+import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
+import LocationModal from './LocationModal';
 
 function MainPage() {
+  const [open, setOpen] = useState(false);
+  const [location, setLocation] = useState('위치를 설정하세요'); // 기본 텍스트
 
-  const navigate=useNavigate();
+  const handleOpenModal = () => setOpen(true);
+  const handleCloseModal = () => setOpen(false);
+  const handleLocationSet = ({ lat, lng }) => {
+    // 위도와 경도를 주소로 변환하는 API 호출 필요
+    // 여기서는 단순히 '위도, 경도' 형태로 표시
+    setLocation(`위도: ${lat}, 경도: ${lng}`);
+  };
 
-  /**
-   * mui 테스트용
-   */
-  return (<MainContainer>
-    <Container>
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          글자 테스트
-        </Typography>
-        <Button onClick={(e) => navigate('/chat/new')} variant="contained" color="primary" sx={{ mb: 2 }}>
-          버튼 테스트
-        </Button>
-        <Button onClick={(e) => navigate('/chatlist')} variant="contained" color="primary" sx={{ mb: 2 }}>
-          버튼 테스트
-        </Button>
-        <Stack spacing={2} sx={{ width: 300 }}>
-          <Autocomplete
-            id="combobox"
-            options={['1번 선택', '2번 선택', '3번 선택']}
-            renderInput={(params) => <TextField {...params} label="콤보박스" />}
-          />
-        </Stack>
-      </Box>
-    </Container>
+  const CustomBox = (props) => (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        my: 2,
+        ...props.sx,
+      }}
+      {...props}
+    />
+  );
 
-  </MainContainer>);
+  return (
+    <MainContainer>
+      <Container>
+        {/* 최상단 */}
+        <CustomBox onClick={handleOpenModal}>
+          <MyLocationOutlinedIcon sx={{ marginRight: 2 }} />
+          <Typography variant="h6">{location}</Typography>
+        </CustomBox>
+        
+        {/* 배너 */}
+        <CustomBox>
+          <Box sx={{ width: '100%', height: '20vh', bgcolor: 'lightgrey' }}>
+            <Typography>배너</Typography>
+          </Box>
+        </CustomBox>
+
+        {/* 진단 */}
+        <CustomBox>
+          <Box sx={{ flex: 1, height: '15vh', bgcolor: 'lightgrey', marginRight: 1 }}>
+            <Typography>내용 1</Typography>
+          </Box>
+          <Box sx={{ flex: 1, height: '15vh', bgcolor: 'lightgrey', marginLeft: 1 }}>
+            <Typography>내용 2</Typography>
+          </Box>
+        </CustomBox>
+
+      </Container>
+
+      {/* 모달 */}
+      <LocationModal
+        open={open}
+        onClose={handleCloseModal}
+        onLocationSet={handleLocationSet}
+      />
+    </MainContainer>
+  );
 }
 
 export default MainPage;
