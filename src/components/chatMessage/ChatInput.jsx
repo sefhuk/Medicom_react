@@ -119,7 +119,6 @@ const Input = styled.textarea`
   white-space: pre-line;
   @media (max-width: 481px) {
     font-size: 1.5rem;
-    /* padding: 1rem 15px; */
     line-height: 3dvh;
   }
 `;

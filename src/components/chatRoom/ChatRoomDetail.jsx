@@ -63,8 +63,10 @@ function ChatRoomDetail({ data, selectedIndex }) {
             </>
           ) : (
             <div style={{ display: 'flex' }}>
-              <ProfileImage user={data.user1} size={'3rem'} />
-              {data.user2 ? <ProfileImage user={data.user2} size={'3rem'} /> : null}
+              <ProfileImage user={data.user1} size={'3rem'} doctorProfile={data.doctorProfile} />
+              {data.user2 ? (
+                <ProfileImage user={data.user2} size={'3rem'} doctorProfile={data.doctorProfile} />
+              ) : null}
             </div>
           )}
         </Preview>
@@ -79,6 +81,7 @@ function ChatRoomDetail({ data, selectedIndex }) {
                 : data.user1
           }
           size={'6rem'}
+          doctorProfile={data.doctorProfile}
         />
       )}
     </Container>
