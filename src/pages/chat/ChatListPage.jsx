@@ -106,7 +106,16 @@ function ChatListPage() {
           ref={anchorRef}
           aria-label='Button group with a nested menu'
         >
-          <Button onClick={() => navigate('/chat/new')} sx={{ width: '100%', fontSize: '1.2rem' }}>
+          <Button
+            onClick={() => navigate('/chat/new')}
+            sx={{
+              width: '100%',
+              fontSize: '1.2rem',
+              '@media (max-width: 600px)': {
+                fontSize: '0.8rem'
+              }
+            }}
+          >
             새로운 상담
           </Button>
         </ButtonGroup>
@@ -116,7 +125,17 @@ function ChatListPage() {
           ref={anchorRef}
           aria-label='Button group with a nested menu'
         >
-          <Button sx={{ width: '100%', fontSize: '1.2rem' }}>{options[selectedIndex]}</Button>
+          <Button
+            sx={{
+              width: '100%',
+              fontSize: '1.2rem',
+              '@media (max-width: 600px)': {
+                fontSize: '0.8rem'
+              }
+            }}
+          >
+            {options[selectedIndex]}
+          </Button>
           <Button
             sx={{ width: '5%' }}
             size='large'
