@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, Link, useNavigate } from 'react-router-dom'; // useNavigate import 추가
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import CommentList from '../../components/board/CommentList';
 import Pagination from '../../components/board/CommentPagination';
 import MainContainer from '../../components/global/MainContainer';
@@ -8,7 +8,7 @@ import { Button, CircularProgress, Alert, TextField, Typography, Box, Dialog, Di
 
 function PostDetailPage() {
   const { id } = useParams();
-  const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 정의
+  const navigate = useNavigate(); // useNavigate 훅을 사용하여 페이지 이동
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -17,9 +17,10 @@ function PostDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [boardId, setBoardId] = useState(null);
-  const [open, setOpen] = useState(false); // 모달 열기 상태
-  const [selectedImage, setSelectedImage] = useState(''); // 선택된 이미지
+  const [open, setOpen] = useState(false); // 모달 상태
+  const [selectedImage, setSelectedImage] = useState(''); // 선택된 이미지 URL
 
+  // 댓글을 가져오는 함수
   const fetchComments = useCallback((page) => {
     setLoading(true);
     axios.get(`http://localhost:8080/comments/post/${id}?page=${page}&size=6`)
@@ -33,6 +34,7 @@ function PostDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  // 페이지 로드 시 포스트와 댓글 가져오기
   useEffect(() => {
     axios.get(`http://localhost:8080/posts/${id}`)
       .then(response => {
@@ -44,6 +46,7 @@ function PostDetailPage() {
     fetchComments(0);
   }, [id, fetchComments]);
 
+  // 댓글 추가 처리
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     if (commentText.trim() === '') {
@@ -58,6 +61,7 @@ function PostDetailPage() {
       .catch(error => setError('댓글을 추가하는 데 실패했습니다.'));
   };
 
+  // 포스트 삭제 처리
   const handleDeletePost = async () => {
     try {
       await axios.delete(`http://localhost:8080/posts/${id}`);
@@ -71,6 +75,7 @@ function PostDetailPage() {
     }
   };
 
+  // 댓글 삭제 처리
   const handleDeleteComment = async (commentId) => {
     try {
       await axios.delete(`http://localhost:8080/comments/${commentId}`);
@@ -80,6 +85,7 @@ function PostDetailPage() {
     }
   };
 
+  // 댓글 업데이트 처리
   const handleUpdateComment = async (commentId, content) => {
     try {
       const response = await axios.put(`http://localhost:8080/comments/${commentId}`, {
@@ -92,6 +98,7 @@ function PostDetailPage() {
     }
   };
 
+  // 댓글에 답글 추가 처리
   const handleReplyComment = async (parentId, content) => {
     try {
       const response = await axios.post('http://localhost:8080/comments', {
@@ -113,15 +120,18 @@ function PostDetailPage() {
     }
   };
 
+  // 페이지 변경 처리
   const handlePageChange = (page) => {
     fetchComments(page);
   };
 
+  // 이미지 클릭 시 모달 열기
   const handleImageClick = (imgLink) => {
     setSelectedImage(imgLink);
     setOpen(true);
   };
 
+  // 모달 닫기
   const handleClose = () => {
     setOpen(false);
     setSelectedImage('');
@@ -154,7 +164,7 @@ function PostDetailPage() {
               src={img.link}
               alt={`image-${index}`}
               style={{
-                width: '200px', // 조정할 수 있는 너비
+                width: '200px',
                 height: 'auto',
                 objectFit: 'cover',
                 cursor: 'pointer',
@@ -165,6 +175,7 @@ function PostDetailPage() {
           ))}
         </Box>
       )}
+      <br />
       <form onSubmit={handleCommentSubmit}>
         <TextField
           label="Add Comment..."
