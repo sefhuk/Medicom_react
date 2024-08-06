@@ -13,6 +13,10 @@ build:
     - echo 'build starts'
     - sudo apt-get update
     - sudo apt-get install npm -y
+    - sudo npm cache clean --force
+    - sudo npm install -g n
+    - sudo n stable
+    - sudo npm install -g npm
     - npm --version
     - npm install --legacy-peer-deps
 
