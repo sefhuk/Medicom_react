@@ -194,7 +194,7 @@ function ChatPage() {
           )}
         </div>
       )}
-      <div ref={tmp} />
+      <div ref={tmp} style={{ height: '3dvh' }} />
       <ChatInput
         sendMessage={sendMessage}
         enable={
