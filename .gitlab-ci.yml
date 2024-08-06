@@ -22,8 +22,6 @@ build:
 
   script:
     - npm run build
-  artifacts:
-    paths:
-      - ./build
+
   tags:
     - react
