@@ -1,25 +1,31 @@
 stages:
+  - libs
   - build
   - test
 
-job_build:
-  image: node:latest
+npm:
+  stage: libs
+  only:
+    - dev
+  cache:
+    paths:
+      - node_modules
+  script:
+    - npm install
+
+build:
   stage: build
+  only:
+    - dev
+  cache:
+    paths:
+      - dist
   before_script:
     - echo 'build starts'
-    - apt-get update
-    - apt-get install --no-install-recommends -y npm
-    - npm --version
-    - npx --version
-    - gem install dpl
-    - npm install
   script:
     - npm run build
   artifacts:
     paths:
       - ./build
-
-job_test:
-  stage: test
-  script:
-    - echo "Running tests"
+  tags:
+    - react
