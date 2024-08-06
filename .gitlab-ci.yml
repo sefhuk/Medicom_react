@@ -1,17 +1,6 @@
 stages:
-  - libs
   - build
   - test
-
-npm:
-  stage: libs
-  only:
-    - dev
-  cache:
-    paths:
-      - node_modules
-  script:
-    - npm install
 
 build:
   stage: build
@@ -22,6 +11,12 @@ build:
       - dist
   before_script:
     - echo 'build starts'
+    - sudo apt-get install npm
+    - npm --version
+    - npx --version
+    - gem install dpl
+    - npm install
+
   script:
     - npm run build
   artifacts:
