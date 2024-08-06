@@ -27,7 +27,7 @@ build:
     - echo 'build end'
   artifacts:
     paths:
-      - build/
+      - ./build/
   tags:
     - react
 
