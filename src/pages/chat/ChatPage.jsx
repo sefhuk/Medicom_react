@@ -130,79 +130,81 @@ function ChatPage() {
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
       <ButtonGroup
-        sx={{ width: '100%', marginTop: '10px' }}
+        sx={{ width: '100%', marginTop: '10px', boxShadow: 'none' }}
         variant='contained'
         aria-label='Button group with a nested menu'
       >
         <Button
           onClick={() => navigate('/chatlist')}
-          sx={{ width: '100%', fontSize: '1.2rem', backgroundColor: '#4f90de' }}
+          sx={{ width: '95%', fontSize: '1.2rem', backgroundColor: '#4f90de', margin: 'auto' }}
         >
           목록으로 돌아가기
         </Button>
       </ButtonGroup>
       <div style={{ height: '1dvh' }} />
-      {error && <div>{error}</div>}
-      {messages &&
-        messages.map((e, idx) => {
-          return e.user.id === Number(auth.userId) ? (
-            <Message
-              key={e.id}
-              self={true}
-              data={e}
-              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
-            />
-          ) : (
-            <Message
-              key={e.id}
-              self={false}
-              data={e}
-              repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
-            />
-          );
-        })}
-      {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' && (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            height: '20dvh',
-            margin: 'auto'
-          }}
-        >
+      <div style={{ overflowY: 'scroll', height: '72dvh' }}>
+        {error && <div>{error}</div>}
+        {messages &&
+          messages.map((e, idx) => {
+            return e.user.id === Number(auth.userId) ? (
+              <Message
+                key={e.id}
+                self={true}
+                data={e}
+                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+              />
+            ) : (
+              <Message
+                key={e.id}
+                self={false}
+                data={e}
+                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+              />
+            );
+          })}
+        {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' && (
           <div
             style={{
-              height: '40%',
-              fontWeight: 'bold',
-              fontSize: '1.5rem',
-              lineHeight: '10dvh',
-              textAlign: 'center'
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              height: '20dvh',
+              margin: 'auto'
             }}
           >
-            매칭을 기다리고 있습니다
-          </div>
-          {auth.role !== 'USER' && (
-            <Button
-              type='SERVICE'
-              variant='contained'
-              style={{ width: '50%', marginBottom: '4px' }}
-              onClick={acceptChatRoom}
+            <div
+              style={{
+                height: '40%',
+                fontWeight: 'bold',
+                fontSize: '1.5rem',
+                lineHeight: '10dvh',
+                textAlign: 'center'
+              }}
             >
-              채팅 수락
-            </Button>
-          )}
-        </div>
-      )}
-      <div ref={tmp} style={{ height: '3dvh' }} />
-      <ChatInput
-        sendMessage={sendMessage}
-        enable={
-          (chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId ||
-            chatRoom.rooms[`ch_${params.chatRoomId}`]?.user2?.id === auth.userId) &&
-          chatRoom.rooms[`ch_${params.chatRoomId}`].status.status !== '비활성화'
-        }
-      />
+              매칭을 기다리고 있습니다
+            </div>
+            {auth.role !== 'USER' && (
+              <Button
+                type='SERVICE'
+                variant='contained'
+                style={{ width: '50%', marginBottom: '4px' }}
+                onClick={acceptChatRoom}
+              >
+                채팅 수락
+              </Button>
+            )}
+          </div>
+        )}
+        <div ref={tmp} style={{ height: '3dvh' }} />
+        <ChatInput
+          sendMessage={sendMessage}
+          enable={
+            (chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId ||
+              chatRoom.rooms[`ch_${params.chatRoomId}`]?.user2?.id === auth.userId) &&
+            chatRoom.rooms[`ch_${params.chatRoomId}`].status.status !== '비활성화'
+          }
+        />
+      </div>
     </MainContainer>
   );
 }
