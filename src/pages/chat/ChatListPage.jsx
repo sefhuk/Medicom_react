@@ -185,9 +185,12 @@ function ChatListPage() {
           )}
         </Popper>
       </Wrapper>
-      {error && <Notice>{error}</Notice>}
-      {isLoading && <Notice>로딩 중 입니다..</Notice>}
-      {data && data.map(e => <ChatRoomDetail key={e.id} data={e} selectedIndex={selectedIndex} />)}
+      <div style={{ height: '78dvh', overflowY: 'scroll' }}>
+        {error && <Notice>{error}</Notice>}
+        {isLoading && <Notice>로딩 중 입니다..</Notice>}
+        {data &&
+          data.map(e => <ChatRoomDetail key={e.id} data={e} selectedIndex={selectedIndex} />)}
+      </div>
     </MainContainer>
   );
 }
