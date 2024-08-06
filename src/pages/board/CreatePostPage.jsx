@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CreatePostForm from '../../components/board/CreatePostForm';
 import MainContainer from '../../components/global/MainContainer';
-import { CircularProgress, Typography } from '@mui/material';
+import { CircularProgress, Box } from '@mui/material';
 
 function CreatePostPage() {
   const { boardId } = useParams();
@@ -16,7 +16,7 @@ function CreatePostPage() {
       await axios.post(`http://localhost:8080/posts`, { ...data, boardId });
       navigate(`/boards/${boardId}`);
     } catch (error) {
-      console.error('포스트 생성 오류:', error);
+      console.error('Failed to create post:', error);
     } finally {
       setLoading(false);
     }
@@ -25,7 +25,9 @@ function CreatePostPage() {
   return (
     <MainContainer>
       {loading ? (
-        <CircularProgress />
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Box>
       ) : (
         <CreatePostForm onSubmit={handleSubmit} />
       )}

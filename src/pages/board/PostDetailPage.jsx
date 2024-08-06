@@ -4,7 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import CommentList from '../../components/board/CommentList';
 import Pagination from '../../components/board/CommentPagination';
 import MainContainer from '../../components/global/MainContainer';
-import { Button, CircularProgress, Alert, TextField, Typography, Box } from '@mui/material';
+import { Button, CircularProgress, Alert, TextField, Typography, Box, Grid } from '@mui/material';
 
 function PostDetailPage() {
   const { id } = useParams();
@@ -17,7 +17,6 @@ function PostDetailPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // 새 상태 추가: 게시판 ID 저장
   const [boardId, setBoardId] = useState(null);
 
   const fetchComments = useCallback((page) => {
@@ -37,7 +36,7 @@ function PostDetailPage() {
     axios.get(`http://localhost:8080/posts/${id}`)
       .then(response => {
         setPost(response.data);
-        setBoardId(response.data.boardId); // 게시판 ID 저장
+        setBoardId(response.data.boardId);
       })
       .catch(error => setError('포스트를 가져오는 데 실패했습니다.'));
 
@@ -62,9 +61,9 @@ function PostDetailPage() {
     try {
       await axios.delete(`http://localhost:8080/posts/${id}`);
       if (boardId) {
-        navigate(`/boards/${boardId}`); // 게시판 상세 페이지로 이동
+        navigate(`/boards/${boardId}`);
       } else {
-        navigate('/boards'); // 게시판 ID가 없는 경우 기본 페이지로 이동
+        navigate('/boards');
       }
     } catch (error) {
       setError('포스트 삭제에 실패했습니다.');
@@ -123,7 +122,7 @@ function PostDetailPage() {
 
   return (
     <MainContainer>
-    <br />
+      <br />
       <Box sx={{ textAlign: 'center', mb: 2 }}>
         <Typography variant="h4">{post.title}</Typography>
       </Box>
@@ -137,11 +136,17 @@ function PostDetailPage() {
         {post.content}
       </Typography>
       {post.imageUrls && post.imageUrls.length > 0 && (
-        <img
-          src={post.imageUrls[0].link} // 첫 번째 이미지 링크를 사용
-          alt="image"
-          style={{ maxWidth: '100%', height: 'auto', marginTop: '16px' }}
-        />
+        <Grid container spacing={2}>
+          {post.imageUrls.map((img, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <img
+                src={img.link}
+                alt={`image-${index}`}
+                style={{ maxWidth: '100%', height: 'auto', marginTop: '16px' }}
+              />
+            </Grid>
+          ))}
+        </Grid>
       )}
       <form onSubmit={handleCommentSubmit}>
         <TextField

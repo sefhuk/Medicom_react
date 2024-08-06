@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import UpdatePostForm from '../../components/board/UpdatePostForm';
 import MainContainer from '../../components/global/MainContainer';
-import { CircularProgress, Typography } from '@mui/material';
+import { CircularProgress, Box, Typography } from '@mui/material';
 
 function UpdatePostPage() {
   const { id } = useParams();
@@ -14,7 +14,7 @@ function UpdatePostPage() {
   useEffect(() => {
     axios.get(`http://localhost:8080/posts/${id}`)
       .then(response => setPost(response.data))
-      .catch(error => console.error('포스트를 가져오는 데 실패했습니다.'))
+      .catch(error => console.error('Failed to fetch post.'))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -24,14 +24,18 @@ function UpdatePostPage() {
       await axios.put(`http://localhost:8080/posts/${id}`, updatedPost);
       navigate(`/posts/${id}`);
     } catch (error) {
-      console.error('포스트 업데이트 오류:', error);
+      console.error('Failed to update post:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <CircularProgress />;
-  if (!post) return <Typography variant="h6">포스트를 불러오는 중입니다...</Typography>;
+  if (loading) return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <CircularProgress />
+    </Box>
+  );
+  if (!post) return <Typography variant="h6">Loading post...</Typography>;
 
   return (
     <MainContainer>

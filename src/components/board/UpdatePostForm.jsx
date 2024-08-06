@@ -1,80 +1,89 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Container, Box, Typography } from '@mui/material';
+import { TextField, Button, Container, Box, Typography, CircularProgress, IconButton } from '@mui/material';
 import { storage } from '../../firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function UpdatePostForm({ post, onUpdate }) {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
-  const [image, setImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(post.imageUrl || '');
+  const [images, setImages] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState(post.imageUrls.map(img => img.link) || []);
+  const [removedImageUrls, setRemovedImageUrls] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setTitle(post.title);
     setContent(post.content);
-    setPreviewUrl(post.imageUrl);
+    setPreviewUrls(post.imageUrls.map(img => img.link));
   }, [post]);
 
   const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setImage(e.target.files[0]);
-      updatePreviewUrl(e.target.files[0]);
-    }
+    const files = Array.from(e.target.files);
+    setImages(prevImages => [...prevImages, ...files]);
+    updatePreviewUrls(files);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.dataTransfer.files[0]) {
-      setImage(e.dataTransfer.files[0]);
-      updatePreviewUrl(e.dataTransfer.files[0]);
-    }
+    const files = Array.from(e.dataTransfer.files);
+    setImages(prevImages => [...prevImages, ...files]);
+    updatePreviewUrls(files);
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
   };
 
-  const updatePreviewUrl = (file) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewUrl(reader.result);
-    };
-    reader.readAsDataURL(file);
+  const updatePreviewUrls = (files) => {
+    const urls = files.map(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrls(prev => [...prev, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
-  const handleImageUpload = async () => {
-    if (!image) return null;
-
-    const storageRef = ref(storage, `images/${image.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, image);
-
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        'state_changed',
-        null,
-        (error) => {
-          console.error('Image upload error:', error);
-          reject(error);
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(downloadURL);
+  const uploadImages = async () => {
+    const urls = await Promise.all(
+      images.map(async (image) => {
+        const uniqueImageName = `${Date.now()}_${image.name}`;
+        const imageRef = ref(storage, `images/${uniqueImageName}`);
+        try {
+          const uploadTask = uploadBytesResumable(imageRef, image);
+          await uploadTask;
+          const url = await getDownloadURL(imageRef);
+          return url;
+        } catch (error) {
+          return null;
         }
-      );
-    });
+      })
+    );
+    return urls.filter(url => url !== null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let imageUrl = previewUrl;
+    setLoading(true);
 
-    if (image) {
-      imageUrl = await handleImageUpload();
+    let imageUrls = post.imageUrls.map(img => img.link).filter(url => !removedImageUrls.includes(url));
+    if (images.length > 0) {
+      const uploadedUrls = await uploadImages();
+      imageUrls = [...imageUrls, ...uploadedUrls];
     }
 
-    const updatedPost = { title, content, imageUrl };
+    const updatedPost = { title, content, imageUrls };
     onUpdate(updatedPost);
+    setLoading(false);
+  };
+
+  const handleRemoveImage = (index) => {
+    const urlToRemove = previewUrls[index];
+    setRemovedImageUrls(prev => [...prev, urlToRemove]);
+    setPreviewUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
+    setImages(prevImages => prevImages.filter((_, i) => i !== index));
   };
 
   return (
@@ -126,28 +135,41 @@ function UpdatePostForm({ post, onUpdate }) {
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
-          <Typography>Drag & Drop your image here or click to select</Typography>
+          <Typography>Drag & Drop your images here or click to select</Typography>
           <Button
             variant="contained"
             component="label"
             sx={{ mt: 2 }}
           >
-            Upload Image
+            Upload Images
             <input
               type="file"
               hidden
+              multiple
               onChange={handleImageChange}
             />
           </Button>
         </Box>
-        {previewUrl && (
+        {previewUrls.length > 0 && (
           <Box sx={{ mb: 2 }}>
-            <img src={previewUrl} alt="Image Preview" style={{ maxWidth: '100%', height: 'auto', borderRadius: 2 }} />
+            {previewUrls.map((url, index) => (
+              <Box key={index} sx={{ position: 'relative', display: 'inline-block', margin: '10px' }}>
+                <img src={url} alt="Image Preview" style={{ maxWidth: '100%', height: 'auto', borderRadius: 2 }} />
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => handleRemoveImage(index)}
+                  sx={{ position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(255, 255, 255, 0.7)' }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            ))}
           </Box>
         )}
         <Button variant="contained" color="primary" type="submit" fullWidth sx={{ mt: 2 }}>
           Update Post
         </Button>
+        {loading && <CircularProgress sx={{ mt: 2 }} />}
       </Box>
     </Container>
   );
