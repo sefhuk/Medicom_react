@@ -79,15 +79,14 @@ function Message({ data, repeat, self }) {
         )}
         <BottomContainer self={self}>
           <Content self={self} onDoubleClick={handleOpen}>
-            {data.content.startsWith('dpt: ') ? (
+            {data.content.startsWith('dpt: ') && data.user.role === 'DOCTOR' ? (
               <Suggestion>
                 <p>진료과 추천 정보가 제공되었습니다</p>
                 <Button
                   variant='contained'
                   onClick={requestHospital}
-                  sx={{ width: '40%', backgroundColor: '#272424', fontSize: '1rem' }}
+                  sx={{ width: '40%', backgroundColor: '#272424' }}
                 >
-                  {' '}
                   {data.content.split(' ')[1]}
                 </Button>
               </Suggestion>
