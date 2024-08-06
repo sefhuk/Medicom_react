@@ -24,7 +24,7 @@ function Footer() {
         navigate('/boards');
         break;
       case 'chat':
-        navigate('/chat');
+        navigate('/chatlist');
         break;
       case 'my':
         navigate('/my-page');
