@@ -20,9 +20,17 @@ build:
     - sudo npm install -g npm
     - npm --version
     - npm install --legacy-peer-deps
-
   script:
     - npm run build
 
+  tags:
+    - react
+
+dev_deploy:
+  stage: deploy
+  only:
+    - dev
+  script:
+    - mv /home/gitlab-runner/builds/pcQL_jW1/0/cloud_track/class_03/web_project3/team05/hospital_here_react /home/elice/hospital/frontend/build
   tags:
     - react
