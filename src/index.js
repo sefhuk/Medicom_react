@@ -31,6 +31,7 @@ import UpdateBoardPage from './pages/board/UpdateBoardPage';
 import UpdatePostPage from './pages/board/UpdatePostPage';
 import MyReviews from './pages/user/MyReivews';
 import { AdminCreateDoctorProfile } from './pages/admin/AdminCreateDoctorProfile';
+import LocationPage from './pages/LocationPage.jsx';
 
 
 
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
       {path: 'hospitals/maps', element: <MapComponent />},
       
       //hospitalpage
+      {path: 'location', element: <LocationPage />},
       {path: '/symptoms', element: <SymptomAsk />},
       {path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation />},
       {
