@@ -3,7 +3,7 @@ import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
 
 // 거리 계산 함수 (위도와 경도를 이용해 두 지점 간의 거리를 계산)
-const getDistance = (lat1, lon1, lat2, lon2) => {
+const getDistance = (lat1, lon1, lat2, lon2) => { 
   const toRad = (value) => value * Math.PI / 180;
   const R = 6371; // 지구의 반경 (킬로미터)
 
