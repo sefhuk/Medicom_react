@@ -25,6 +25,9 @@ build:
     - npm run build
   after_script:
     - echo 'build end'
+  artifacts:
+    paths:
+      - build/
   tags:
     - react
 
