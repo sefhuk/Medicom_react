@@ -6,12 +6,11 @@ job_build:
   stage: build
   before_script:
     - echo 'build starts'
-    - chmod +x ./hospital_here/hospital_here/gradlew
   script:
-    - ./hospital_here/hospital_here/gradlew clean build
+    - npm run build
   artifacts:
     paths:
-      - ./hospital_here/hospital_here/build/libs/*.jar
+      - ./build
 
 job_test:
   stage: test
