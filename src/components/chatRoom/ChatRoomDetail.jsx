@@ -58,7 +58,12 @@ function ChatRoomDetail({ data, selectedIndex }) {
             <>
               {data.status.status !== '진행' && `(${data.status.status})`}{' '}
               {data.lastMessage !== null
-                ? data.lastMessage.content.replace(/\n/g, ' ')
+                ? data.lastMessage.content
+                    .replace(/\n/g, ' ')
+                    .replace(
+                      'dpt: ',
+                      data.lastMessage.user.role === 'DOCTOR' ? '진료과 정보 제공: ' : 'dpt: '
+                    )
                 : '메시지가 없습니다'}
             </>
           ) : (

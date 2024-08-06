@@ -15,8 +15,9 @@ function MainContainer({ children, isChat }) {
 
 const Container = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
-  max-width: 70dvh;
+  max-width: 60dvh;
   margin: 0 auto;
   height: 100dvh;
 `;

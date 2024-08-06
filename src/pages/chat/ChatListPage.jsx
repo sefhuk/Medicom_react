@@ -106,7 +106,16 @@ function ChatListPage() {
           ref={anchorRef}
           aria-label='Button group with a nested menu'
         >
-          <Button onClick={() => navigate('/chat/new')} sx={{ width: '100%', fontSize: '1.2rem' }}>
+          <Button
+            onClick={() => navigate('/chat/new')}
+            sx={{
+              width: '100%',
+              fontSize: '1.2rem',
+              '@media (max-width: 600px)': {
+                fontSize: '0.8rem'
+              }
+            }}
+          >
             새로운 상담
           </Button>
         </ButtonGroup>
@@ -116,7 +125,17 @@ function ChatListPage() {
           ref={anchorRef}
           aria-label='Button group with a nested menu'
         >
-          <Button sx={{ width: '100%', fontSize: '1.2rem' }}>{options[selectedIndex]}</Button>
+          <Button
+            sx={{
+              width: '100%',
+              fontSize: '1.2rem',
+              '@media (max-width: 600px)': {
+                fontSize: '0.8rem'
+              }
+            }}
+          >
+            {options[selectedIndex]}
+          </Button>
           <Button
             sx={{ width: '5%' }}
             size='large'
@@ -166,9 +185,12 @@ function ChatListPage() {
           )}
         </Popper>
       </Wrapper>
-      {error && <Notice>{error}</Notice>}
-      {isLoading && <Notice>로딩 중 입니다..</Notice>}
-      {data && data.map(e => <ChatRoomDetail key={e.id} data={e} selectedIndex={selectedIndex} />)}
+      <div style={{ height: '78dvh', overflowY: 'scroll' }}>
+        {error && <Notice>{error}</Notice>}
+        {isLoading && <Notice>로딩 중 입니다..</Notice>}
+        {data &&
+          data.map(e => <ChatRoomDetail key={e.id} data={e} selectedIndex={selectedIndex} />)}
+      </div>
     </MainContainer>
   );
 }
