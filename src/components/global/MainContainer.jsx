@@ -25,6 +25,7 @@ const Content = styled.div`
   flex: 1;
   height: ${({ isChat }) => (isChat === true ? '76dvh' : '84dvh')};
   margin-bottom: ${({ isChat }) => (isChat === true ? '8dvh' : '0px')};
+  overflow-y: scroll;
 `;
 
 export default MainContainer;
