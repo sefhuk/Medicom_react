@@ -8,6 +8,7 @@ import { borders } from '@mui/system';
 import { BorderColor, BorderColorOutlined } from '@mui/icons-material';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import SearchIcon from '@mui/icons-material/Search';
+import Button from '@mui/material/Button';
 
 function MainPage() {
   const [open, setOpen] = useState(false);
@@ -89,7 +90,9 @@ function MainPage() {
                   <Typography>배너</Typography>
               </CustomBox>
             </Grid>
-
+          <Button onClick={() => navigate('/boards')} variant="contained" color="primary" sx={{ mb: 2 }}>
+            게시판 목록
+          </Button>
 
 
             <Grid item xs={12}>

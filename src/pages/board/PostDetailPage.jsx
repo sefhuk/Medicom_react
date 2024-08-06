@@ -1,14 +1,22 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import axios from 'axios';
+import { axiosInstance } from '../../utils/axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import CommentList from '../../components/board/CommentList';
 import Pagination from '../../components/board/CommentPagination';
 import MainContainer from '../../components/global/MainContainer';
 import { Button, CircularProgress, Alert, TextField, Typography, Box, Dialog, DialogContent } from '@mui/material';
 
+// Auth 헤더를 반환하는 함수
+function getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  return {
+    'Authorization': `${token}`
+  };
+}
+
 function PostDetailPage() {
   const { id } = useParams();
-  const navigate = useNavigate(); // useNavigate 훅을 사용하여 페이지 이동
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -17,95 +25,140 @@ function PostDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [boardId, setBoardId] = useState(null);
-  const [open, setOpen] = useState(false); // 모달 상태
-  const [selectedImage, setSelectedImage] = useState(''); // 선택된 이미지 URL
+  const [open, setOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  const isLoggedIn = () => {
+    const token = localStorage.getItem('token');
+    return token !== null;
+  };
+
+  // 포스트를 가져오는 함수
+  const fetchPost = async () => {
+    try {
+      const response = await axiosInstance.get(`/posts/${id}`, { headers: getAuthHeaders() });
+      setPost(response.data);
+      setBoardId(response.data.boardId);
+    } catch (error) {
+      setError('포스트를 가져오는 데 실패했습니다.');
+    }
+  };
 
   // 댓글을 가져오는 함수
-  const fetchComments = useCallback((page) => {
+  const fetchComments = useCallback(async (page) => {
     setLoading(true);
-    axios.get(`http://localhost:8080/comments/post/${id}?page=${page}&size=6`)
-      .then(response => {
-        const sortedComments = response.data.content.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        setComments(sortedComments);
-        setTotalPages(response.data.totalPages);
-        setCurrentPage(page);
-      })
-      .catch(error => setError('댓글을 가져오는 데 실패했습니다.'))
-      .finally(() => setLoading(false));
+    try {
+      const response = await axiosInstance.get(`/comments/post/${id}?page=${page}&size=6`, { headers: getAuthHeaders() });
+      const sortedComments = response.data.content.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      setComments(sortedComments);
+      setTotalPages(response.data.totalPages);
+      setCurrentPage(page);
+    } catch (error) {
+      setError('댓글을 가져오는 데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  // 페이지 로드 시 포스트와 댓글 가져오기
   useEffect(() => {
-    axios.get(`http://localhost:8080/posts/${id}`)
-      .then(response => {
-        setPost(response.data);
-        setBoardId(response.data.boardId);
-      })
-      .catch(error => setError('포스트를 가져오는 데 실패했습니다.'));
-
+    fetchPost();
     fetchComments(0);
-  }, [id, fetchComments]);
+  }, [fetchComments, id]);
 
   // 댓글 추가 처리
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
+    if (!isLoggedIn()) {
+      alert('로그인 후 댓글을 추가할 수 있습니다.');
+      return;
+    }
+
     if (commentText.trim() === '') {
       alert('댓글을 입력해주세요.');
       return;
     }
-    axios.post('http://localhost:8080/comments', { postId: id, content: commentText })
-      .then(response => {
-        setComments([...comments, response.data]);
-        setCommentText('');
-      })
-      .catch(error => setError('댓글을 추가하는 데 실패했습니다.'));
+    try {
+      const response = await axiosInstance.post('/comments', { postId: id, content: commentText }, { headers: getAuthHeaders() });
+      setComments([...comments, response.data]);
+      setCommentText('');
+    } catch (error) {
+      setError('댓글을 추가하는 데 실패했습니다.');
+    }
   };
 
   // 포스트 삭제 처리
   const handleDeletePost = async () => {
+    if (!isLoggedIn()) {
+      alert('로그인 후 포스트를 삭제할 수 있습니다.');
+      return;
+    }
+
     try {
-      await axios.delete(`http://localhost:8080/posts/${id}`);
-      if (boardId) {
-        navigate(`/boards/${boardId}`);
-      } else {
-        navigate('/boards');
-      }
+      await axiosInstance.delete(`/posts/${id}`, { headers: getAuthHeaders() });
+      navigate(boardId ? `/boards/${boardId}` : '/boards');
     } catch (error) {
-      setError('포스트 삭제에 실패했습니다.');
+      if (error.response?.status === 403) {
+        alert('이 포스트를 삭제할 권한이 없습니다.');
+      } else {
+        setError('포스트 삭제에 실패했습니다.');
+      }
     }
   };
 
   // 댓글 삭제 처리
   const handleDeleteComment = async (commentId) => {
+    if (!isLoggedIn()) {
+      alert('로그인 후 댓글을 삭제할 수 있습니다.');
+      return;
+    }
+
     try {
-      await axios.delete(`http://localhost:8080/comments/${commentId}`);
+      await axiosInstance.delete(`/comments/${commentId}`, { headers: getAuthHeaders() });
       setComments(comments.filter(comment => comment.id !== commentId));
     } catch (error) {
-      setError('댓글 삭제에 실패했습니다.');
+      if (error.response?.status === 403) {
+        alert('이 댓글을 삭제할 권한이 없습니다.');
+      } else {
+        setError('댓글 삭제에 실패했습니다.');
+      }
     }
   };
 
   // 댓글 업데이트 처리
   const handleUpdateComment = async (commentId, content) => {
+    if (!isLoggedIn()) {
+      alert('로그인 후 댓글을 수정할 수 있습니다.');
+      return;
+    }
+
     try {
-      const response = await axios.put(`http://localhost:8080/comments/${commentId}`, {
+      const response = await axiosInstance.put(`/comments/${commentId}`, {
         postId: id,
         content: content,
-      });
+      }, { headers: getAuthHeaders() });
       setComments(comments.map(comment => comment.id === commentId ? response.data : comment));
     } catch (error) {
-      setError('댓글 업데이트에 실패했습니다.');
+      if (error.response?.status === 403) {
+        alert('이 댓글을 수정할 권한이 없습니다.');
+      } else {
+        setError('댓글 업데이트에 실패했습니다.');
+      }
     }
   };
 
   // 댓글에 답글 추가 처리
   const handleReplyComment = async (parentId, content) => {
+    if (!isLoggedIn()) {
+      alert('로그인 후 댓글에 답글을 추가할 수 있습니다.');
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:8080/comments', {
+      const response = await axiosInstance.post('/comments', {
         postId: id,
         content: content,
         parentId: parentId
-      });
+      }, { headers: getAuthHeaders() });
       setComments(comments.map(comment => {
         if (comment.id === parentId) {
           return {
@@ -137,9 +190,13 @@ function PostDetailPage() {
     setSelectedImage('');
   };
 
-  if (loading) return <CircularProgress />;
+  if (loading) return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <CircularProgress />
+    </Box>
+  );
   if (error) return <Alert severity="error">{error}</Alert>;
-  if (!post) return <p>포스트를 불러오는 중입니다...</p>;
+  if (!post) return <Typography>포스트를 불러오는 중입니다...</Typography>;
 
   return (
     <MainContainer>
