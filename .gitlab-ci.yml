@@ -14,8 +14,6 @@ build:
     - sudo apt-get update
     - sudo apt-get install npm -y
     - npm --version
-    - npx --version
-    - gem install dpl
     - npm install
 
   script:
