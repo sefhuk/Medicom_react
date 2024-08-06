@@ -105,7 +105,19 @@ const Nav = () => {
           >
             <MenuIcon />
         </IconButton>
-        <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}> {/* anchor 속성 추가 */}
+        <Drawer anchor="left"
+            open={open} onClose={toggleDrawer(false)}
+            sx={{
+              maxWidth: '70dvh',
+              overflow: 'hidden',
+              margin: 'auto',
+              '& .MuiBackdrop-root': {
+                margin: 'auto',
+              },
+              '& .MuiPaper-root': {
+                position: 'absolute'
+              }
+            }}> {/* anchor 속성 추가 */}
           {DrawerList}
         </Drawer>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
