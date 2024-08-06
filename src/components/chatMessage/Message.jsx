@@ -81,7 +81,7 @@ function Message({ data, repeat, self }) {
           <Content self={self} onDoubleClick={handleOpen}>
             {data.content.startsWith('dpt: ') ? (
               <Suggestion>
-                <p style={{ margin: '4px 0 20px' }}>진료과 추천 정보가 제공되었습니다</p>
+                <p>진료과 추천 정보가 제공되었습니다</p>
                 <Button
                   variant='contained'
                   onClick={requestHospital}
@@ -154,6 +154,9 @@ const Content = styled.div`
   max-width: 70%;
   height: auto;
   overflow: hidden;
+  @media (min-width: 490px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const Suggestion = styled.p`
@@ -169,6 +172,9 @@ const Time = styled.p`
   margin-bottom: 0px;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
+  @media (min-width: 490px) {
+    font-size: 1.2rem;
+  }
 `;
 
 export default Message;
