@@ -1,13 +1,14 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'; // useNavigate import 추가
 import CommentList from '../../components/board/CommentList';
 import Pagination from '../../components/board/CommentPagination';
 import MainContainer from '../../components/global/MainContainer';
-import { Button, CircularProgress, Alert, TextField, Typography, Box, Grid } from '@mui/material';
+import { Button, CircularProgress, Alert, TextField, Typography, Box, Dialog, DialogContent } from '@mui/material';
 
 function PostDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 정의
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -15,9 +16,9 @@ function PostDetailPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
-
   const [boardId, setBoardId] = useState(null);
+  const [open, setOpen] = useState(false); // 모달 열기 상태
+  const [selectedImage, setSelectedImage] = useState(''); // 선택된 이미지
 
   const fetchComments = useCallback((page) => {
     setLoading(true);
@@ -116,6 +117,16 @@ function PostDetailPage() {
     fetchComments(page);
   };
 
+  const handleImageClick = (imgLink) => {
+    setSelectedImage(imgLink);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedImage('');
+  };
+
   if (loading) return <CircularProgress />;
   if (error) return <Alert severity="error">{error}</Alert>;
   if (!post) return <p>포스트를 불러오는 중입니다...</p>;
@@ -136,17 +147,23 @@ function PostDetailPage() {
         {post.content}
       </Typography>
       {post.imageUrls && post.imageUrls.length > 0 && (
-        <Grid container spacing={2}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
           {post.imageUrls.map((img, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <img
-                src={img.link}
-                alt={`image-${index}`}
-                style={{ maxWidth: '100%', height: 'auto', marginTop: '16px' }}
-              />
-            </Grid>
+            <img
+              key={index}
+              src={img.link}
+              alt={`image-${index}`}
+              style={{
+                width: '200px', // 조정할 수 있는 너비
+                height: 'auto',
+                objectFit: 'cover',
+                cursor: 'pointer',
+                borderRadius: '8px',
+              }}
+              onClick={() => handleImageClick(img.link)}
+            />
           ))}
-        </Grid>
+        </Box>
       )}
       <form onSubmit={handleCommentSubmit}>
         <TextField
@@ -173,6 +190,24 @@ function PostDetailPage() {
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <img
+            src={selectedImage}
+            alt="Expanded View"
+            style={{
+              width: '100%',
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </MainContainer>
   );
 }
