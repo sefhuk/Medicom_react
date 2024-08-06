@@ -12,7 +12,7 @@ build:
   variables:
     CI: 'false'
   before_script:
-    - echo 'build starts'
+    - echo 'build start'
     - sudo apt-get update
     - sudo apt-get install npm -y
     - sudo npm cache clean --force
@@ -23,6 +23,8 @@ build:
     - npm install --legacy-peer-deps
   script:
     - npm run build
+  after_script:
+    - echo 'build end'
 
   tags:
     - react
@@ -31,7 +33,12 @@ dev_deploy:
   stage: deploy
   only:
     - dev
+  before_script:
+    - echo 'deploy start'
   script:
     - mv /home/gitlab-runner/builds/pcQL_jW1/0/cloud_track/class_03/web_project3/team05/hospital_here_react /home/elice/hospital/frontend/build
+    - sudo service nginx restart
+  after_script:
+    - echo 'deploy end'
   tags:
     - react
