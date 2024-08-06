@@ -7,7 +7,7 @@ job_build:
   stage: build
   before_script:
     - echo 'build starts'
-    - apt-get update -qy
+    - sudo apt-get update -qy
     - apt-get install --no-install-recommends -y npm
     - npm --version
     - npx --version
