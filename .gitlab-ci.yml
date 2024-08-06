@@ -8,6 +8,8 @@ build:
   cache:
     paths:
       - dist
+  variables:
+    CI: 'false'
   before_script:
     - echo 'build starts'
     - sudo apt-get update
