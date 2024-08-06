@@ -11,7 +11,8 @@ build:
       - dist
   before_script:
     - echo 'build starts'
-    - sudo apt-get install npm
+    - sudo apt-get update
+    - sudo apt-get install npm -y
     - npm --version
     - npx --version
     - gem install dpl
