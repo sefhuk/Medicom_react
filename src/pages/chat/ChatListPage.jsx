@@ -87,7 +87,12 @@ function ChatListPage() {
         })
       );
     } catch (err) {
-      setError(err.response.data.message);
+      navigate('/');
+      try {
+        setError(err.response.data.message);
+      } catch (err) {
+        navigate('/');
+      }
     } finally {
       setIsLoading(false);
     }
