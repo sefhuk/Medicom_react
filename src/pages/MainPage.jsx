@@ -89,8 +89,6 @@ function MainPage() {
               </CustomBox>
             </Grid>
 
-
-
             <Grid item xs={12}>
               <CustomBoxTypo>
                 <Typography variant="h6">병원 어디로 가지?</Typography>
