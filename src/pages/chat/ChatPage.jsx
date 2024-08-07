@@ -78,6 +78,10 @@ function ChatPage() {
       alert('잘못된 접근입니다');
     }
 
+    if (chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '비활성화') {
+      return;
+    }
+
     const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}/ws`);
 
     const stomp = Stomp.over(socket);
