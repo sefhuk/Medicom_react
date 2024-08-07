@@ -32,7 +32,7 @@ import UpdatePostPage from './pages/board/UpdatePostPage';
 import MyReviews from './pages/user/MyReivews';
 import { AdminCreateDoctorProfile } from './pages/admin/AdminCreateDoctorProfile';
 import LocationPage from './pages/LocationPage.jsx';
-
+import { LocationProvider } from './LocationContext.jsx';
 
 
 const queryClient = new QueryClient();
@@ -123,7 +123,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <QueryClientProvider client={queryClient}>
     <RecoilRoot>
-      <RouterProvider router={router} />
+      <LocationProvider> {/* 추가 */}
+        <RouterProvider router={router} />
+      </LocationProvider> {/* 추가 */}
     </RecoilRoot>
   </QueryClientProvider>
 );

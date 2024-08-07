@@ -2,6 +2,8 @@ import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import './App.css';
 import { NavermapsProvider } from 'react-naver-maps';
+import { LocationProvider } from './LocationContext';
+import LocationPage from './pages/LocationPage';
 
 
 //import React, { useState } from 'react';
@@ -13,6 +15,7 @@ const App = () => {
   return (
 
     <NavermapsProvider ncpClientId='327ksyij3n'>
+      <LocationProvider>
       <div>
         {/* <nav>
           <ul>
@@ -29,6 +32,7 @@ const App = () => {
         </nav> */}
         <Outlet />
       </div>
+      </LocationProvider>
     </NavermapsProvider>
 
 
