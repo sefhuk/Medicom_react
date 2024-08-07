@@ -4,6 +4,8 @@ import './App.css';
 import { NavermapsProvider } from 'react-naver-maps';
 import { LocationProvider } from './LocationContext';
 import LocationPage from './pages/LocationPage';
+import OtherLocationPage from './pages/OtherLocationPage';
+
 
 
 //import React, { useState } from 'react';
