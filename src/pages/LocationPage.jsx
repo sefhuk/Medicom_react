@@ -1,12 +1,13 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useContext } from 'react';
 import MainContainer from '../components/global/MainContainer';
 import { Box, Snackbar, Alert, Typography } from '@mui/material';
+import { LocationContext } from '../LocationContext';
 
 function LocationPage() {
   const mapRef = useRef(null);
   const [center, setCenter] = useState(null);
   const [address, setAddress] = useState('');
-
+  const { setLocation } = useContext(LocationContext);
   const handleSaveLocation = () => {
 
   }
@@ -17,6 +18,7 @@ function LocationPage() {
         (position) => {
           const { latitude, longitude } = position.coords;
           setCenter({ lat: latitude, lng: longitude });
+          setLocation({ lat: latitude, lng: longitude });
         },
         (error) => {
           console.error('Geolocation error:', error);
@@ -41,7 +43,7 @@ function LocationPage() {
         map: map
       });
 
-      // 페이지 로드 시 자동으로 주소 정보 가져오기
+      // 페이지 로드 시 자동으로 현재 주소 정보 가져오기
       const lat = center.lat;
       const lng = center.lng;
       const url = `http://localhost:8080/api/geocode?lat=${lat}&lng=${lng}`;
