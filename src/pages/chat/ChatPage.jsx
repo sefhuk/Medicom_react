@@ -163,14 +163,14 @@ function ChatPage() {
                 key={e.id}
                 self={true}
                 data={e}
-                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : undefined)}
               />
             ) : (
               <Message
                 key={e.id}
                 self={false}
                 data={e}
-                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : undefined)}
               />
             );
           })}
