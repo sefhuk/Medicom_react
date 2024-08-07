@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
+import HospitalReviewCard from '../../components/HospitalReviewCard';
 
 // 거리 계산 함수 (위도와 경도를 이용해 두 지점 간의 거리를 계산)
 const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -10,8 +11,8 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return Math.abs(R * c); // 절댓값 적용
 };
@@ -41,8 +42,11 @@ const HospitalList = () => {
   const [hospitalReviews, setHospitalReviews] = useState({});
   const [reviewsLoading, setReviewsLoading] = useState({});
   const [reviewsPage, setReviewsPage] = useState({});
+  const [reviewsLoaded, setReviewsLoaded] = useState({});
+  const [hasMoreReviews, setHasMoreReviews] = useState({});
 
   const pageSize = 10;
+  const reviewPageSize = 4;
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -169,51 +173,114 @@ const HospitalList = () => {
     fetchHospitals();
   }, [searchParams, currentPage, currentLocation]);
 
-  const fetchReviews = async (hospitalId, page) => {
+  const fetchReviews = async (hospitalId, page = 0) => {
     setReviewsLoading(prev => ({ ...prev, [hospitalId]: true }));
     try {
-      const response = await axios.get(`http://localhost:8080/api/hospitals/${hospitalId}/reviews`, {
-        params: { page, size: pageSize },
+      const response = await axios.get(`http://localhost:8080/review/${hospitalId}/Page`, {
+        params: { page, size: reviewPageSize },
       });
-      
+
+      const totalPages = response.data.totalPages;
+      const currentPage = response.data.number;
+
+      const reviewsWithUsernames = await Promise.all(
+        response.data.content.map(async review => {
+          try {
+            const userResponse = await axios.get(`http://localhost:8080/review/findUser/${review.userId}`);
+            return {
+              ...review,
+              userName: userResponse.data,
+            };
+          } catch (error) {
+            console.error(error);
+            return {
+              ...review,
+              userName: '탈퇴한 유저'
+            };
+          }
+        })
+      );
+
       setHospitalReviews(prev => ({
         ...prev,
-        [hospitalId]: (prev[hospitalId] || []).concat(response.data.content),
+        [hospitalId]: (prev[hospitalId] || []).concat(reviewsWithUsernames),
       }));
       setReviewsPage(prev => ({ ...prev, [hospitalId]: page }));
+      setReviewsLoaded((prev) => ({ ...prev, [hospitalId]: true }));
+      setHasMoreReviews((prev) => ({
+        ...prev,
+        [hospitalId]: currentPage < totalPages - 1,
+      }));
     } catch (error) {
-      console.error('Fetching reviews error:', error);
+      console.error(error);
     } finally {
       setReviewsLoading(prev => ({ ...prev, [hospitalId]: false }));
     }
   };
 
   const handleLoadMoreReviews = (hospitalId) => {
-    const nextPage = (reviewsPage[hospitalId] || 0) + 1;
+    const nextPage = reviewsPage[hospitalId] !== undefined ? reviewsPage[hospitalId] + 1 : 0;
+    //const nextPage = (reviewsPage[hospitalId] || 0) + 1;
     fetchReviews(hospitalId, nextPage);
+  };
+  const handleCloseReviews = (hospitalId) => {
+    setHospitalReviews(prev => ({
+      ...prev,
+      [hospitalId]: [],
+    }));
+    setReviewsPage(prev => ({
+      ...prev,
+      [hospitalId]: -1,
+    }));
+    setReviewsLoaded(prev => ({
+      ...prev,
+      [hospitalId]: false,
+    }));
   };
 
   const renderReviews = (hospitalId) => {
     const reviews = hospitalReviews[hospitalId] || [];
     const loading = reviewsLoading[hospitalId];
-    const hasMoreReviews = reviews.length % pageSize === 0;
+    const loaded = reviewsLoaded[hospitalId]; // 리뷰 로드 여부
+    const moreReviews = hasMoreReviews[hospitalId];
+
+    if (!loaded) {
+      return (
+        <button
+          onClick={() => handleLoadMoreReviews(hospitalId)}
+          disabled={loading}
+        >
+          {loading ? '로딩 중...' : '리뷰 더보기'}
+        </button>
+      );
+    }
+
+    //const hasMoreReviews = reviews.length % pageSize === 0;
 
     return (
       <>
         {reviews.length > 0 ? (
           <ul>
             {reviews.map((review, index) => (
-              <li key={index}>{review.content}</li>
+              <li key={index}>
+              <HospitalReviewCard review={review} />
+              </li>
             ))}
           </ul>
         ) : (
           <p>리뷰가 없습니다.</p>
         )}
-        {hasMoreReviews && (
-          <button onClick={() => handleLoadMoreReviews(hospitalId)} disabled={loading}>
+        {moreReviews && (
+          <button
+            onClick={() => handleLoadMoreReviews(hospitalId)}
+            disabled={loading}
+          >
             {loading ? '로딩 중...' : '리뷰 더보기'}
           </button>
         )}
+        <button onClick={() => handleCloseReviews(hospitalId)}>
+          리뷰 닫기
+        </button>
       </>
     );
   };
@@ -299,7 +366,7 @@ const HospitalList = () => {
           placeholder="병원 이름, 주소를 입력하세요 (예: '강남병원, 서울시 강남구')"
         />
         <button onClick={handleSearch}>검색</button>
-        
+
         <h2>부서 필터링</h2>
         <select
           value={selectedDepartment}
