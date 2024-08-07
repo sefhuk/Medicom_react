@@ -60,6 +60,9 @@ function Message({ data, repeat, self }) {
       >
         <Box sx={style}>
           <h2 id='parent-modal-title'>메시지 옵션</h2>
+          <p style={{ color: '#22a1d3', fontWeight: 'bold', fontStyle: 'italic' }}>
+            {data.content}
+          </p>
           <EditModal msgId={data.id} msg={data.content} setOpens={setOpen} />
         </Box>
       </Modal>
