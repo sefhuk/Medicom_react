@@ -47,6 +47,7 @@ function ChatPage() {
       const response = await axiosInstance.post(
         `/chatrooms/${Number(params.chatRoomId)}/users/${auth.userId}`
       );
+      stomp.sendMessage(Number(params.chatRoomId), null, true);
       setChatRoom(m => ({
         ...m,
         rooms: { ...m.rooms, [`ch_${response.data.id}`]: response.data }
@@ -59,12 +60,13 @@ function ChatPage() {
     }
   };
 
-  const sendMessage = (id, input) => {
+  const sendMessage = (id, input, isAccepted) => {
     const body = JSON.stringify({
       id: Number(id) || null,
       userId: Number(auth.userId),
       chatRoomId: Number(params.chatRoomId),
-      content: input?.replace(/\n/g, '\\n') || null
+      content: input?.replace(/\n/g, '\\n') || null,
+      isAccepted: isAccepted || false
     });
     stompClient.publish({ destination: `/app/chat/${Number(params.chatRoomId)}`, body });
   };
@@ -84,6 +86,16 @@ function ChatPage() {
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
 
+        // 채팅 수락
+        if (data.isAccepted) {
+          setChatRoom(m => ({
+            ...m,
+            rooms: {
+              ...m.rooms,
+              [`ch_${data.id}`]: { ...m.rooms[`ch_${data.id}`], status: { status: '진행' } }
+            }
+          }));
+        }
         if (!data.content) {
           // 메시지 삭제
           setMessages(m => m.filter(e => e.id !== data.id));
