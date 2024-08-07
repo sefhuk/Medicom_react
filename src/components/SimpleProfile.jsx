@@ -11,10 +11,10 @@ function SimpleProfile(props) {
   const fetchHospitalInfo = async () => {
     try {
       const response = await axiosInstance.get(`/api/hospitals/${props.doctorProfile.hospitalId}`);
-      console.log('res', response);
       setData(response.data);
       setIsLoading(false);
     } catch (err) {
+      alert(JSON.stringify(err.response));
       console.log(err);
     }
   };

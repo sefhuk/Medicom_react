@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
+import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid } from '@mui/material';
+
 
 // 거리 계산 함수 (위도와 경도를 이용해 두 지점 간의 거리를 계산)
-const getDistance = (lat1, lon1, lat2, lon2) => {
+const getDistance = (lat1, lon1, lat2, lon2) => { 
   const toRad = (value) => value * Math.PI / 180;
   const R = 6371; // 지구의 반경 (킬로미터)
 
@@ -289,62 +291,99 @@ const HospitalList = () => {
 
   return (
     <MainContainer>
-      <div className="container">
-        <h1>병원 검색하기</h1>
-        <h2>검색</h2>
-        <input
-          type="text"
-          value={searchInput}
-          onChange={handleInputChange}
-          placeholder="병원 이름, 주소를 입력하세요 (예: '강남병원, 서울시 강남구')"
-        />
-        <button onClick={handleSearch}>검색</button>
-        
-        <h2>부서 필터링</h2>
-        <select
-          value={selectedDepartment}
-          onChange={e => handleFilter(e.target.value)}
-        >
-          <option value="">모든 부서</option>
-          {departments.map(department => (
-            <option key={department.id} value={department.name}>
-              {department.name}
-            </option>
-          ))}
-        </select>
+       <Box className="container" sx={{ padding: '20px', marginLeft: '20px', marginRight: '20px' }}>
+        <Typography variant="h5" component="h5">병원 검색하기</Typography>
 
-        <ul>
+        <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
+          <Grid item xs={12} sm={6} md={5}>
+            <TextField
+              fullWidth
+              type="text"
+              value={searchInput}
+              onChange={handleInputChange}
+              placeholder="병원 이름 또는 주소를 입력"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={4} md={3}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="department-select-label">모든 부서</InputLabel>
+              <Select
+                labelId="department-select-label"
+                value={selectedDepartment}
+                onChange={e => handleFilter(e.target.value)}
+                label="모든 부서"
+              >
+                <MenuItem value="">
+                  <em>모든 부서</em>
+                </MenuItem>
+                {departments.map(department => (
+                  <MenuItem key={department.id} value={department.name}>
+                    {department.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={2} md={2}>
+            <Button fullWidth variant="contained" color="primary" onClick={handleSearch} sx={{ height: '100%' }}>검색</Button>
+          </Grid>
+        </Grid>
+
+        <List sx={{ border: '1px solid #ddd', borderRadius: '4px', padding: '0', marginTop: '20px' }}>
           {hospitals.length > 0 ? (
-            hospitals.map(hospital => (
-              <li key={hospital.id}>
-                <strong>{hospital.name}</strong><br />{hospital.district} {hospital.subDistrict} - {hospital.telephoneNumber} &nbsp;
-                {currentLocation && hospital.distance !== null
-                  ? `${Math.abs(hospital.distance).toFixed(2)} km`
-                  : '거리 정보를 가져올 수 없습니다.'}
-                <ul>
-                  {hospital.departments && hospital.departments.length > 0 ? (
-                    hospital.departments.map(department => (
-                      <li key={department.id}>
-                        {department.name}
-                      </li>
-                    ))
-                  ) : (
-                    <li>부서 정보가 없습니다.</li>
-                  )}
-                </ul>
-                <button onClick={() => handleMapClick(hospital)}>지도 보기</button>
+            hospitals.map((hospital, index) => (
+              <ListItem
+                key={hospital.id}
+                sx={{
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  borderBottom: index === hospitals.length - 1 ? 'none' : '1px solid #ddd',
+                  padding: '20px' // 내부 여백 추가
+                }}
+              >
+                <Box sx={{ width: '100%', marginBottom: '10px' }}> {/* 아이템 간 여백 추가 */}
+                  <Typography variant="h6" component="strong">{hospital.name}</Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                    <Typography variant="body2">주소: {hospital.district} {hospital.subDistrict}</Typography>
+                    <Typography variant="body2">
+                      {currentLocation && hospital.distance !== null
+                        ? `${Math.abs(hospital.distance).toFixed(2)} km`
+                        : '거리 정보를 가져올 수 없습니다.'}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                    <Typography variant="body2">진료과목:</Typography>
+                    {hospital.departments && hospital.departments.length > 0 ? (
+                      hospital.departments.map(department => (
+                        <Box key={department.id} sx={{ padding: '5px', border: '1px solid #ccc', borderRadius: '5px', whiteSpace: 'nowrap' }}>
+                          <Typography variant="body2">{department.name}</Typography>
+                        </Box>
+                      ))
+                    ) : (
+                      <Typography variant="body2">부서 정보가 없습니다.</Typography>
+                    )}
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+                    <Typography variant="body2">전화번호: {hospital.telephoneNumber}</Typography>
+                    <Button variant="contained" color="secondary" onClick={() => handleMapClick(hospital)} sx={{ marginLeft: '10px' }}>지도</Button>
+                  </Box>
+                </Box>
+                <Box sx={{ marginTop: '10px', width: '100%' }}>
+                  {renderReviews(hospital.id)}
+                </Box>
                 {selectedHospital?.id === hospital.id && renderMap()}
-                {renderReviews(hospital.id)}
-              </li>
+              </ListItem>
             ))
           ) : (
-            <p>병원이 없습니다</p>
+            <Typography variant="body2" sx={{ padding: '10px' }}>병원이 없습니다</Typography>
           )}
-        </ul>
-        <div className="page-buttons">
+        </List>
+
+        <Box className="page-buttons" sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
           {renderPageNumbers()}
-        </div>
-      </div>
+        </Box>
+      </Box>
     </MainContainer>
   );
 };

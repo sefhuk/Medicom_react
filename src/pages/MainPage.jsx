@@ -3,7 +3,6 @@ import MainContainer from '../components/global/MainContainer';
 import { useNavigate } from 'react-router';
 import { Container, Grid, Typography, Box } from '@mui/material';
 import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
-import LocationModal from './LocationModal';
 import { borders } from '@mui/system';
 import { BorderColor, BorderColorOutlined } from '@mui/icons-material';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
@@ -14,13 +13,6 @@ function MainPage() {
   const [open, setOpen] = useState(false);
   const [location, setLocation] = useState('내 위치 설정'); // 기본 텍스트
   const navigate = useNavigate();
-  const handleOpenModal = () => setOpen(true);
-  const handleCloseModal = () => setOpen(false);
-  const handleLocationSet = ({ lat, lng }) => {
-    // 위도와 경도를 주소로 변환하는 API 호출 필요
-    // 여기서는 단순히 '위도, 경도' 형태로 표시
-    setLocation(`위도: ${lat}, 경도: ${lng}`);
-  };
 
   const handleChatPage = () => {
     navigate('/'); //의사와 채팅으로 이동
@@ -28,6 +20,15 @@ function MainPage() {
 
   const handleAIPage = () => {
     navigate('/'); //AI 진단페이지 이동
+  };
+
+  const handleSearchPage = () => {
+    navigate('/hospitals'); //AI 진단페이지 이동
+  };
+
+  
+  const handleLocationPage = () => {
+    navigate('/location'); //위치 설정 페이지 이동
   };
 
   const CustomBox = ({ sx = {}, ...props }) => (
@@ -76,7 +77,7 @@ function MainPage() {
   return (
     <MainContainer>
       <Grid item xs={12}>
-        <CustomBoxTypo onClick={handleOpenModal} sx={{ bgcolor: 'black', py: 2, cursor: 'pointer' }}>
+        <CustomBoxTypo onClick={handleLocationPage} sx={{ bgcolor: 'black', py: 2, cursor: 'pointer' }}>
           <MyLocationOutlinedIcon sx={{ marginLeft: 3, marginRight: 2, color: 'white' }} />
           <Typography variant="h6" sx = {{ color: 'white' }}>{location}</Typography>
         </CustomBoxTypo>
@@ -149,13 +150,6 @@ function MainPage() {
         </Box>
 
       </Container>
-
-      {/* 모달 */}
-      <LocationModal
-        open={open}
-        onClose={handleCloseModal}
-        onLocationSet={handleLocationSet}
-      />
     </MainContainer>
   );
 }
