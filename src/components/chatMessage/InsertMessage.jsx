@@ -54,7 +54,6 @@ function InsertMessage() {
           <Button
             type='DOCTOR'
             variant='contained'
-            ㅎ
             style={{ marginBottom: '4px' }}
             onClick={handleButtonClick}
           >
