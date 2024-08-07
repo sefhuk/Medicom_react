@@ -57,11 +57,14 @@ const Nav = () => {
   };
 
   const handleLogoutClick = async () => {
+    const originAlert = window.alert;
+    window.alert = () => {}
     setAuthState({ isLoggedIn: false });
     setChatRoomState({ rooms: [], selectedIndex: 0 });
     localStorage.removeItem('token');
     await axiosInstance.post('/user-logout');
     deleteCookie('refreshToken');
+    window.alert = originAlert;
     navigate('/');
   };
 
