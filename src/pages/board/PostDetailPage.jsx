@@ -6,14 +6,6 @@ import Pagination from '../../components/board/CommentPagination';
 import MainContainer from '../../components/global/MainContainer';
 import { Button, CircularProgress, Alert, TextField, Typography, Box, Dialog, DialogContent } from '@mui/material';
 
-// Auth 헤더를 반환하는 함수
-function getAuthHeaders() {
-  const token = localStorage.getItem('token');
-  return {
-    'Authorization': `${token}`
-  };
-}
-
 function PostDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,24 +19,31 @@ function PostDetailPage() {
   const [boardId, setBoardId] = useState(null);
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const [userId, setUserId] = useState(null);
+
+  function getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      'Authorization': `${token}`
+    };
+  }
 
   const isLoggedIn = () => {
     const token = localStorage.getItem('token');
     return token !== null;
   };
 
-  // 포스트를 가져오는 함수
   const fetchPost = async () => {
     try {
       const response = await axiosInstance.get(`/posts/${id}`, { headers: getAuthHeaders() });
       setPost(response.data);
       setBoardId(response.data.boardId);
+      setUserId(response.data.userId);
     } catch (error) {
       setError('포스트를 가져오는 데 실패했습니다.');
     }
   };
 
-  // 댓글을 가져오는 함수
   const fetchComments = useCallback(async (page) => {
     setLoading(true);
     try {
@@ -65,7 +64,6 @@ function PostDetailPage() {
     fetchComments(0);
   }, [fetchComments, id]);
 
-  // 댓글 추가 처리
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!isLoggedIn()) {
@@ -86,79 +84,66 @@ function PostDetailPage() {
     }
   };
 
-  // 포스트 삭제 처리
   const handleDeletePost = async () => {
     if (!isLoggedIn()) {
       alert('로그인 후 포스트를 삭제할 수 있습니다.');
       return;
     }
-
+    if (post.userId !== userId) {
+      alert('이 포스트를 삭제할 권한이 없습니다.');
+      return;
+    }
     try {
       await axiosInstance.delete(`/posts/${id}`, { headers: getAuthHeaders() });
       navigate(boardId ? `/boards/${boardId}` : '/boards');
     } catch (error) {
-      if (error.response?.status === 403) {
-        alert('이 포스트를 삭제할 권한이 없습니다.');
-      } else {
-        setError('포스트 삭제에 실패했습니다.');
-      }
+      setError('포스트 삭제에 실패했습니다.');
     }
   };
 
-  // 댓글 삭제 처리
   const handleDeleteComment = async (commentId) => {
     if (!isLoggedIn()) {
       alert('로그인 후 댓글을 삭제할 수 있습니다.');
       return;
     }
-
+    const comment = comments.find(comment => comment.id === commentId);
+    if (comment.userId !== userId) {
+      alert('이 댓글을 삭제할 권한이 없습니다.');
+      return;
+    }
     try {
       await axiosInstance.delete(`/comments/${commentId}`, { headers: getAuthHeaders() });
       setComments(comments.filter(comment => comment.id !== commentId));
     } catch (error) {
-      if (error.response?.status === 403) {
-        alert('이 댓글을 삭제할 권한이 없습니다.');
-      } else {
-        setError('댓글 삭제에 실패했습니다.');
-      }
+      setError('댓글 삭제에 실패했습니다.');
     }
   };
 
-  // 댓글 업데이트 처리
   const handleUpdateComment = async (commentId, content) => {
     if (!isLoggedIn()) {
       alert('로그인 후 댓글을 수정할 수 있습니다.');
       return;
     }
-
+    const comment = comments.find(comment => comment.id === commentId);
+    if (comment.userId !== userId) {
+      alert('이 댓글을 수정할 권한이 없습니다.');
+      return;
+    }
     try {
-      const response = await axiosInstance.put(`/comments/${commentId}`, {
-        postId: id,
-        content: content,
-      }, { headers: getAuthHeaders() });
+      const response = await axiosInstance.put(`/comments/${commentId}`, { postId: id, content: content }, { headers: getAuthHeaders() });
       setComments(comments.map(comment => comment.id === commentId ? response.data : comment));
     } catch (error) {
-      if (error.response?.status === 403) {
-        alert('이 댓글을 수정할 권한이 없습니다.');
-      } else {
-        setError('댓글 업데이트에 실패했습니다.');
-      }
+      setError('댓글 업데이트에 실패했습니다.');
     }
   };
 
-  // 댓글에 답글 추가 처리
   const handleReplyComment = async (parentId, content) => {
     if (!isLoggedIn()) {
       alert('로그인 후 댓글에 답글을 추가할 수 있습니다.');
       return;
     }
-
     try {
-      const response = await axiosInstance.post('/comments', {
-        postId: id,
-        content: content,
-        parentId: parentId
-      }, { headers: getAuthHeaders() });
+      const response = await axiosInstance.post('/comments', { postId: id, content: content, parentId: parentId }, { headers: getAuthHeaders() });
       setComments(comments.map(comment => {
         if (comment.id === parentId) {
           return {
@@ -173,18 +158,15 @@ function PostDetailPage() {
     }
   };
 
-  // 페이지 변경 처리
   const handlePageChange = (page) => {
     fetchComments(page);
   };
 
-  // 이미지 클릭 시 모달 열기
   const handleImageClick = (imgLink) => {
     setSelectedImage(imgLink);
     setOpen(true);
   };
 
-  // 모달 닫기
   const handleClose = () => {
     setOpen(false);
     setSelectedImage('');
@@ -206,7 +188,22 @@ function PostDetailPage() {
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Link to={`/posts/update/${id}`}>
-          <Button variant="contained" color="primary" sx={{ mr: 1 }}>UPDATE</Button>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mr: 1 }}
+            onClick={() => {
+              if (!isLoggedIn()) {
+                alert('로그인 후 포스트를 수정할 수 있습니다.');
+                return;
+              }
+              if (post.userId !== userId) {
+                alert('이 포스트를 수정할 권한이 없습니다.');
+              }
+            }}
+          >
+            UPDATE
+          </Button>
         </Link>
         <Button variant="contained" color="error" onClick={handleDeletePost}>DELETE</Button>
       </Box>
