@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRecoilState } from 'recoil';
-import { userauthState } from '../../utils/atom';
 import { Navigate, Outlet } from 'react-router';
+import { userauthState } from '../utils/atom';
 
 function PrivateRoute() {
   const [auth] = useRecoilState(userauthState);

@@ -12,7 +12,8 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: '50%',
+  maxWidth: '50dvh',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -68,7 +69,7 @@ function ChatInput({ sendMessage, enable }) {
         aria-labelledby='parent-modal-title'
         aria-describedby='parent-modal-description'
       >
-        <Box sx={{ ...style, width: '60%' }}>
+        <Box sx={style}>
           <h2 id='parent-modal-title'>추가 기능</h2>
           <AdvancedModal sendMessage={sendMessage} setOpens={setOpen} />
         </Box>
@@ -100,7 +101,7 @@ const Container = styled.div`
   bottom: 8dvh;
   box-sizing: border-box;
   padding: 4px;
-  max-width: 70dvh;
+  max-width: 60dvh;
   width: 100%;
   height: 8dvh;
   padding: 5px;
