@@ -100,7 +100,7 @@ const Container = styled.div`
   bottom: 8dvh;
   box-sizing: border-box;
   padding: 4px;
-  max-width: 70dvh;
+  max-width: 60dvh;
   width: 100%;
   height: 8dvh;
   padding: 5px;
