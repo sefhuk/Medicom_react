@@ -6,6 +6,7 @@ import { Container, Grid, Typography, Box } from '@mui/material';
 import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import SearchIcon from '@mui/icons-material/Search';
+import Button from '@mui/material/Button';
 
 function MainPage() {
   const { address } = useContext(LocationContext); // 수정
@@ -87,6 +88,8 @@ function MainPage() {
                 <Typography>배너</Typography>
               </CustomBox>
             </Grid>
+
+
 
             <Grid item xs={12}>
               <CustomBoxTypo>

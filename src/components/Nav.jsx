@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, ListItemButton, ListItemIcon, Box, ListItemText, Divider, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { userauthState } from '../utils/atom';
+import { chatRoomState, userauthState } from '../utils/atom';
 import { deleteCookie } from '../utils/cookies';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HttpsIcon from '@mui/icons-material/Https';
@@ -15,6 +15,7 @@ const Nav = () => {
   const navigate = useNavigate();
   const auth = useRecoilValue(userauthState);
   const setAuthState = useSetRecoilState(userauthState);
+  const setChatRoomState = useSetRecoilState(chatRoomState);
   const [open, setOpen] = useState(false);
 
   const toggleDrawer = (newOpen) => () => {
@@ -56,10 +57,14 @@ const Nav = () => {
   };
 
   const handleLogoutClick = async () => {
+    const originAlert = window.alert;
+    window.alert = () => {}
     setAuthState({ isLoggedIn: false });
+    setChatRoomState({ rooms: [], selectedIndex: 0 });
     localStorage.removeItem('token');
     await axiosInstance.post('/user-logout');
     deleteCookie('refreshToken');
+    window.alert = originAlert;
     navigate('/');
   };
 

@@ -1,22 +1,44 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { axiosInstance } from '../../utils/axios';
 import CreatePostForm from '../../components/board/CreatePostForm';
 import MainContainer from '../../components/global/MainContainer';
-import { Button, CircularProgress } from '@mui/material';
+import { CircularProgress, Box, Alert } from '@mui/material';
+
+// Auth 헤더를 반환하는 함수
+function getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  return {
+    'Authorization': `${token}`
+  };
+}
 
 function CreatePostPage() {
   const { boardId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(null);
+
+  const isLoggedIn = () => {
+    const token = localStorage.getItem('token');
+    return token !== null;
+  };
 
   const handleSubmit = async (data) => {
+    if (!isLoggedIn()) {
+      alert('로그인 후 포스트를 작성할 수 있습니다.');
+      return;
+    }
+
     setLoading(true);
     try {
-      await axios.post(`http://localhost:8080/posts`, { ...data, boardId });
+      await axiosInstance.post(`/posts`, { ...data, boardId }, {
+        headers: getAuthHeaders()
+      });
       navigate(`/boards/${boardId}`);
     } catch (error) {
-      console.error('포스트 생성 오류:', error);
+      setError('포스트 작성에 실패했습니다.');
+      console.error('Failed to create post:', error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -24,8 +46,16 @@ function CreatePostPage() {
 
   return (
     <MainContainer>
-      {loading ? <CircularProgress /> : <CreatePostForm onSubmit={handleSubmit} />}
-    <br />
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          {error && <Alert severity="error">{error}</Alert>}
+          <CreatePostForm onSubmit={handleSubmit} />
+        </>
+      )}
     </MainContainer>
   );
 }
