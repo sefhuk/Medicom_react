@@ -60,13 +60,14 @@ function ChatPage() {
     }
   };
 
-  const sendMessage = (id, input, isAccepted) => {
+  const sendMessage = (id, input, isAccepted, isTerminated) => {
     const body = JSON.stringify({
       id: Number(id) || null,
       userId: Number(auth.userId),
       chatRoomId: Number(params.chatRoomId),
       content: input?.replace(/\n/g, '\\n') || null,
-      isAccepted: isAccepted || false
+      isAccepted: isAccepted || false,
+      isTerminated: isTerminated || false
     });
     stompClient.publish({ destination: `/app/chat/${Number(params.chatRoomId)}`, body });
   };
@@ -86,43 +87,57 @@ function ChatPage() {
 
     const stomp = Stomp.over(socket);
 
-    stomp.connect({}, () => {
+    stomp.connect({ Authorization: localStorage.getItem('token') }, () => {
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
 
-        // 채팅 수락
-        if (data.isAccepted) {
+        // 채팅 수락 or 종료
+        if (data.isAccepted || data.isTerminated) {
           setChatRoom(m => ({
             ...m,
             rooms: {
               ...m.rooms,
-              [`ch_${data.id}`]: { ...m.rooms[`ch_${data.id}`], status: { status: '진행' } }
+              [`ch_${data.id}`]: {
+                ...m.rooms[`ch_${data.id}`],
+                status: { status: data.isAccepted ? '진행' : '비활성화' }
+              }
             }
           }));
-        }
-        if (!data.content) {
-          // 메시지 삭제
-          setMessages(m => m.filter(e => e.id !== data.id));
-        } else {
-          data.content = data.content.replace(/\\n/g, '\n');
 
-          // 메시지 추가 & 삭제
-          setMessages(m => {
-            let isModified = false;
-            const newMessages = m.map(e => {
-              if (e.id === data.id) {
-                e.content = data.content;
-                isModified = true;
-              }
-              return e;
-            });
-
-            if (!isModified) {
-              newMessages.push(data);
+          if (auth.userId !== data.userId) {
+            if (data.isAccepted) {
+              alert('상담 요청이 수락되어 채팅이 진행됩니다');
             }
 
-            return newMessages;
-          });
+            if (data.isTerminated) {
+              alert('상대방이 퇴장하였습니다');
+            }
+          }
+        } else {
+          if (!data.content) {
+            // 메시지 삭제
+            setMessages(m => m.filter(e => e.id !== data.id));
+          } else {
+            data.content = data.content.replace(/\\n/g, '\n');
+
+            // 메시지 추가 & 삭제
+            setMessages(m => {
+              let isModified = false;
+              const newMessages = m.map(e => {
+                if (e.id === data.id) {
+                  e.content = data.content;
+                  isModified = true;
+                }
+                return e;
+              });
+
+              if (!isModified) {
+                newMessages.push(data);
+              }
+
+              return newMessages;
+            });
+          }
         }
       });
     });
