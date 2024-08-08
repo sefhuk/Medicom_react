@@ -62,6 +62,7 @@ const Nav = () => {
     setAuthState({ isLoggedIn: false });
     setChatRoomState({ rooms: [], selectedIndex: 0 });
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     await axiosInstance.post('/user-logout');
     deleteCookie('refreshToken');
     window.alert = originAlert;

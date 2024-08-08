@@ -31,9 +31,12 @@ import UpdateBoardPage from './pages/board/UpdateBoardPage';
 import UpdatePostPage from './pages/board/UpdatePostPage';
 import MyReviews from './pages/user/MyReivews';
 import { AdminCreateDoctorProfile } from './pages/admin/AdminCreateDoctorProfile';
+import BookmarksPage from './pages/user/BookmarksPage';
 import LocationPage from './pages/LocationPage.jsx';
+import OtherLocationPage from './pages/OtherLocationPage.jsx';
 import { LocationProvider } from './LocationContext.jsx';
 import PrivateRoute from './pages/PrivateRoute.jsx';
+
 
 const queryClient = new QueryClient();
 
@@ -73,6 +76,7 @@ const router = createBrowserRouter([
 
           //hospitalpage
           { path: 'location', element: <LocationPage /> },
+          {path: 'location/other', element: <OtherLocationPage />},
           { path: 'symptoms', element: <SymptomAsk /> },
           { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
           {
@@ -100,10 +104,24 @@ const router = createBrowserRouter([
             element: <MyPage />
           },
 
+
+
+
+
+
+          {
+            path: 'my-reviews', // 새로운 경로 추가
+            element: <MyReviews />
+          },
+          {
+            path: '/bookmarks', element: <BookmarksPage />
+          },
+
           {
             path: 'my-activity',
             element: <MyActivity />
           },
+
 
           //board
           { path: 'boards', element: <BoardListPage /> },

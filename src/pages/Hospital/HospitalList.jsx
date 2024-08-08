@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
+import HospitalReviewCard from '../../components/HospitalReviewCard';
+import { axiosInstance } from '../../utils/axios';
 import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid } from '@mui/material';
 
 
@@ -12,8 +14,8 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return Math.abs(R * c); // 절댓값 적용
 };
@@ -43,8 +45,15 @@ const HospitalList = () => {
   const [hospitalReviews, setHospitalReviews] = useState({});
   const [reviewsLoading, setReviewsLoading] = useState({});
   const [reviewsPage, setReviewsPage] = useState({});
+  const [reviewsLoaded, setReviewsLoaded] = useState({});
+  const [hasMoreReviews, setHasMoreReviews] = useState({});
+
+  //북마크
+  const [bookmarks, setBookmarks] = useState([]);
+  const [bookmarksLoading, setBookmarksLoading] = useState(false);
 
   const pageSize = 10;
+  const reviewPageSize = 4;
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -171,51 +180,172 @@ const HospitalList = () => {
     fetchHospitals();
   }, [searchParams, currentPage, currentLocation]);
 
-  const fetchReviews = async (hospitalId, page) => {
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      setBookmarksLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axiosInstance.get('http://localhost:8080/bookmark', {
+          headers: {
+            Authorization: `${token}`
+          }
+        });
+        setBookmarks(response.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setBookmarksLoading(false);
+      }
+    };
+
+    fetchBookmarks(); // 컴포넌트가 마운트될 때 북마크 데이터를 로드함
+  }, []);
+
+  const fetchReviews = async (hospitalId, page = 0) => {
     setReviewsLoading(prev => ({ ...prev, [hospitalId]: true }));
     try {
-      const response = await axios.get(`http://localhost:8080/api/hospitals/${hospitalId}/reviews`, {
-        params: { page, size: pageSize },
+      const response = await axios.get(`http://localhost:8080/review/${hospitalId}/Page`, {
+        params: { page, size: reviewPageSize },
       });
-      
+
+      const totalPages = response.data.totalPages;
+      const currentPage = response.data.number;
+
+      const reviewsWithUsernames = await Promise.all(
+        response.data.content.map(async review => {
+          try {
+            const userResponse = await axios.get(`http://localhost:8080/review/findUser/${review.userId}`);
+            return {
+              ...review,
+              userName: userResponse.data,
+            };
+          } catch (error) {
+            console.error(error);
+            return {
+              ...review,
+              userName: '탈퇴한 유저'
+            };
+          }
+        })
+      );
+
       setHospitalReviews(prev => ({
         ...prev,
-        [hospitalId]: (prev[hospitalId] || []).concat(response.data.content),
+        [hospitalId]: (prev[hospitalId] || []).concat(reviewsWithUsernames),
       }));
       setReviewsPage(prev => ({ ...prev, [hospitalId]: page }));
+      setReviewsLoaded((prev) => ({ ...prev, [hospitalId]: true }));
+      setHasMoreReviews((prev) => ({
+        ...prev,
+        [hospitalId]: currentPage < totalPages - 1,
+      }));
     } catch (error) {
-      console.error('Fetching reviews error:', error);
+      console.error(error);
     } finally {
       setReviewsLoading(prev => ({ ...prev, [hospitalId]: false }));
     }
   };
 
   const handleLoadMoreReviews = (hospitalId) => {
-    const nextPage = (reviewsPage[hospitalId] || 0) + 1;
+    const nextPage = reviewsPage[hospitalId] !== undefined ? reviewsPage[hospitalId] + 1 : 0;
+    //const nextPage = (reviewsPage[hospitalId] || 0) + 1;
     fetchReviews(hospitalId, nextPage);
+  };
+  const handleCloseReviews = (hospitalId) => {
+    setHospitalReviews(prev => ({
+      ...prev,
+      [hospitalId]: [],
+    }));
+    setReviewsPage(prev => ({
+      ...prev,
+      [hospitalId]: -1,
+    }));
+    setReviewsLoaded(prev => ({
+      ...prev,
+      [hospitalId]: false,
+    }));
+  };
+  const handleAddBookmark = async (hospitalId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      const bookmarkDTO = {
+        userId: userId,
+        hospitalId: hospitalId,
+      };
+      await axiosInstance.post('/bookmark',bookmarkDTO, {
+        headers: {
+          Authorization: `${token}`
+        }
+      });
+      setBookmarks([...bookmarks, { hospitalId }]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleRemoveBookmark = async (hospitalId) => {
+    try {
+      const token = localStorage.getItem('token');
+
+
+      await axiosInstance.delete(`http://localhost:8080/bookmark/${hospitalId}`,{
+        headers: {
+          Authorization: `${token}`
+        }
+      });
+      setBookmarks(bookmarks.filter(bookmark => hospitalId !== hospitalId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const isBookmarked = (hospitalId) => {
+    return bookmarks.some(bookmark => bookmark.hospitalId === hospitalId);
   };
 
   const renderReviews = (hospitalId) => {
     const reviews = hospitalReviews[hospitalId] || [];
     const loading = reviewsLoading[hospitalId];
-    const hasMoreReviews = reviews.length % pageSize === 0;
+    const loaded = reviewsLoaded[hospitalId]; // 리뷰 로드 여부
+    const moreReviews = hasMoreReviews[hospitalId];
+
+    if (!loaded) {
+      return (
+        <button
+          onClick={() => handleLoadMoreReviews(hospitalId)}
+          disabled={loading}
+        >
+          {loading ? '로딩 중...' : '리뷰 더보기'}
+        </button>
+      );
+    }
+
+    //const hasMoreReviews = reviews.length % pageSize === 0;
 
     return (
       <>
         {reviews.length > 0 ? (
           <ul>
             {reviews.map((review, index) => (
-              <li key={index}>{review.content}</li>
+              <li key={index}>
+              <HospitalReviewCard review={review} />
+              </li>
             ))}
           </ul>
         ) : (
           <p>리뷰가 없습니다.</p>
         )}
-        {hasMoreReviews && (
-          <button onClick={() => handleLoadMoreReviews(hospitalId)} disabled={loading}>
+        {moreReviews && (
+          <button
+            onClick={() => handleLoadMoreReviews(hospitalId)}
+            disabled={loading}
+          >
             {loading ? '로딩 중...' : '리뷰 더보기'}
           </button>
         )}
+        <button onClick={() => handleCloseReviews(hospitalId)}>
+          리뷰 닫기
+        </button>
       </>
     );
   };
@@ -293,6 +423,7 @@ const HospitalList = () => {
     <MainContainer>
        <Box className="container" sx={{ padding: '20px', marginLeft: '20px', marginRight: '20px' }}>
         <Typography variant="h5" component="h5">병원 검색하기</Typography>
+
 
         <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
           <Grid item xs={12} sm={6} md={5}>
@@ -373,7 +504,13 @@ const HospitalList = () => {
                   {renderReviews(hospital.id)}
                 </Box>
                 {selectedHospital?.id === hospital.id && renderMap()}
+                {isBookmarked(hospital.id) ? (
+                  <button onClick={() => handleRemoveBookmark(hospital.id)}>북마크 삭제</button>
+                ) : (
+                  <button onClick={() => handleAddBookmark(hospital.id)}>북마크 추가</button>
+                )}
               </ListItem>
+
             ))
           ) : (
             <Typography variant="body2" sx={{ padding: '10px' }}>병원이 없습니다</Typography>

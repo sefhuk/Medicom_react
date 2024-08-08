@@ -8,14 +8,13 @@ function MainContainer({ children, isChat }) {
     <Container>
       <Nav />
       <Content isChat={isChat}>{children}</Content>
-
+      <Footer />
     </Container>
   );
 }
 
 const Container = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
   max-width: 60dvh;
   margin: 0 auto;

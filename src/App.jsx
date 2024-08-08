@@ -4,6 +4,8 @@ import './App.css';
 import { NavermapsProvider } from 'react-naver-maps';
 import { LocationProvider } from './LocationContext';
 import { useSetRecoilState } from 'recoil';
+import OtherLocationPage from './pages/OtherLocationPage';
+
 import { userauthState } from './utils/atom';
 import { axiosInstance } from './utils/axios';
 

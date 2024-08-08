@@ -87,7 +87,12 @@ function ChatListPage() {
         })
       );
     } catch (err) {
-      setError(err.response.data.message);
+      try {
+        setError(err.response.data.message);
+      } catch (err) {
+        alert('잘못된 접근입니다. 다시 시도해주세요');
+        navigate('/');
+      }
     } finally {
       setIsLoading(false);
     }

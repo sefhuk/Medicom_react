@@ -115,7 +115,7 @@ const Input = styled.textarea`
   background-color: #e8e0e0;
   padding: 1rem 15px;
   font-size: 1.8rem;
-  line-height: 4dvh;
+  line-height: 5dvh;
   resize: none;
   white-space: pre-line;
   @media (max-width: 481px) {
