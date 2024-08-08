@@ -1,10 +1,8 @@
-// LocationContext.js
 import React, { createContext, useState, useEffect } from 'react';
 
 export const LocationContext = createContext();
 
 export const LocationProvider = ({ children }) => {
-  // 초기값은 로컬 스토리지에서 가져온 값 또는 기본값
   const [latitude, setLatitude] = useState(localStorage.getItem('latitude') || '');
   const [longitude, setLongitude] = useState(localStorage.getItem('longitude') || '');
   const [address, setAddress] = useState(localStorage.getItem('address') || '내 위치 설정');

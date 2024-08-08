@@ -23,7 +23,8 @@ function SymptomAskSecond() {
               <Typography variant='h1' sx = {{ textAlign: 'center' }}>02</Typography>
               <Typography variant='h4'>진단 결과</Typography>
               <Typography variant='body1' sx={{ marginTop: 2 }}>
-                {message}
+                {message} 
+                {/* 응답값 */}
               </Typography>
             </Grid>
             <Grid item xs={12} sx={{ marginTop: 2 }}>

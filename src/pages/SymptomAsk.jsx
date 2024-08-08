@@ -10,7 +10,7 @@ function SymptomAsk() {
 
   const handleNext = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/gemini', {
+      const response = await axios.post('http://localhost:8000/gemini', {
         description: textFieldValue,
       });
 
