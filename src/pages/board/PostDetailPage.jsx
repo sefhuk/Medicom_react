@@ -20,6 +20,7 @@ function PostDetailPage() {
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
   const [userId, setUserId] = useState(null);
+  const [userName, setUserName] = useState(null); // New state for user name
 
   function getAuthHeaders() {
     const token = localStorage.getItem('token');
@@ -39,6 +40,7 @@ function PostDetailPage() {
       setPost(response.data);
       setBoardId(response.data.boardId);
       setUserId(response.data.userId);
+      setUserName(response.data.userName); // Set user name
     } catch (error) {
       setError('포스트를 가져오는 데 실패했습니다.');
     }
@@ -76,7 +78,7 @@ function PostDetailPage() {
       return;
     }
     try {
-      const response = await axiosInstance.post('/comments', { postId: id, content: commentText }, { headers: getAuthHeaders() });
+      const response = await axiosInstance.post('/comments', { postId: id, content: commentText, userName }, { headers: getAuthHeaders() });
       setComments([...comments, response.data]);
       setCommentText('');
     } catch (error) {
@@ -143,7 +145,7 @@ function PostDetailPage() {
       return;
     }
     try {
-      const response = await axiosInstance.post('/comments', { postId: id, content: content, parentId: parentId }, { headers: getAuthHeaders() });
+      const response = await axiosInstance.post('/comments', { postId: id, content: content, parentId: parentId, userName }, { headers: getAuthHeaders() });
       setComments(comments.map(comment => {
         if (comment.id === parentId) {
           return {
@@ -186,6 +188,14 @@ function PostDetailPage() {
       <Box sx={{ textAlign: 'center', mb: 2 }}>
         <Typography variant="h4">{post.title}</Typography>
       </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Typography variant="caption" display="block">
+          {post.userName}
+        </Typography>
+        <Typography variant="caption" display="block">
+          {new Date(post.createdAt).toLocaleString()}
+        </Typography>
+      </Box>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Link to={`/posts/update/${id}`}>
           <Button
@@ -218,7 +228,7 @@ function PostDetailPage() {
               src={img.link}
               alt={`image-${index}`}
               style={{
-                width: '200px',
+                width: '425px',
                 height: 'auto',
                 objectFit: 'cover',
                 cursor: 'pointer',

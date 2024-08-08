@@ -4,46 +4,38 @@ import { Edit as EditIcon, Delete as DeleteIcon, Reply as ReplyIcon } from '@mui
 import ReplyList from './ReplyList';
 
 function CommentList({ comments, onDelete, onUpdate, onReply }) {
-  // 댓글 수정 상태와 내용
   const [editCommentId, setEditCommentId] = useState(null);
   const [editContent, setEditContent] = useState('');
-  // 댓글 답글 상태와 내용
   const [replyCommentId, setReplyCommentId] = useState(null);
   const [replyContent, setReplyContent] = useState('');
 
-  // 댓글 수정
   const handleEditClick = (comment) => {
     setEditCommentId(comment.id);
     setEditContent(comment.content);
   };
 
-  // 댓글 업데이트
   const handleUpdate = () => {
     onUpdate(editCommentId, editContent);
     setEditCommentId(null);
     setEditContent('');
   };
 
-  // 댓글 수정 취소
   const handleCancelEdit = () => {
     setEditCommentId(null);
     setEditContent('');
   };
 
-  // 댓글에 답글 추가
   const handleReplyClick = (comment) => {
     setReplyCommentId(comment.id);
     setReplyContent('');
   };
 
-  // 답글 추가
   const handleReply = () => {
     onReply(replyCommentId, replyContent);
     setReplyCommentId(null);
     setReplyContent('');
   };
 
-  // 답글 작성 취소
   const handleCancelReply = () => {
     setReplyCommentId(null);
     setReplyContent('');
@@ -55,10 +47,9 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
         {comments.map(comment => (
           <ListItem
             key={comment.id}
-            sx={{ mb: 2, bgcolor: '#f9f9f9', borderRadius: 1, p: 2, border: '1px solid #ddd' }}
+            sx={{ mb: 2, bgcolor: '#f9f9f9', borderRadius: 1, p: 2, border: '1px solid #ddd', display: 'flex', justifyContent: 'space-between' }}
           >
             <Box sx={{ flex: 1 }}>
-              {/* 댓글 수정 상태 */}
               {editCommentId === comment.id ? (
                 <Box>
                   <TextField
@@ -80,6 +71,14 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
                   <Typography variant="body1" gutterBottom>
                     {comment.content}
                   </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="caption" display="block">
+                      {comment.userName}
+                    </Typography>
+                    <Typography variant="caption" display="block">
+                      {new Date(comment.createdAt).toLocaleString()}
+                    </Typography>
+                  </Box>
                   <IconButton onClick={() => handleEditClick(comment)} color="primary">
                     <EditIcon />
                   </IconButton>
@@ -93,7 +92,6 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
                   )}
                 </Box>
               )}
-              {/* 답글 추가 상태 */}
               {replyCommentId === comment.id && (
                 <Box sx={{ mt: 2 }}>
                   <TextField
@@ -112,7 +110,6 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
                   </Button>
                 </Box>
               )}
-              {/* 댓글에 대한 답글 목록 */}
               {comment.replies && comment.replies.length > 0 && (
                 <ReplyList
                   replies={comment.replies}

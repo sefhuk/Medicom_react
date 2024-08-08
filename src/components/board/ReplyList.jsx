@@ -3,39 +3,33 @@ import { Box, Button, TextField, Typography, List, ListItem, IconButton } from '
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 
 function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
-  // 상태 변수
-  const [editReplyId, setEditReplyId] = useState(null); // 수정 중인 답글 ID
-  const [editContent, setEditContent] = useState(''); // 수정할 답글 내용
-  const [replyContent, setReplyContent] = useState(''); // 새로 추가할 답글 내용
+  const [editReplyId, setEditReplyId] = useState(null);
+  const [editContent, setEditContent] = useState('');
+  const [replyContent, setReplyContent] = useState('');
 
-  // 대댓글 수정
   const handleEditClick = (reply) => {
     setEditReplyId(reply.id);
     setEditContent(reply.content);
   };
 
-  // 대댓글 업데이트
   const handleUpdate = () => {
     onUpdate(editReplyId, editContent);
     setEditReplyId(null);
     setEditContent('');
   };
 
-  // 대댓글 수정 취소
   const handleCancelEdit = () => {
     setEditReplyId(null);
     setEditContent('');
   };
 
-  // 답글 추가 버튼 클릭 시 호출
   const handleReply = () => {
-    onReply(parentId, replyContent); // 부모 컴포넌트에 답글 추가 요청
-    setReplyContent(''); // 상태 초기화
+    onReply(parentId, replyContent);
+    setReplyContent('');
   };
 
-  // 답글 추가 취소 버튼 클릭 시 호출
   const handleCancelReply = () => {
-    setReplyContent(''); // 상태 초기화
+    setReplyContent('');
   };
 
   return (
@@ -44,7 +38,7 @@ function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
         {replies.map(reply => (
           <ListItem
             key={reply.id}
-            sx={{ mb: 2, bgcolor: '#e9e9e9', borderRadius: 1, p: 2, border: '1px solid #ccc' }}
+            sx={{ mb: 2, bgcolor: '#e9e9e9', borderRadius: 1, p: 2, border: '1px solid #ccc', display: 'flex', justifyContent: 'space-between' }}
           >
             <Box sx={{ flex: 1 }}>
               {editReplyId === reply.id ? (
@@ -68,6 +62,14 @@ function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
                   <Typography variant="body2" gutterBottom>
                     {reply.content}
                   </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="caption" display="block">
+                      {reply.userName}
+                    </Typography>
+                    <Typography variant="caption" display="block">
+                      {new Date(reply.createdAt).toLocaleString()}
+                    </Typography>
+                  </Box>
                   <IconButton onClick={() => handleEditClick(reply)} color="primary">
                     <EditIcon />
                   </IconButton>
