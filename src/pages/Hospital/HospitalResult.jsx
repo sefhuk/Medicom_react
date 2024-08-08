@@ -3,6 +3,7 @@ import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
 import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid } from '@mui/material';
 
+
 // 거리 계산 함수 (위도와 경도를 이용해 두 지점 간의 거리를 계산)
 const getDistance = (lat1, lon1, lat2, lon2) => { 
   const toRad = (value) => value * Math.PI / 180;
@@ -120,6 +121,18 @@ const HospitalList = () => {
 
     getCurrentLocation();
   }, []);
+
+  // useEffect(() => {
+  //   const getCurrentLocation = () => {
+  //     // 임의의 위치 설정
+  //     const latitude = 37.5665;
+  //     const longitude = 126.9780;
+  //     console.log(`임의의 위치 - 위도: ${latitude}, 경도: ${longitude}`);
+  //     setCurrentLocation({ latitude, longitude });
+  //   };
+
+  //   getCurrentLocation();
+  // }, []);
 
   useEffect(() => {
     const fetchHospitals = async () => {
@@ -243,10 +256,7 @@ const HospitalList = () => {
   const renderMap = () => {
     if (selectedHospital) {
       return (
-        <>
-          <div id={`map-${selectedHospital.id}`} style={{ width: '100%', height: '400px', marginTop: '20px' }}></div>
-          {renderReviews(selectedHospital.id)}
-        </>
+        <div id={`map-${selectedHospital.id}`} style={{ width: '100%', height: '400px', marginTop: '20px' }}></div>
       );
     }
     return null;
@@ -281,9 +291,24 @@ const HospitalList = () => {
 
   return (
     <MainContainer>
+        <Box sx={{ mb: 1, textAlign: 'center', mt: 2 }}>
+        {"OO님의 추천 진료과는 다음과 같습니다."}
+      </Box>
+      <Box
+        height="50px"
+        width="95%"
+        my={4}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        gap={4}
+        p={2}
+        sx={{ border: '2px solid grey' }}
+      ></Box>
+      <Box sx={{ mb: 2, textAlign: 'center' }}>
+        {"OO님의 현재 위치에 따른 병원 검색 결과"}
+      </Box>
        <Box className="container" sx={{ padding: '20px', marginLeft: '20px', marginRight: '20px' }}>
-        <Typography variant="h5" component="h5">병원 검색하기</Typography>
-
         <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
           <Grid item xs={12} sm={6} md={5}>
             <TextField
@@ -356,8 +381,11 @@ const HospitalList = () => {
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
                     <Typography variant="body2">전화번호: {hospital.telephoneNumber}</Typography>
-                    <Button variant="contained" color="secondary" onClick={() => handleMapClick(hospital)} sx={{ marginLeft: '170px' }}>지도 & 정보</Button>
+                    <Button variant="contained" color="secondary" onClick={() => handleMapClick(hospital)} sx={{ marginLeft: '10px' }}>지도</Button>
                   </Box>
+                </Box>
+                <Box sx={{ marginTop: '10px', width: '100%' }}>
+                  {renderReviews(hospital.id)}
                 </Box>
                 {selectedHospital?.id === hospital.id && renderMap()}
               </ListItem>
