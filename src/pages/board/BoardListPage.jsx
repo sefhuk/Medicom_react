@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import { axiosInstance } from '../../utils/axios';
 import MainContainer from '../../components/global/MainContainer';
 import BoardList from '../../components/board/BoardList';
 import Pagination from '../../components/board/Pagination';
 import SearchBar from '../../components/board/SearchBar';
 import { CircularProgress, Alert } from '@mui/material';
+
+function getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  return {
+    'Authorization': `${token}`
+  };
+}
 
 function BoardListPage() {
   const [boards, setBoards] = useState([]);
@@ -16,7 +23,8 @@ function BoardListPage() {
 
   const fetchBoards = useCallback((page, query) => {
     setLoading(true);
-    axios.get('http://localhost:8080/boards', {
+    axiosInstance.get('/boards', {
+      headers: getAuthHeaders(),
       params: {
         name: query,
         page: page,
@@ -54,8 +62,8 @@ function BoardListPage() {
 
   return (
     <MainContainer>
-    <br />
-    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+      <br />
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
         <SearchBar onSearch={handleSearch} searchType="boards" />
       </div>
       <BoardList boards={boards} />

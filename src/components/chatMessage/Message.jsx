@@ -12,7 +12,8 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  maxWidth: '50dvh',
+  width: '40%',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -57,8 +58,11 @@ function Message({ data, repeat, self }) {
         aria-labelledby='parent-modal-title'
         aria-describedby='parent-modal-description'
       >
-        <Box sx={{ ...style, width: '60%' }}>
+        <Box sx={style}>
           <h2 id='parent-modal-title'>메시지 옵션</h2>
+          <p style={{ color: '#22a1d3', fontWeight: 'bold', fontStyle: 'italic' }}>
+            {data.content}
+          </p>
           <EditModal msgId={data.id} msg={data.content} setOpens={setOpen} />
         </Box>
       </Modal>
@@ -78,16 +82,15 @@ function Message({ data, repeat, self }) {
           </TopContainer>
         )}
         <BottomContainer self={self}>
-          <Content self={self} onDoubleClick={handleOpen}>
-            {data.content.startsWith('dpt: ') ? (
+          <Content self={self} onClick={handleOpen}>
+            {data.content.startsWith('dpt: ') && data.user.role === 'DOCTOR' ? (
               <Suggestion>
-                <p style={{ margin: '4px 0 20px' }}>진료과 추천 정보가 제공되었습니다</p>
+                <p>진료과 추천 정보가 제공되었습니다</p>
                 <Button
                   variant='contained'
                   onClick={requestHospital}
-                  sx={{ width: '40%', backgroundColor: '#272424', fontSize: '1rem' }}
+                  sx={{ width: '40%', backgroundColor: '#272424' }}
                 >
-                  {' '}
                   {data.content.split(' ')[1]}
                 </Button>
               </Suggestion>
@@ -154,6 +157,9 @@ const Content = styled.div`
   max-width: 70%;
   height: auto;
   overflow: hidden;
+  @media (min-width: 490px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const Suggestion = styled.p`
@@ -169,6 +175,9 @@ const Time = styled.p`
   margin-bottom: 0px;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
+  @media (min-width: 490px) {
+    font-size: 1.2rem;
+  }
 `;
 
 export default Message;

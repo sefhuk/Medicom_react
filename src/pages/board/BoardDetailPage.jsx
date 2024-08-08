@@ -1,11 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
+import { axiosInstance } from '../../utils/axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import PostList from '../../components/board/PostList';
 import MainContainer from '../../components/global/MainContainer';
 import Pagination from '../../components/board/Pagination';
 import SearchBar from '../../components/board/SearchBar';
 import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert } from '@mui/material';
+
+function getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  return {
+    'Authorization': `${token}`
+  };
+}
 
 function BoardDetailPage() {
   const { id } = useParams();
@@ -21,7 +28,8 @@ function BoardDetailPage() {
 
   const fetchPosts = useCallback((page, query) => {
     setLoading(true);
-    axios.get(`http://localhost:8080/posts/board/${id}`, {
+    axiosInstance.get(`/posts/board/${id}`, {
+      headers: getAuthHeaders(),
       params: {
         title: query,
         page: page,
@@ -37,7 +45,9 @@ function BoardDetailPage() {
   }, [id]);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/boards/${id}`)
+    axiosInstance.get(`/boards/${id}`, {
+      headers: getAuthHeaders()
+    })
       .then(response => setBoard(response.data))
       .catch(error => setError('게시판 정보를 가져오는 데 실패했습니다.'));
 
@@ -46,7 +56,9 @@ function BoardDetailPage() {
 
   const handleDeleteBoard = async () => {
     try {
-      await axios.delete(`http://localhost:8080/boards/${id}`);
+      await axiosInstance.delete(`/boards/${id}`, {
+        headers: getAuthHeaders()
+      });
       navigate('/boards');
     } catch (error) {
       setError('게시판 삭제에 실패했습니다.');
@@ -75,7 +87,7 @@ function BoardDetailPage() {
 
   return (
     <MainContainer>
-    <br/>
+      <br />
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
         <SearchBar onSearch={handleSearch} searchType="posts" />
       </div>

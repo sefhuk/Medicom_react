@@ -121,7 +121,7 @@ const BookmarksPage = () => {
                   <Typography variant="h6">{state.selectedHospital.name}</Typography>
                   <Box sx={{ margin: '20px 0', borderBottom: '1px solid grey' }}></Box>
                   <Typography variant="body1">주소 : {state.selectedHospital.address}</Typography>
-                  <Typography variant="body2">전화번호 : {state.selectedHospital.telephoneNumber ? state.selectedHospital.telephoneNumber : '제공되지 않음'}</Typography>
+                  <Typography variant="body2">전화번호 : {state.selectedHospital.telephoneNumber.length > 4 ? state.selectedHospital.telephoneNumber : '제공되지 않음'}</Typography>
                 </>
               )}
 
