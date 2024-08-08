@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import axios from 'axios';
+import { axiosInstance } from '../../utils/axios';
 
-const SearchBar = ({ onSearch, searchType }) => {
+const BoardSearchBar = ({ onSearch }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleSearch = async () => {
         try {
-            const params = { page: 0, size: 6 };
-            params[searchType === 'posts' ? 'title' : 'name'] = searchTerm;
-
-            const response = await axios.get(`http://localhost:8080/${searchType}/search`, { params });
+            // 검색어가 비어 있으면 전체 게시물 검색
+            const params = { page: 0, size: 6, name: searchTerm || '' };
+            const response = await axiosInstance.get('/boards/search', { params });
 
             if (response.data.content.length === 0) {
-                alert("No results found");
+                alert("해당 게시판을 찾을 수 없습니다.");
             } else {
                 onSearch(response.data);
             }
@@ -26,7 +25,7 @@ const SearchBar = ({ onSearch, searchType }) => {
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <TextField
                 variant="outlined"
-                label={`Search ${searchType}`}
+                label="Search Boards"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 sx={{ mr: 1 }}
@@ -36,4 +35,4 @@ const SearchBar = ({ onSearch, searchType }) => {
     );
 };
 
-export default SearchBar;
+export default BoardSearchBar;
