@@ -25,7 +25,7 @@ const PostSearchBar = ({ onSearch }) => {
             }
 
             if (response.data.content.length === 0) {
-                alert("No results found");
+                alert("해당 제목을 찾을 수 없습니다.");
             } else {
                 onSearch(response.data);
             }
@@ -33,7 +33,7 @@ const PostSearchBar = ({ onSearch }) => {
             if (error.response && error.response.data) {
                 const { codeName, message } = error.response.data;
                 if (codeName === "USER_NOT_FOUND") {
-                    alert(`Error: ${message}`);
+                    alert(`존재하지 않는 아이디 입니다.`);
                 } else {
                     console.error("Error fetching search results:", error);
                     alert("An error occurred while fetching search results.");

@@ -12,7 +12,7 @@ const BoardSearchBar = ({ onSearch }) => {
             const response = await axiosInstance.get('/boards/search', { params });
 
             if (response.data.content.length === 0) {
-                alert("No results found");
+                alert("해당 게시판을 찾을 수 없습니다.");
             } else {
                 onSearch(response.data);
             }
