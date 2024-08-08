@@ -17,7 +17,7 @@ function MainPage() {
   };
 
   const handleAIPage = () => {
-    navigate('/'); // AI 진단 페이지로 이동
+    navigate('/symptoms'); // AI 진단 페이지로 이동
   };
 
   const handleSearchPage = () => {

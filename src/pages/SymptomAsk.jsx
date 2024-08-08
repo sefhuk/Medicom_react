@@ -1,17 +1,8 @@
 import React from 'react';
 import MainContainer from '../components/global/MainContainer';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
+import { Box, Grid, Container, Typography } from '@mui/material';
 
-//공통 속성 지정
-const DemoPaper = styled(Paper)(({ theme }) => ({
-    width: 120,
-    height: 120,
-    padding: theme.spacing(2),
-    ...theme.typography.body2,
-    textAlign: 'center',
-  }));
 
 
 //<DemoPaper variant="elevation">default variant</DemoPaper>
@@ -20,10 +11,24 @@ const DemoPaper = styled(Paper)(({ theme }) => ({
 function SymptomAsk() {
   return (
     <MainContainer>
-        <Paper>증상에 대하여 답해주세요.</Paper>
-        <Paper>
-            질문
-        </Paper>
+      <Container>
+        <Box sx={{  flexGrow: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+            <Grid item xs={12}>
+
+            </Grid>
+            <Grid item xs={12}>
+              <Typography>증상에 대해 설명해주세요.</Typography>
+            </Grid>
+            <Grid item xs={12}>
+
+            </Grid>
+            <Grid item xs={12}>
+
+            </Grid>
+            </Grid> 
+        </Box>
+      </Container> 
     </MainContainer>
   );
 }

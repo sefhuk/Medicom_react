@@ -55,11 +55,7 @@ const router = createBrowserRouter([
     path: '/social-login-success',
     element: <SocialLoginSuccess />
   },
-  { path: 'hospitals', element: <HospitalList /> },
-  { path: 'hospitals/maps', element: <MapComponent /> },
-  { path: 'hospitals/list', element: <HospitalResult />},
-  { path: 'location', element: <LocationPage /> },
-  {path: 'location/other', element: <OtherLocationPage />},
+  { path: 'symptoms', element: <SymptomAsk /> },
   // 로그인 필요없는 페이지 - 끝
   {
     path: '/',
@@ -77,15 +73,14 @@ const router = createBrowserRouter([
           { path: 'chat/:chatRoomId/messages', element: <ChatPage /> },
           { path: 'chat/new', element: <NewChatPage /> },
           { path: 'chatlist', element: <ChatListPage /> },
-          // { path: 'hospitals', element: <HospitalList /> },
-          // { path: 'hospitals/maps', element: <MapComponent /> },
-          // { path: 'hospitals/list', element: <HospitalResult />},
+          { path: 'hospitals', element: <HospitalList /> },
+          { path: 'hospitals/maps', element: <MapComponent /> },
+          { path: 'hospitals/list', element: <HospitalResult />},
 
           //hospitalpage
-          // { path: 'location', element: <LocationPage /> },
-          // {path: 'location/other', element: <OtherLocationPage />},
-          { path: 'symptoms', element: <SymptomAsk /> },
-          { path: 'hospitals/maps/reservation', element: <HospitalReservation /> },
+          { path: 'location', element: <LocationPage /> },
+          {path: 'location/other', element: <OtherLocationPage />},
+          { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
           {
             path: 'admin-page',
             element: <AdminPage />

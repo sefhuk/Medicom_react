@@ -31,7 +31,7 @@ function LocationPage() {
           setInfoWindowContent('현재 위치'); // 현재 위치 아이콘 클릭 시 내용 설정
 
           // 위도, 경도를 주소로 변환
-          const url = `http://localhost:8000/api/geocode/coords-to-address?lat=${latitude}&lng=${longitude}`;
+          const url = `http://localhost:8080/api/geocode/coords-to-address?lat=${latitude}&lng=${longitude}`;
 
           fetch(url)
             .then(response => response.json())
