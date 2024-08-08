@@ -221,24 +221,47 @@ const MapComponent = () => {
             backgroundColor: 'white',
             padding: '20px',
             boxShadow: '0px -4px 8px rgba(0,0,0,0.2)',
-            borderTop: '2px solid #333',
-            borderRadius: '0px 0px 8px 8px',
-            zIndex: 1000
+            borderTop: '2px solid #007BFF',
+            zIndex: 1,
+            textAlign: 'left',
           }}>
-            <Typography variant="h6">{selectedHospital.name}</Typography>
-            <Typography>{selectedHospital.address}</Typography>
-            <Typography>{selectedHospital.contactNumber}</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleReservation}
-            >
-              예약하기
-            </Button>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{selectedHospital.name}</Typography>
+            <Typography><strong>주소:</strong> {selectedHospital.address}</Typography>
+            <Typography><strong>진료과목:</strong></Typography>
+            <ul style={{
+              listStyleType: 'none',
+              padding: 0,
+              margin: 0,
+              display: 'flex',
+              justifyContent: 'flex-start',
+              flexWrap: 'wrap'
+            }}>
+              {selectedHospital.departments.map(department => (
+                <li key={department.id} style={{
+                  marginRight: '20px',
+                  whiteSpace: 'nowrap'
+                }}>
+                  #{department.name}
+                </li>
+              ))}
+            </ul>
+            <button onClick={handleReservation} style={{
+              backgroundColor: '#007BFF',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '10px 15px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              marginTop: '10px'
+            }}>
+              병원 예약
+            </button>
           </Box>
         )}
       </Box>
     </MainContainer>
+
   );
 };
 
