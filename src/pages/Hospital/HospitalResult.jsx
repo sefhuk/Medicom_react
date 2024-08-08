@@ -1,13 +1,26 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
 import HospitalReviewCard from '../../components/HospitalReviewCard';
 import { axiosInstance } from '../../utils/axios';
 import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid } from '@mui/material';
-import { LocationContext } from '../../LocationContext';
+
+
+// 거리 계산 함수 (위도와 경도를 이용해 두 지점 간의 거리를 계산)
+const getDistance = (lat1, lon1, lat2, lon2) => { 
+  const toRad = (value) => value * Math.PI / 180;
+  const R = 6371; // 지구의 반경 (킬로미터)
+
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.abs(R * c); // 절댓값 적용
+};
 
 const HospitalList = () => {
-  const { latitude, longitude } = useContext(LocationContext);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,6 +32,7 @@ const HospitalList = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(null);
   const [searchParams, setSearchParams] = useState({
     name: '',
     departmentName: '',
@@ -34,7 +48,7 @@ const HospitalList = () => {
   const [reviewsLoaded, setReviewsLoaded] = useState({});
   const [hasMoreReviews, setHasMoreReviews] = useState({});
 
-  // 북마크 상태
+  //북마크
   const [bookmarks, setBookmarks] = useState([]);
   const [bookmarksLoading, setBookmarksLoading] = useState(false);
 
@@ -97,28 +111,63 @@ const HospitalList = () => {
   }, [mapLoaded, selectedHospital]);
 
   useEffect(() => {
+    const getCurrentLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            console.log(`현재 위치 - 위도: ${latitude}, 경도: ${longitude}`);
+            setCurrentLocation({ latitude, longitude });
+          },
+          (error) => {
+            console.error('현재 위치를 가져오는 데 실패했습니다:', error);
+          }
+        );
+      } else {
+        console.error('현재 위치를 가져오는 데 실패했습니다.');
+      }
+    };
+
+    getCurrentLocation();
+  }, []);
+
+  // useEffect(() => {
+  //   const getCurrentLocation = () => {
+  //     // 임의의 위치 설정
+  //     const latitude = 37.5665;
+  //     const longitude = 126.9780;
+  //     console.log(`임의의 위치 - 위도: ${latitude}, 경도: ${longitude}`);
+  //     setCurrentLocation({ latitude, longitude });
+  //   };
+
+  //   getCurrentLocation();
+  // }, []);
+
+  useEffect(() => {
     const fetchHospitals = async () => {
-      if (!latitude || !longitude) return;
-  
+      if (!currentLocation) return;
+
       setLoading(true);
       try {
         const response = await axios.get('http://localhost:8080/api/search', {
           params: {
             ...searchParams,
-            latitude,
-            longitude,
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
           },
         });
-  
+
         console.log('API 응답 데이터:', response.data);
-  
-        // 서버에서 가져온 데이터
-        let hospitalsData = response.data.content;
-  
-        // 거리 기준으로 오름차순 정렬
-        hospitalsData.sort((a, b) => a.distance - b.distance);
-  
-        setHospitals(hospitalsData);
+
+        // 거리 계산 후 정렬
+        const hospitalsWithDistance = response.data.content.map(hospital => ({
+          ...hospital,
+          distance: getDistance(currentLocation.latitude, currentLocation.longitude, hospital.latitude, hospital.longitude),
+        }));
+
+        const sortedHospitals = hospitalsWithDistance.sort((a, b) => a.distance - b.distance);
+
+        setHospitals(sortedHospitals);
         setTotalPages(response.data.totalPages || 0);
       } catch (error) {
         setError(error);
@@ -127,9 +176,9 @@ const HospitalList = () => {
         setLoading(false);
       }
     };
-  
+
     fetchHospitals();
-  }, [searchParams, currentPage, latitude, longitude]);
+  }, [searchParams, currentPage, currentLocation]);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
@@ -199,9 +248,9 @@ const HospitalList = () => {
 
   const handleLoadMoreReviews = (hospitalId) => {
     const nextPage = reviewsPage[hospitalId] !== undefined ? reviewsPage[hospitalId] + 1 : 0;
+    //const nextPage = (reviewsPage[hospitalId] || 0) + 1;
     fetchReviews(hospitalId, nextPage);
   };
-
   const handleCloseReviews = (hospitalId) => {
     setHospitalReviews(prev => ({
       ...prev,
@@ -216,7 +265,6 @@ const HospitalList = () => {
       [hospitalId]: false,
     }));
   };
-
   const handleAddBookmark = async (hospitalId) => {
     try {
       const token = localStorage.getItem('token');
@@ -226,7 +274,7 @@ const HospitalList = () => {
         userId: userId,
         hospitalId: hospitalId,
       };
-      await axiosInstance.post('/bookmark', bookmarkDTO, {
+      await axiosInstance.post('/bookmark',bookmarkDTO, {
         headers: {
           Authorization: `${token}`
         }
@@ -236,22 +284,21 @@ const HospitalList = () => {
       console.error(error);
     }
   };
-
   const handleRemoveBookmark = async (hospitalId) => {
     try {
       const token = localStorage.getItem('token');
 
-      await axiosInstance.delete(`http://localhost:8080/bookmark/${hospitalId}`, {
+
+      await axiosInstance.delete(`http://localhost:8080/bookmark/${hospitalId}`,{
         headers: {
           Authorization: `${token}`
         }
       });
-      setBookmarks(bookmarks.filter(bookmark => bookmark.hospitalId !== hospitalId));
+      setBookmarks(bookmarks.filter(bookmark => hospitalId !== hospitalId));
     } catch (error) {
       console.error(error);
     }
   };
-
   const isBookmarked = (hospitalId) => {
     return bookmarks.some(bookmark => bookmark.hospitalId === hospitalId);
   };
@@ -273,13 +320,15 @@ const HospitalList = () => {
       );
     }
 
+    //const hasMoreReviews = reviews.length % pageSize === 0;
+
     return (
       <>
         {reviews.length > 0 ? (
           <ul>
             {reviews.map((review, index) => (
               <li key={index}>
-                <HospitalReviewCard review={review} />
+              <HospitalReviewCard review={review} />
               </li>
             ))}
           </ul>
@@ -372,8 +421,9 @@ const HospitalList = () => {
 
   return (
     <MainContainer>
-      <Box className="container" sx={{ padding: '20px', marginLeft: '20px', marginRight: '20px' }}>
+       <Box className="container" sx={{ padding: '20px', marginLeft: '20px', marginRight: '20px' }}>
         <Typography variant="h5" component="h5">병원 검색하기</Typography>
+
 
         <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
           <Grid item xs={12} sm={6} md={5}>
@@ -428,7 +478,7 @@ const HospitalList = () => {
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                     <Typography variant="body2">주소: {hospital.district} {hospital.subDistrict}</Typography>
                     <Typography variant="body2">
-                      {latitude && longitude && hospital.distance !== null
+                      {currentLocation && hospital.distance !== null
                         ? `${Math.abs(hospital.distance).toFixed(2)} km`
                         : '거리 정보를 가져올 수 없습니다.'}
                     </Typography>
@@ -460,6 +510,7 @@ const HospitalList = () => {
                   <button onClick={() => handleAddBookmark(hospital.id)}>북마크 추가</button>
                 )}
               </ListItem>
+
             ))
           ) : (
             <Typography variant="body2" sx={{ padding: '10px' }}>병원이 없습니다</Typography>
