@@ -21,7 +21,7 @@ function ChatRoomDetail({ data, selectedIndex }) {
   };
 
   return (
-    <Container hovered={isHovered}>
+    <Container hovered={isHovered ? true : undefined}>
       <Wrapper
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

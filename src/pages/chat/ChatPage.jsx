@@ -47,6 +47,7 @@ function ChatPage() {
       const response = await axiosInstance.post(
         `/chatrooms/${Number(params.chatRoomId)}/users/${auth.userId}`
       );
+      stomp.sendMessage(Number(params.chatRoomId), null, true);
       setChatRoom(m => ({
         ...m,
         rooms: { ...m.rooms, [`ch_${response.data.id}`]: response.data }
@@ -59,12 +60,14 @@ function ChatPage() {
     }
   };
 
-  const sendMessage = (id, input) => {
+  const sendMessage = (id, input, isAccepted, isTerminated) => {
     const body = JSON.stringify({
       id: Number(id) || null,
       userId: Number(auth.userId),
       chatRoomId: Number(params.chatRoomId),
-      content: input?.replace(/\n/g, '\\n') || null
+      content: input?.replace(/\n/g, '\\n') || null,
+      isAccepted: isAccepted || false,
+      isTerminated: isTerminated || false
     });
     stompClient.publish({ destination: `/app/chat/${Number(params.chatRoomId)}`, body });
   };
@@ -76,37 +79,65 @@ function ChatPage() {
       alert('잘못된 접근입니다');
     }
 
+    if (chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '비활성화') {
+      return;
+    }
+
     const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}/ws`);
 
     const stomp = Stomp.over(socket);
 
-    stomp.connect({}, () => {
+    stomp.connect({ Authorization: localStorage.getItem('token') }, () => {
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
 
-        if (!data.content) {
-          // 메시지 삭제
-          setMessages(m => m.filter(e => e.id !== data.id));
-        } else {
-          data.content = data.content.replace(/\\n/g, '\n');
-
-          // 메시지 추가 & 삭제
-          setMessages(m => {
-            let isModified = false;
-            const newMessages = m.map(e => {
-              if (e.id === data.id) {
-                e.content = data.content;
-                isModified = true;
+        // 채팅 수락 or 종료
+        if (data.isAccepted || data.isTerminated) {
+          setChatRoom(m => ({
+            ...m,
+            rooms: {
+              ...m.rooms,
+              [`ch_${data.id}`]: {
+                ...m.rooms[`ch_${data.id}`],
+                status: { status: data.isAccepted ? '진행' : '비활성화' }
               }
-              return e;
-            });
+            }
+          }));
 
-            if (!isModified) {
-              newMessages.push(data);
+          if (auth.userId !== data.userId) {
+            if (data.isAccepted) {
+              alert('상담 요청이 수락되어 채팅이 진행됩니다');
             }
 
-            return newMessages;
-          });
+            if (data.isTerminated) {
+              alert('상대방이 퇴장하였습니다');
+            }
+          }
+        } else {
+          if (!data.content) {
+            // 메시지 삭제
+            setMessages(m => m.filter(e => e.id !== data.id));
+          } else {
+            data.content = data.content.replace(/\\n/g, '\n');
+
+            // 메시지 추가 & 삭제
+            setMessages(m => {
+              let isModified = false;
+              const newMessages = m.map(e => {
+                if (e.id === data.id) {
+                  e.content = data.content;
+                  isModified = true;
+                }
+                return e;
+              });
+
+              if (!isModified) {
+                newMessages.push(data);
+              }
+
+              return newMessages;
+            });
+          }
         }
       });
     });
@@ -151,14 +182,14 @@ function ChatPage() {
                 key={e.id}
                 self={true}
                 data={e}
-                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : undefined)}
               />
             ) : (
               <Message
                 key={e.id}
                 self={false}
                 data={e}
-                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : '0')}
+                repeat={e.user.id === (messages[idx - 1] ? messages[idx - 1].user.id : undefined)}
               />
             );
           })}

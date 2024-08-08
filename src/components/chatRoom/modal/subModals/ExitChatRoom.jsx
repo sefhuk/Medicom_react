@@ -3,18 +3,20 @@ import React from 'react';
 import { axiosInstance } from '../../../../utils/axios';
 import { useNavigate, useParams } from 'react-router';
 import { useRecoilState } from 'recoil';
-import { userauthState } from '../../../../utils/atom';
+import { stompState, userauthState } from '../../../../utils/atom';
 
 function ExitChatRoom() {
   const params = useParams();
 
   const [auth] = useRecoilState(userauthState);
+  const [stomp] = useRecoilState(stompState);
 
   const navigate = useNavigate();
 
   const exit = async () => {
     try {
       await axiosInstance.delete(`/chatrooms/${params.chatRoomId}/users/${auth.userId}`);
+      stomp.sendMessage(params.chatRoomId, null, false, true);
       navigate('/chatlist');
     } catch (err) {
       alert(err.response.data.message);
