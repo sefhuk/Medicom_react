@@ -1,42 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import MainContainer from '../../components/global/MainContainer';
 import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
 import axios from 'axios';
+import { LocationContext } from '../../LocationContext';
 
 const MapComponent = () => {
+  const { latitude, longitude } = useContext(LocationContext);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [hospitals, setHospitals] = useState([]);
   const [filteredHospitals, setFilteredHospitals] = useState([]);
-  const [userLocation, setUserLocation] = useState(null);
   const [departmentInput, setDepartmentInput] = useState('');
   const [map, setMap] = useState(null);
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [error, setError] = useState(null);
   const [markers, setMarkers] = useState([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const getUserLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          position => {
-            const { latitude, longitude } = position.coords;
-            setUserLocation({ latitude, longitude });
-          },
-          error => {
-            setError('사용자의 위치를 가져올 수 없습니다.');
-            console.error('위치 가져오기 오류:', error);
-          }
-        );
-      } else {
-        setError('이 브라우저는 지오로케이션을 지원하지 않습니다.');
-      }
-    };
-
-    getUserLocation();
-  }, []);
 
   useEffect(() => {
     const fetchHospitalsData = async () => {
@@ -54,11 +33,9 @@ const MapComponent = () => {
   }, []);
 
   useEffect(() => {
-    if (userLocation && hospitals.length > 0) {
-      const { latitude: userLat, longitude: userLng } = userLocation;
-
+    if (latitude && longitude && hospitals.length > 0) {
       const distance = (lat1, lng1, lat2, lng2) => {
-        const R = 6371;
+        const R = 6371;  // 지구의 반경 (킬로미터 단위)
         const dLat = (lat2 - lat1) * (Math.PI / 180);
         const dLng = (lng2 - lng1) * (Math.PI / 180);
         const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -71,26 +48,26 @@ const MapComponent = () => {
       const filtered = hospitals.filter(hospital => {
         const hospitalLat = hospital.latitude;
         const hospitalLng = hospital.longitude;
-        return distance(userLat, userLng, hospitalLat, hospitalLng) <= 5;
+        return distance(latitude, longitude, hospitalLat, hospitalLng) <= 5;
       });
 
       setFilteredHospitals(filtered);
     }
-  }, [userLocation, hospitals]);
+  }, [latitude, longitude, hospitals]);
 
   useEffect(() => {
-    if (mapLoaded && userLocation) {
+    if (mapLoaded && latitude && longitude) {
       const mapDiv = document.getElementById('map');
       if (window.naver && window.naver.maps && mapDiv) {
         const mapInstance = new window.naver.maps.Map(mapDiv, {
-          center: new window.naver.maps.LatLng(userLocation.latitude, userLocation.longitude),
+          center: new window.naver.maps.LatLng(latitude, longitude),
           zoom: 16
         });
 
         setMap(mapInstance);
       }
     }
-  }, [mapLoaded, userLocation]);
+  }, [mapLoaded, latitude, longitude]);
 
   useEffect(() => {
     if (map && filteredHospitals.length > 0) {
@@ -284,7 +261,9 @@ const MapComponent = () => {
         )}
       </Box>
     </MainContainer>
+
   );
 };
 
 export default MapComponent;
+
