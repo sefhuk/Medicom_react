@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { axiosInstance } from '../utils/axios';
 import { useNavigate } from 'react-router';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { LocationContext } from '../LocationContext';
@@ -38,7 +39,7 @@ function OtherLocationPage() {
     if (selectedAddress) {
       try {
         const encodedAddress = encodeURIComponent(selectedAddress.roadAddr);
-        const response = await fetch(`http://localhost:8000/api/geocode/address-to-coords?address=${encodedAddress}`);
+        const response = await fetch(`https://localhost:8000/api/geocode/address-to-coords?address=${encodedAddress}`);
         const data = await response.json();
         
         console.log('Geocode API response:', data); // 응답 데이터 확인
