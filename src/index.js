@@ -80,7 +80,7 @@ const router = createBrowserRouter([
           { path: 'location', element: <LocationPage /> },
           {path: 'location/other', element: <OtherLocationPage />},
           { path: 'symptoms', element: <SymptomAsk /> },
-          { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
+          { path: 'hospitals/maps/reservation', element: <HospitalReservation /> },
           {
             path: 'admin-page',
             element: <AdminPage />
