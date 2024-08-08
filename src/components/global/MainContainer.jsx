@@ -21,7 +21,7 @@ const Container = styled.div`
   flex-direction: column;
   max-width: 60dvh;
   margin: 0 auto;
-  height: 100dvh;
+  flex: 1;
 `;
 
 const Content = styled.div`

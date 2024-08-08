@@ -5,8 +5,9 @@ export const CustomScrollBox = styled(Box)(({ theme }) => ({
   overflowY: 'auto',
   position: 'relative',
   '&::-webkit-scrollbar': {
-    width: '10px',
-    opacity: 1
+    width: '5px',
+    opacity: 0,
+    transition: 'opacity 0.3s'
   },
   '&::-webkit-scrollbar-track': {
     backgroundColor: 'transparent'
@@ -18,6 +19,9 @@ export const CustomScrollBox = styled(Box)(({ theme }) => ({
     transition: 'background-color 0.3s'
   },
   '&:hover::-webkit-scrollbar-thumb': {
-    backgroundColor: '#f1f1f1' // hover 시 색상
+    backgroundColor: '#f1f1f1'
+  },
+  '&:hover::-webkit-scrollbar': {
+    opacity: 1
   }
 }));
