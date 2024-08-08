@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
 import HospitalReviewCard from '../../components/HospitalReviewCard';
+import { axiosInstance } from '../../utils/axios';
 
 // 거리 계산 함수 (위도와 경도를 이용해 두 지점 간의 거리를 계산)
 const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -44,6 +45,10 @@ const HospitalList = () => {
   const [reviewsPage, setReviewsPage] = useState({});
   const [reviewsLoaded, setReviewsLoaded] = useState({});
   const [hasMoreReviews, setHasMoreReviews] = useState({});
+
+  //북마크
+  const [bookmarks, setBookmarks] = useState([]);
+  const [bookmarksLoading, setBookmarksLoading] = useState(false);
 
   const pageSize = 10;
   const reviewPageSize = 4;
@@ -173,6 +178,27 @@ const HospitalList = () => {
     fetchHospitals();
   }, [searchParams, currentPage, currentLocation]);
 
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      setBookmarksLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axiosInstance.get('http://localhost:8080/bookmark', {
+          headers: {
+            Authorization: `${token}`
+          }
+        });
+        setBookmarks(response.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setBookmarksLoading(false);
+      }
+    };
+
+    fetchBookmarks(); // 컴포넌트가 마운트될 때 북마크 데이터를 로드함
+  }, []);
+
   const fetchReviews = async (hospitalId, page = 0) => {
     setReviewsLoading(prev => ({ ...prev, [hospitalId]: true }));
     try {
@@ -236,6 +262,43 @@ const HospitalList = () => {
       ...prev,
       [hospitalId]: false,
     }));
+  };
+  const handleAddBookmark = async (hospitalId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      const bookmarkDTO = {
+        userId: userId,
+        hospitalId: hospitalId,
+      };
+      await axiosInstance.post('/bookmark',bookmarkDTO, {
+        headers: {
+          Authorization: `${token}`
+        }
+      });
+      setBookmarks([...bookmarks, { hospitalId }]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleRemoveBookmark = async (hospitalId) => {
+    try {
+      const token = localStorage.getItem('token');
+
+
+      await axiosInstance.delete(`http://localhost:8080/bookmark/${hospitalId}`,{
+        headers: {
+          Authorization: `${token}`
+        }
+      });
+      setBookmarks(bookmarks.filter(bookmark => hospitalId !== hospitalId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const isBookmarked = (hospitalId) => {
+    return bookmarks.some(bookmark => bookmark.hospitalId === hospitalId);
   };
 
   const renderReviews = (hospitalId) => {
@@ -402,6 +465,11 @@ const HospitalList = () => {
                 <button onClick={() => handleMapClick(hospital)}>지도 보기</button>
                 {selectedHospital?.id === hospital.id && renderMap()}
                 {renderReviews(hospital.id)}
+                {isBookmarked(hospital.id) ? (
+                  <button onClick={() => handleRemoveBookmark(hospital.id)}>북마크 삭제</button>
+                ) : (
+                  <button onClick={() => handleAddBookmark(hospital.id)}>북마크 추가</button>
+                )}
               </li>
             ))
           ) : (

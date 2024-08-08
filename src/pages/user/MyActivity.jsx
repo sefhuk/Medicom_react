@@ -36,7 +36,7 @@ const MyActivity = () => {
           { label: '예약 내역', path: '/' },
           { label: '내가 쓴 글', path: '/' },
           { label: '나의 리뷰', path: '/my-reviews' },
-          { label: '즐겨찾기', path: '/' },
+          { label: '즐겨찾기', path: '/bookmarks' },
         ].map((item) => (
           <React.Fragment key={item.label}>
             <ListItem

@@ -62,6 +62,7 @@ const Nav = () => {
   const handleLogoutClick = async () => {
     setAuthState({ isLoggedIn: false });
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     await axiosInstance.post('/user-logout');
     deleteCookie('refreshToken');
     navigate('/');

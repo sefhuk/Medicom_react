@@ -31,6 +31,7 @@ import UpdateBoardPage from './pages/board/UpdateBoardPage';
 import UpdatePostPage from './pages/board/UpdatePostPage';
 import MyReviews from './pages/user/MyReivews';
 import { AdminCreateDoctorProfile } from './pages/admin/AdminCreateDoctorProfile';
+import BookmarksPage from './pages/user/BookmarksPage';
 
 
 
@@ -112,6 +113,9 @@ const router = createBrowserRouter([
         path: 'my-reviews', // 새로운 경로 추가
         element: <MyReviews />
       },
+      {
+        path: '/bookmarks', element: <BookmarksPage />
+      }
 
     ]
   }
