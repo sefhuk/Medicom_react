@@ -97,8 +97,8 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-sizing: border-box;
-  width: 95%;
+  max-width: 60dvh;
+  width: 80%;
   height: 18dvh;
   border: 2px solid black;
   border-radius: 10px;
