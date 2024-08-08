@@ -13,6 +13,7 @@ import ChatListPage from './pages/chat/ChatListPage';
 import NewChatPage from './pages/chat/NewChatPage';
 import HospitalList from './pages/Hospital/HospitalList';
 import MapComponent from './pages/Hospital/MapComponent';
+import HospitalResult from './pages/Hospital/HospitalResult';
 import SocialLoginSuccess from './pages/SocialLoginSuccess';
 import MyPage from './pages/user/MyPage';
 import AdminPage from './pages/admin/AdminPage';
@@ -73,6 +74,7 @@ const router = createBrowserRouter([
           { path: 'chatlist', element: <ChatListPage /> },
           { path: 'hospitals', element: <HospitalList /> },
           { path: 'hospitals/maps', element: <MapComponent /> },
+          { path: 'hospitals/list', element: <HospitalResult />},
 
           //hospitalpage
           { path: 'location', element: <LocationPage /> },

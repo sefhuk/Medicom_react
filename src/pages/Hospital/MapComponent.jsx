@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import MainContainer from '../../components/global/MainContainer';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
@@ -186,39 +186,43 @@ const MapComponent = () => {
     }
   };
 
+  const handleViewAll = () => {
+    navigate('/hospitals/list');
+  };
 
   return (
-    
     <MainContainer>
       <Box sx={{ mb: 1, textAlign: 'center', mt: 2 }}>
         {"OO님의 추천 진료과는 다음과 같습니다."}
       </Box>
       <Box
-         height="50px"
-         width="95%" // 모든 화면 크기에서 동일한 값 사용
-         my={4}
-         display="flex"
-         alignItems="center"
-         justifyContent="center"
-         gap={4}
-         p={2}
-         sx={{ border: '2px solid grey' }}
-       >
+        height="50px"
+        width="95%"
+        my={4}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        gap={4}
+        p={2}
+        sx={{ border: '2px solid grey' }}
+      >
         <input
-            type="text"
-            value={departmentInput}
-            onChange={(e) => setDepartmentInput(e.target.value)}
-            placeholder="부서명을 입력하세요"
-            style={{ margin: '10px' }}
-          />
-          <button onClick={handleDepartmentSearch}>
-            검색
-          </button>
+          type="text"
+          value={departmentInput}
+          onChange={(e) => setDepartmentInput(e.target.value)}
+          placeholder="부서명을 입력하세요"
+          style={{ margin: '10px' }}
+        />
+        <button onClick={handleDepartmentSearch}>
+          검색
+        </button>
       </Box>
       <Box sx={{ mb: 2, textAlign: 'center' }}>
         {"OO님의 현재 위치에 따른 병원 검색 결과"}
-      </Box>  
-      
+      </Box>
+      <Button variant="contained" color="primary" onClick={handleViewAll}>
+        전체 리스트 보기
+      </Button>
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -227,7 +231,7 @@ const MapComponent = () => {
         position: 'relative',
         width: '95%',
         height: '50%',
-        mx: 'auto', // 좌우 여백 자동으로 중앙 정렬
+        mx: 'auto',
       }}>
         <Box id="map" sx={{ width: '100%', height: '100%' }}></Box>
         {error && <Box sx={{ color: 'red' }}>{error}</Box>}
@@ -236,7 +240,7 @@ const MapComponent = () => {
             position: 'absolute',
             top: '110%',
             width: '90%',
-            height: 'auto', // 콘텐츠에 따라 자동 조정
+            height: 'auto',
             backgroundColor: 'white',
             padding: '20px',
             boxShadow: '0px -4px 8px rgba(0,0,0,0.2)',
@@ -247,24 +251,24 @@ const MapComponent = () => {
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{selectedHospital.name}</Typography>
             <Typography><strong>주소:</strong> {selectedHospital.address}</Typography>
             <Typography><strong>진료과목:</strong></Typography>
-            <ul style={{ 
+            <ul style={{
               listStyleType: 'none',
-              padding: 0, 
+              padding: 0,
               margin: 0,
               display: 'flex',
               justifyContent: 'flex-start',
               flexWrap: 'wrap'
             }}>
               {selectedHospital.departments.map(department => (
-                <li key={department.id} style={{ 
-                  marginRight: '20px', // 항목 간의 간격 설정
-                  whiteSpace: 'nowrap' // 텍스트 줄바꿈 방지
+                <li key={department.id} style={{
+                  marginRight: '20px',
+                  whiteSpace: 'nowrap'
                 }}>
                   #{department.name}
                 </li>
               ))}
             </ul>
-            <button onClick={(handleReservation) => {}} style={{
+            <button onClick={handleReservation} style={{
               backgroundColor: '#007BFF',
               color: 'white',
               border: 'none',
