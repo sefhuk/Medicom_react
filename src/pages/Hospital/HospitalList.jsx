@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
 import HospitalReviewCard from '../../components/HospitalReviewCard';
 import { axiosInstance } from '../../utils/axios';
 import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid } from '@mui/material';
-
+import { LocationContext } from '../../LocationContext';
 
 // 거리 계산 함수 (위도와 경도를 이용해 두 지점 간의 거리를 계산)
 const getDistance = (lat1, lon1, lat2, lon2) => { 
@@ -21,6 +21,7 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 const HospitalList = () => {
+  const { latitude, longitude } = useContext(LocationContext);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +33,6 @@ const HospitalList = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [searchParams, setSearchParams] = useState({
     name: '',
     departmentName: '',
@@ -48,7 +48,7 @@ const HospitalList = () => {
   const [reviewsLoaded, setReviewsLoaded] = useState({});
   const [hasMoreReviews, setHasMoreReviews] = useState({});
 
-  //북마크
+  // 북마크 상태
   const [bookmarks, setBookmarks] = useState([]);
   const [bookmarksLoading, setBookmarksLoading] = useState(false);
 
@@ -111,49 +111,16 @@ const HospitalList = () => {
   }, [mapLoaded, selectedHospital]);
 
   useEffect(() => {
-    const getCurrentLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            console.log(`현재 위치 - 위도: ${latitude}, 경도: ${longitude}`);
-            setCurrentLocation({ latitude, longitude });
-          },
-          (error) => {
-            console.error('현재 위치를 가져오는 데 실패했습니다:', error);
-          }
-        );
-      } else {
-        console.error('현재 위치를 가져오는 데 실패했습니다.');
-      }
-    };
-
-    getCurrentLocation();
-  }, []);
-
-  // useEffect(() => {
-  //   const getCurrentLocation = () => {
-  //     // 임의의 위치 설정
-  //     const latitude = 37.5665;
-  //     const longitude = 126.9780;
-  //     console.log(`임의의 위치 - 위도: ${latitude}, 경도: ${longitude}`);
-  //     setCurrentLocation({ latitude, longitude });
-  //   };
-
-  //   getCurrentLocation();
-  // }, []);
-
-  useEffect(() => {
     const fetchHospitals = async () => {
-      if (!currentLocation) return;
+      if (!latitude || !longitude) return;
 
       setLoading(true);
       try {
         const response = await axios.get('http://localhost:8080/api/search', {
           params: {
             ...searchParams,
-            latitude: currentLocation.latitude,
-            longitude: currentLocation.longitude,
+            latitude,
+            longitude,
           },
         });
 
@@ -162,7 +129,7 @@ const HospitalList = () => {
         // 거리 계산 후 정렬
         const hospitalsWithDistance = response.data.content.map(hospital => ({
           ...hospital,
-          distance: getDistance(currentLocation.latitude, currentLocation.longitude, hospital.latitude, hospital.longitude),
+          distance: getDistance(latitude, longitude, hospital.latitude, hospital.longitude),
         }));
 
         const sortedHospitals = hospitalsWithDistance.sort((a, b) => a.distance - b.distance);
@@ -178,8 +145,7 @@ const HospitalList = () => {
     };
 
     fetchHospitals();
-  }, [searchParams, currentPage, currentLocation]);
-
+  }, [searchParams, currentPage, latitude, longitude]);
   useEffect(() => {
     const fetchBookmarks = async () => {
       setBookmarksLoading(true);
@@ -478,7 +444,7 @@ const HospitalList = () => {
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                     <Typography variant="body2">주소: {hospital.district} {hospital.subDistrict}</Typography>
                     <Typography variant="body2">
-                      {currentLocation && hospital.distance !== null
+                      {latitude && longitude && hospital.distance !== null
                         ? `${Math.abs(hospital.distance).toFixed(2)} km`
                         : '거리 정보를 가져올 수 없습니다.'}
                     </Typography>
