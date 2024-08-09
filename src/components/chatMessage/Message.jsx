@@ -50,7 +50,7 @@ function Message({ data, repeat, self }) {
       return;
     }
 
-    navigate('/hospitals/map', {
+    navigate('/hospitals/maps', {
       state: {
         departments: [e.target.innerText]
       }
