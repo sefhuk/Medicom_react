@@ -51,7 +51,7 @@ const HospitalList = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/departments');
+        const response = await axiosInstance.get('/api/departments');
         setDepartments(response.data || []);
       } catch (error) {
         console.error('fetching departments 에러:', error);
@@ -109,7 +109,7 @@ const HospitalList = () => {
   
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:8080/api/search', {
+        const response = await axiosInstance.get('http://localhost:8080/api/search', {
           params: {
             ...searchParams,
             latitude,
