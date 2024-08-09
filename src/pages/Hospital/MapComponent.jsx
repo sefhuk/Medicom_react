@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import MainContainer from '../../components/global/MainContainer';
 import { Box, Typography, Button } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { axiosInstance } from '../../utils/axios';
 import { LocationContext } from '../../LocationContext';
 
 const MapComponent = () => {
@@ -24,7 +24,7 @@ const MapComponent = () => {
   useEffect(() => {
     const fetchHospitalsData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/hospitals/all');
+        const response = await axiosInstance.get('http://localhost:8080/api/hospitals/all');
         setHospitals(response.data);
         console.log('병원 데이터를 가져왔습니다:', response.data);
       } catch (error) {
