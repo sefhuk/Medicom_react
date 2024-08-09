@@ -148,6 +148,8 @@ const BottomContainer = styled.div`
 const Author = styled.p`
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
+  margin-top: auto;
+  margin-bottom: auto;
   order: ${({ self }) => (self ? 1 : 2)};
   @media (min-width: 481px) {
     font-size: 1.4rem;
