@@ -37,10 +37,11 @@ function OtherLocationPage() {
   // 선택된 주소로 위도, 경도 조회 후 Context에 저장
   const handleSubmit = async () => {
     if (selectedAddress) {
+      
       try {
         const encodedAddress = encodeURIComponent(selectedAddress.roadAddr);
-        const response = await fetch(`http://localhost:8080/api/geocode/address-to-coords?address=${encodedAddress}`);
-        const data = await response.json();
+        const response = axiosInstance.get(`/api/geocode/address-to-coords?address=${encodedAddress}`);
+        const data = response.data;
         
         console.log('Geocode API response:', data); // 응답 데이터 확인
   

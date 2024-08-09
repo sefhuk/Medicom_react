@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import MainContainer from '../components/global/MainContainer';
-import { Box, Grid, Container, Typography, Button } from '@mui/material';
+import { Box, Grid, Container, Typography, Button, Stepper, StepLabel, Step } from '@mui/material';
 
 function SymptomAskSecond() {
   const location = useLocation();
@@ -12,7 +12,7 @@ function SymptomAskSecond() {
 
   // "!!"와 "**"를 제거
   const cleanMessage = (msg) => {
-    return msg.replace(/!!/g, '').replace(/\*\*/g, '');
+    return msg.replace(/!!/g, '').replace(/\*\*/g, '').replace(/\*/g, '');
   };
 
   const cleanedMessage = cleanMessage(message);
@@ -21,12 +21,23 @@ function SymptomAskSecond() {
     navigate('/hospitals/maps', { state: { departments } });
   };
 
+  const steps = ['증상 입력', 'AI 진단', '가까운 병원 추천'];
+
   return (
     <MainContainer>
       <Container>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sx={{ marginTop: '30%' }}>
+              <Stepper activeStep={0} alternativeLabel>
+                {steps.map((label, index) => (
+                  <Step key={index}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                  ))}
+              </Stepper>
+            </Grid>
+            <Grid item xs={12}>
               <Typography variant='h1' sx={{ textAlign: 'center' }}>02</Typography>
               <Typography variant='h4'>진단 결과</Typography>
               <Typography variant='body1' sx={{ marginTop: 2 }}>

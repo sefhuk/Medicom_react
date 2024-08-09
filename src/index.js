@@ -56,13 +56,12 @@ const router = createBrowserRouter([
     path: '/social-login-success',
     element: <SocialLoginSuccess />
   },
-  { path: 'symptoms', element: <SymptomAsk /> },
-  { path: 'symptoms/diagnosis', element: <SymptomAskSecond /> },
+
   { path: 'hospitals', element: <HospitalList /> },
   { path: 'hospitals/maps', element: <MapComponent /> },
   { path: 'hospitals/list', element: <HospitalResult />},
 
-  { path: 'location/other', element: <OtherLocationPage />},
+
   { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
   // 로그인 필요없는 페이지 - 끝
   {
@@ -79,6 +78,10 @@ const router = createBrowserRouter([
         children: [
           // 로그인이 필요한 페이지 - 시작
           { path: 'location', element: <LocationPage /> },
+          { path: 'symptoms', element: <SymptomAsk /> },
+          { path: 'symptoms/diagnosis', element: <SymptomAskSecond /> },
+          { path: 'location/other', element: <OtherLocationPage />},
+          
           { path: 'chat/:chatRoomId/messages', element: <ChatPage /> },
           { path: 'chat/new', element: <NewChatPage /> },
           { path: 'chatlist', element: <ChatListPage /> },
