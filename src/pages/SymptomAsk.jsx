@@ -1,29 +1,91 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 import MainContainer from '../components/global/MainContainer';
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
+import { Box, Grid, Container, Typography, TextField, Button, Stepper, StepLabel, Step } from '@mui/material';
+import axios from 'axios';
+import { Loading } from '../components/Loading'; 
+import { axiosInstance } from '../utils/axios';
 
-//공통 속성 지정
-const DemoPaper = styled(Paper)(({ theme }) => ({
-    width: 120,
-    height: 120,
-    padding: theme.spacing(2),
-    ...theme.typography.body2,
-    textAlign: 'center',
-  }));
-
-
-//<DemoPaper variant="elevation">default variant</DemoPaper>
-//처럼 각각 인라인 디자인
 
 function SymptomAsk() {
+  const [textFieldValue, setTextFieldValue] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNext = async () => {
+    if (textFieldValue.trim() === '') {
+      setError(true);
+    }
+    else {
+      setLoading(true); 
+    try {
+      const response = await axiosInstance.post('/gemini', {
+        message: textFieldValue,
+      });
+
+      // 서버 응답 데이터를 상태로 저장
+      navigate('diagnosis', { state: { 
+        message: response.data.message,
+        departments: response.data.departments
+      } });
+    } catch (error) {
+      console.error('Error submitting the symptom description:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+  };
+
+  const steps = ['증상 입력', 'AI 진단', '가까운 병원 추천'];
+
   return (
     <MainContainer>
-        <Paper>증상에 대하여 답해주세요.</Paper>
-        <Paper>
-            질문
-        </Paper>
+      <Container>
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sx={{ marginTop: '30%' }}>
+              <Stepper activeStep={0} alternativeLabel>
+                {steps.map((label, index) => (
+                  <Step key={index}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                  ))}
+              </Stepper>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant='h1'>01</Typography>
+              <Typography variant='h5'>증상에 대해 자유롭게 설명해주세요.</Typography>
+              <Typography variant='h8' sx={{ color: 'grey' }}>예시: 배가 아프고 식은땀이 나</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-multiline-flexible"
+                label="자세히 설명할수록 좋아요."
+                multiline
+                maxRows={4}
+                variant="standard"
+                sx={{ width: '100%' }}
+                value={textFieldValue}
+                onChange={(e) => setTextFieldValue(e.target.value)}
+                error={error}
+                helperText={error ? '텍스트를 입력해주세요' : ''}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={handleNext} 
+                sx={{ marginTop: 2 }}
+              >
+                다음
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Container>
+      <Loading open={loading} />
     </MainContainer>
   );
 }

@@ -8,9 +8,9 @@ function MainContainer({ children, isChat }) {
   return (
     <Container>
       <Nav />
-      <CustomScrollBox>
+        <CustomScrollBox>
         <Content isChat={isChat}>{children}</Content>
-      </CustomScrollBox>
+        </CustomScrollBox>
       <Footer />
     </Container>
   );
@@ -21,7 +21,8 @@ const Container = styled.div`
   flex-direction: column;
   max-width: 60dvh;
   margin: 0 auto;
-  flex: 1;
+  height: 100dvh;
+  padding: 0;
 `;
 
 const Content = styled.div`

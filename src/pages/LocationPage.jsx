@@ -4,6 +4,7 @@ import { Box, Typography, IconButton } from '@mui/material';
 import MyLocationIcon from '@mui/icons-material/MyLocation'; // Add Material UI icon
 import { LocationContext } from '../LocationContext'; 
 import { useNavigate } from 'react-router';
+import { axiosInstance } from '../utils/axios';
 
 function LocationPage() {
   const mapRef = useRef(null);
@@ -20,7 +21,6 @@ function LocationPage() {
   const handleOtherPage = () => {
     navigate('other');
   };
-
   const fetchCurrentPosition = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -28,14 +28,12 @@ function LocationPage() {
           const { latitude, longitude } = position.coords;
           setCenter({ lat: latitude, lng: longitude });
           setAddress('현재 위치 로딩 중...');
-          setInfoWindowContent('현재 위치'); // 현재 위치 아이콘 클릭 시 내용 설정
-
-          // 위도, 경도를 주소로 변환
-          const url = `http://localhost:8000/api/geocode/coords-to-address?lat=${latitude}&lng=${longitude}`;
-
-          fetch(url)
-            .then(response => response.json())
-            .then(data => {
+          setInfoWindowContent('현재 위치');
+  
+          // axiosInstance를 사용하여 위치 정보 API 호출
+          axiosInstance.get(`/api/geocode/coords-to-address?lat=${latitude}&lng=${longitude}`)
+            .then(response => {
+              const data = response.data;
               if (data && data.results && data.results.length > 0) {
                 const result = data.results[0].region;
                 const addressParts = [
@@ -70,6 +68,7 @@ function LocationPage() {
       setCenter({ lat: 37.3595704, lng: 127.105399 });
     }
   };
+  
 
   useEffect(() => {
     if (latitude && longitude) {

@@ -68,7 +68,7 @@ function Message({ data, repeat, self }) {
       </Modal>
       <Container self={self}>
         {self || (
-          <TopContainer repeat={repeat} self={self}>
+          <TopContainer repeat={repeat ? repeat : undefined} self={self}>
             {repeat || (
               <ProfileImage
                 user={data.user}

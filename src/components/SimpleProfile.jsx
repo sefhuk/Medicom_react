@@ -1,36 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ProfileImage from './chatMessage/ProfileImage';
-import { axiosInstance } from '../utils/axios';
 import { GetUserRoleString } from '../utils/stringUtil';
 
 function SimpleProfile(props) {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchHospitalInfo = async () => {
-    try {
-      const response = await axiosInstance.get(`/api/hospitals/${props.doctorProfile.hospitalId}`);
-      setData(response.data);
-      setIsLoading(false);
-    } catch (err) {
-      alert(JSON.stringify(err.response));
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    if (props.user.role !== 'DOCTOR') {
-      setIsLoading(false);
-      return;
-    }
-    fetchHospitalInfo();
-  }, []);
-
-  if (isLoading) {
-    return <Container>로딩 중입니다..</Container>;
-  }
-
   return (
     <Container>
       <Head>
@@ -40,10 +13,10 @@ function SimpleProfile(props) {
             <Name>{props?.user.name}</Name>
             <Role>{GetUserRoleString(props?.user.role)}</Role>
           </Div>
-          {data && (
+          {props?.user.role === 'DOCTOR' && (
             <>
-              <HospitalName>{data.name}</HospitalName>
-              <Departments>진료과목: {data.departments}</Departments>
+              <HospitalName>{props?.doctorProfile.hospitalName}</HospitalName>
+              <Departments>진료과목: {props?.doctorProfile.department}</Departments>
             </>
           )}
         </Wrapper>

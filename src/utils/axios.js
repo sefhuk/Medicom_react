@@ -13,7 +13,10 @@ axiosInstance.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const { data } = await axiosInstance.get('/refresh-token');
+        const { data } = await axios.create({
+          baseURL: process.env.REACT_APP_API_BASE_URL,
+          withCredentials: true
+        }).get('/refresh-token');
         const newToken = data.headers['authorization'];
         localStorage.setItem('token', newToken);
         axiosInstance.defaults.headers.common['Authorization'] = `${newToken}`;
