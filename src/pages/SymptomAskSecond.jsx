@@ -4,14 +4,21 @@ import MainContainer from '../components/global/MainContainer';
 import { Box, Grid, Container, Typography, Button } from '@mui/material';
 
 function SymptomAskSecond() {
-  const location = useLocation(); //useLocation 사용으로 이전 페이지 응답 받아오기
+  const location = useLocation();
   const { state } = location; 
-  const message = state?.message || '';
+  const message = state?.message || '정보가 없습니다.';
   const departments = state?.departments || [];
   const navigate = useNavigate();
 
+  // "!!"와 "**"를 제거
+  const cleanMessage = (msg) => {
+    return msg.replace(/!!/g, '').replace(/\*\*/g, '');
+  };
+
+  const cleanedMessage = cleanMessage(message);
+
   const handleResultPage = () => {
-    navigate('/hospitals/maps');
+    navigate('/hospitals/maps', { state: { departments } });
   };
 
   return (
@@ -19,12 +26,11 @@ function SymptomAskSecond() {
       <Container>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sx = {{ marginTop: '30%'}}>
-              <Typography variant='h1' sx = {{ textAlign: 'center' }}>02</Typography>
+            <Grid item xs={12} sx={{ marginTop: '30%' }}>
+              <Typography variant='h1' sx={{ textAlign: 'center' }}>02</Typography>
               <Typography variant='h4'>진단 결과</Typography>
               <Typography variant='body1' sx={{ marginTop: 2 }}>
-                {message} 
-                {/* 응답값 */}
+                {cleanedMessage} 
               </Typography>
             </Grid>
             <Grid item xs={12} sx={{ marginTop: 2 }}>
@@ -47,7 +53,6 @@ function SymptomAskSecond() {
         </Box>
       </Container>
     </MainContainer>
-
   );
 }
 

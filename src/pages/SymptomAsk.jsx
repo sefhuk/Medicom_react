@@ -3,24 +3,29 @@ import { useNavigate } from 'react-router';
 import MainContainer from '../components/global/MainContainer';
 import { Box, Grid, Container, Typography, TextField, Button } from '@mui/material';
 import axios from 'axios';
+import { Loading } from '../components/Loading'; 
 
 function SymptomAsk() {
   const [textFieldValue, setTextFieldValue] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleNext = async () => {
+    setLoading(true); 
     try {
-      const response = await axios.post('http://localhost:8000/gemini', {
-        description: textFieldValue,
+      const response = await axios.post('http://localhost:8080/gemini', {
+        message: textFieldValue,
       });
 
-      // 서버 응답 데이터를 상태로 저장하고 다음 페이지로 이동
+      // 서버 응답 데이터를 상태로 저장
       navigate('diagnosis', { state: { 
         message: response.data.message,
         departments: response.data.departments
       } });
     } catch (error) {
       console.error('Error submitting the symptom description:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,6 +67,7 @@ function SymptomAsk() {
           </Grid>
         </Box>
       </Container>
+      <Loading open={loading} /> {/* 로딩 상태에 따라 Loading 컴포넌트 표시 */}
     </MainContainer>
   );
 }
