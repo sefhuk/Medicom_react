@@ -109,7 +109,7 @@ const HospitalList = () => {
   
       setLoading(true);
       try {
-        const response = await axiosInstance.get('http://localhost:8080/api/search', {
+        const response = await axiosInstance.get('/api/search', {
           params: {
             ...searchParams,
             latitude,
