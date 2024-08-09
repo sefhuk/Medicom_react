@@ -42,12 +42,14 @@ function ChatRoomDetail({ data, selectedIndex }) {
           ) : auth.role !== 'USER' ? (
             data.user1.name
           ) : data.user2 ? (
-            <>
-              {data.user2.role === 'DOCTOR' ? '(의사) ' : '(관리자) '} {data.user2.name}
+            <div>
+              {data.user2.name}
+              <Role>{data.user2.role === 'DOCTOR' ? '  의사' : '  관리자'}</Role>
+
               {data.user2.role === 'DOCTOR' && (
                 <HospitalName>{data.doctorProfile.hospitalName}</HospitalName>
               )}
-            </>
+            </div>
           ) : (
             data.type.type
           )}
@@ -129,6 +131,16 @@ const Title = styled.div`
   }
 `;
 
+const Role = styled.span`
+  font-size: 1.3rem;
+  font-style: italic;
+  color: #9da1a2;
+  font-weight: 400;
+  @media (max-width: 500px) {
+    font-size: 0.8rem;
+  }
+`;
+
 const HospitalName = styled.div`
   font-size: 0.8rem;
   color: #706c6c;
@@ -145,8 +157,10 @@ const ChatType = styled.p`
 
 const Preview = styled.div`
   width: 70%;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   @media (max-width: 768px) {
     font-size: 1rem;
   }

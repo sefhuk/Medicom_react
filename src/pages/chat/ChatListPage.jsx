@@ -82,8 +82,8 @@ function ChatListPage() {
       setChatRoom(m => ({ ...m, rooms: chatRooms }));
       setData(
         Object.values(chatRooms).sort((a, b) => {
-          if (a.user2 === null) return 1;
-          if (a.user2 !== null) return -1;
+          if (a.status.status === '진행') return -1;
+          return 1;
         })
       );
     } catch (err) {

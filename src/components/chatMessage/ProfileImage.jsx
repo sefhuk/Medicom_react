@@ -10,7 +10,8 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 500,
+  maxWidth: '400px',
+  width: '50dvw',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -40,7 +41,7 @@ function ProfileImage(props) {
         aria-labelledby='child-modal-title'
         aria-describedby='child-modal-description'
       >
-        <Box sx={{ ...style, width: '50%', maxWidth: '600px' }}>
+        <Box sx={{ ...style }}>
           <SimpleProfile
             imgUrl={props.url}
             user={props.user}
