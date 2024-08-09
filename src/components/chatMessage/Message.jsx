@@ -6,6 +6,7 @@ import { Box, Button, Modal } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { userauthState } from '../../utils/atom';
 import EditModal from './modal/EditModal';
+import { useNavigate } from 'react-router';
 
 const style = {
   position: 'absolute',
@@ -30,6 +31,8 @@ function Message({ data, repeat, self }) {
   };
   const handleClose = () => setOpen(false);
 
+  const navigate = useNavigate();
+
   const messageTime = () => {
     let date = fromatDate(new Date(data.createdAt));
 
@@ -41,13 +44,17 @@ function Message({ data, repeat, self }) {
     return date;
   };
 
-  const requestHospital = async () => {
-    alert('API 연결 전');
-    // try {
-    //   await axiosInstance.get('');
-    // } catch (err) {
-    //   alert(err);
-    // }
+  const requestHospital = async e => {
+    const isConfirmed = window.confirm('결과 페이지로 이동합니다');
+    if (!isConfirmed) {
+      return;
+    }
+
+    navigate('/hospitals/map', {
+      state: {
+        departments: [e.target.innerText]
+      }
+    });
   };
 
   return (
