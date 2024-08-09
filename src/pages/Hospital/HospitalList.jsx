@@ -6,8 +6,7 @@ import { axiosInstance } from '../../utils/axios';
 import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid, IconButton } from '@mui/material';
 import { LocationContext } from '../../LocationContext';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
@@ -20,7 +19,7 @@ const HospitalList = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [searchInput, setSearchInput] = useState('');
-  const [departmentInput, setDepartmentInput] = useState('');
+  const [setDepartmentInput] = useState('');
   const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedHospital, setSelectedHospital] = useState(null);
@@ -331,6 +330,7 @@ const HospitalList = () => {
   const handleDepartmentChange = (e) => {
     setDepartmentInput(e.target.value);
   };
+
 
   const handleFilter = (departmentName) => {
     setSelectedDepartment(departmentName);
