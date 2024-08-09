@@ -9,6 +9,7 @@ import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
 import { chatRoomState, stompState, userauthState } from '../../utils/atom';
 import { Button, ButtonGroup } from '@mui/material';
+import { Loading } from '../../components/Loading';
 
 const fetchData = async (id, setMessages, setError) => {
   try {
@@ -34,6 +35,7 @@ function ChatPage() {
   const [error, setError] = useState(null);
   const [stompClient, setStompClient] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -88,7 +90,7 @@ function ChatPage() {
     const stomp = Stomp.over(socket);
 
     stomp.connect({ Authorization: localStorage.getItem('token') }, frame => {
-      alert('연결 성공');
+      setLoading(false);
 
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
@@ -162,6 +164,7 @@ function ChatPage() {
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
+      <Loading open={loading} />
       <ButtonGroup
         sx={{ width: '100%', marginTop: '10px', boxShadow: 'none' }}
         variant='contained'
