@@ -47,21 +47,33 @@ function PostDetailPage() {
   };
 
   const fetchComments = useCallback(async (page) => {
-    setLoading(true);
-    try {
-      const response = await axiosInstance.get(`/comments/post/${id}?page=${page}&size=6`, { headers: getAuthHeaders() });
-      const sortedComments = response.data.content.map(comment => ({
-        ...comment,
-        replies: comment.replies || []
-      }));
-      setComments(sortedComments);
-      setTotalPages(response.data.totalPages);
-      setCurrentPage(page);
-    } catch (error) {
-      setError('댓글을 가져오는 데 실패했습니다.');
-    } finally {
-      setLoading(false);
-    }
+      setLoading(true);
+      try {
+          const response = await axiosInstance.get(`/comments/post/${id}?page=${page}&size=6`, { headers: getAuthHeaders() });
+
+          const commentsData = response.data.content;
+          const nestedComments = commentsData.reduce((acc, comment) => {
+              if (comment.parentId === null) {
+
+                  acc.push({ ...comment, replies: [] });
+              } else {
+
+                  const parentComment = acc.find(c => c.id === comment.parentId);
+                  if (parentComment) {
+                      parentComment.replies.push(comment);
+                  }
+              }
+              return acc;
+          }, []);
+
+          setComments(nestedComments);
+          setTotalPages(response.data.totalPages);
+          setCurrentPage(page);
+      } catch (error) {
+          setError('댓글을 가져오는 데 실패했습니다.');
+      } finally {
+          setLoading(false);
+      }
   }, [id]);
 
   useEffect(() => {
@@ -94,10 +106,7 @@ function PostDetailPage() {
       alert('로그인 후 포스트를 삭제할 수 있습니다.');
       return;
     }
-//     if (post.userId !== userId) {
-//       alert('자신이 작성한 게시글만 삭제할 수 있습니다.');
-//       return;
-//     }
+
     try {
       await axiosInstance.delete(`/posts/${id}`, { headers: getAuthHeaders() });
       navigate(boardId ? `/boards/${boardId}` : '/boards');
@@ -118,10 +127,6 @@ function PostDetailPage() {
       return;
     }
 
-//     if (comment.userId !== userId) {
-//       alert('자신이 작성한 댓글만 삭제할 수 있습니다.');
-//       return;
-//     }
 
     try {
       await axiosInstance.delete(`/comments/${commentId}`, { headers: getAuthHeaders() });
@@ -143,10 +148,6 @@ function PostDetailPage() {
       return;
     }
 
-//     if (comment.userId !== userId) {
-//       alert('자신이 작성한 댓글만 수정할 수 있습니다.');
-//       return;
-//     }
 
     try {
       const response = await axiosInstance.put(`/comments/${commentId}`, { postId: id, content: content }, { headers: getAuthHeaders() });
@@ -197,10 +198,7 @@ function PostDetailPage() {
       alert('로그인 후 포스트를 수정할 수 있습니다.');
       return;
     }
-//     if (post.userId !== userId) {
-//       alert('자신이 작성한 게시글만 수정할 수 있습니다.');
-//       return;
-//     }
+
     navigate(`/posts/update/${id}`);
   };
 
