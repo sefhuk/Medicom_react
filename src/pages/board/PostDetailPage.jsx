@@ -111,7 +111,7 @@ function PostDetailPage() {
       await axiosInstance.delete(`/posts/${id}`, { headers: getAuthHeaders() });
       navigate(boardId ? `/boards/${boardId}` : '/boards');
     } catch (error) {
-      alert('게시글 삭제에 실패했습니다.');
+      alert('자신이 작성한 게시글만 삭제할 수 있습니다.');
     }
   };
 
@@ -132,7 +132,7 @@ function PostDetailPage() {
       await axiosInstance.delete(`/comments/${commentId}`, { headers: getAuthHeaders() });
       setComments(removeCommentById(commentId, comments));
     } catch (error) {
-      alert('댓글 삭제에 실패했습니다.');
+      alert('자신이 작성한 댓글만 삭제할 수 있습니다.');
     }
   };
 
@@ -153,7 +153,7 @@ function PostDetailPage() {
       const response = await axiosInstance.put(`/comments/${commentId}`, { postId: id, content: content }, { headers: getAuthHeaders() });
       setComments(comments.map(comment => comment.id === commentId ? response.data : comment));
     } catch (error) {
-      alert('댓글 업데이트에 실패했습니다.');
+      alert('자신이 작성한 댓글만 수정할 수 있습니다.');
     }
   };
 
