@@ -20,7 +20,7 @@ function SymptomAsk() {
     else {
       setLoading(true); 
     try {
-      const response = axiosInstance.post('/gemini', {
+      const response = await axiosInstance.post('/gemini', {
         message: textFieldValue,
       });
 
