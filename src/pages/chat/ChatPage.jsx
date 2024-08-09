@@ -87,7 +87,9 @@ function ChatPage() {
 
     const stomp = Stomp.over(socket);
 
-    stomp.connect({ Authorization: localStorage.getItem('token') }, () => {
+    stomp.connect({ Authorization: localStorage.getItem('token') }, frame => {
+      alert('연결 성공');
+
       stomp.subscribe(`/queue/${Number(params.chatRoomId)}`, msg => {
         const data = JSON.parse(msg.body);
 
