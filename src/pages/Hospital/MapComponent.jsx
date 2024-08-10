@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import MainContainer from '../../components/global/MainContainer';
 import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { axiosInstance } from '../../utils/axios';
 import { LocationContext } from '../../LocationContext';
 
 const MapComponent = () => {
@@ -20,7 +20,7 @@ const MapComponent = () => {
   useEffect(() => {
     const fetchHospitalsData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/hospitals/all');
+        const response = await axiosInstance.get('/api/hospitals/all');
         setHospitals(response.data);
         console.log('병원 데이터를 가져왔습니다:', response.data);
       } catch (error) {
@@ -124,8 +124,15 @@ const MapComponent = () => {
       return;
     }
 
+    // 진료과를 쉼표로 구분하여 배열로 변환
+    const departmentsArray = departmentInput.split(',').map(dep => dep.trim());
+
+    //띄어쓰기로 구분하여 배열로 변환
+    //const departmentsArray = departmentInput.split(' ').map(dep => dep.trim()).filter(dep => dep);
+
+    // 병원 필터링
     const filteredByDepartment = filteredHospitals.filter(hospital =>
-      hospital.departments.some(department => department.name === departmentInput)
+      hospital.departments.some(department => departmentsArray.includes(department.name))
     );
 
     setFilteredHospitals(filteredByDepartment);
@@ -187,7 +194,7 @@ const MapComponent = () => {
           type="text"
           value={departmentInput}
           onChange={(e) => setDepartmentInput(e.target.value)}
-          placeholder="부서명을 입력하세요"
+          placeholder="부서명을 입력하세요 (쉼표로 구분)"
           style={{ margin: '10px' }}
         />
         <button onClick={handleDepartmentSearch}>
@@ -261,9 +268,7 @@ const MapComponent = () => {
         )}
       </Box>
     </MainContainer>
-
   );
 };
 
 export default MapComponent;
-
