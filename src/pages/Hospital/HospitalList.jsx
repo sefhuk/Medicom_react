@@ -3,8 +3,13 @@ import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
 import HospitalReviewCard from '../../components/HospitalReviewCard';
 import { axiosInstance } from '../../utils/axios';
-import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid } from '@mui/material';
+import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid, IconButton } from '@mui/material';
 import { LocationContext } from '../../LocationContext';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { useNavigate} from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
 
 const HospitalList = () => {
   const { latitude, longitude } = useContext(LocationContext);
@@ -14,11 +19,12 @@ const HospitalList = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [searchInput, setSearchInput] = useState('');
-  const [departmentInput, setDepartmentInput] = useState('');
+  const [setDepartmentInput] = useState('');
   const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useState({
     name: '',
     departmentName: '',
@@ -44,7 +50,7 @@ const HospitalList = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/departments');
+        const response = await axiosInstance.get('/api/departments');
         setDepartments(response.data || []);
       } catch (error) {
         console.error('fetching departments 에러:', error);
@@ -102,7 +108,7 @@ const HospitalList = () => {
   
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:8080/api/search', {
+        const response = await axiosInstance.get('/api/search', {
           params: {
             ...searchParams,
             latitude,
@@ -325,6 +331,7 @@ const HospitalList = () => {
     setDepartmentInput(e.target.value);
   };
 
+
   const handleFilter = (departmentName) => {
     setSelectedDepartment(departmentName);
     setDepartmentInput(departmentName);
@@ -367,110 +374,153 @@ const HospitalList = () => {
     return pageNumbers;
   };
 
+
+
+  //예약 관련 코드
+
+  const handleReservation = () => {
+    if (selectedHospital) {
+      navigate(`${selectedHospital.id}/reservation`);
+    } else {
+      setError('예약할 병원을 선택해주세요.');
+    }
+  };
+
+
   if (loading) return <p>로딩 중 ...</p>;
   if (error) return <p>Error fetching data: {error.message}</p>;
 
   return (
     <MainContainer>
-      <Box className="container" sx={{ padding: '20px', marginLeft: '20px', marginRight: '20px' }}>
-        <Typography variant="h5" component="h5">병원 검색하기</Typography>
+  <Box className="container" sx={{ padding: '20px', marginLeft: '20px', marginRight: '20px' }}>
+    <Typography variant="h5" component="h5">병원 검색하기</Typography>
 
-        <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
-          <Grid item xs={12} sm={6} md={5}>
-            <TextField
-              fullWidth
-              type="text"
-              value={searchInput}
-              onChange={handleInputChange}
-              placeholder="병원 이름 또는 주소를 입력"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={12} sm={4} md={3}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel id="department-select-label">모든 부서</InputLabel>
-              <Select
-                labelId="department-select-label"
-                value={selectedDepartment}
-                onChange={e => handleFilter(e.target.value)}
-                label="모든 부서"
-              >
-                <MenuItem value="">
-                  <em>모든 부서</em>
-                </MenuItem>
-                {departments.map(department => (
-                  <MenuItem key={department.id} value={department.name}>
-                    {department.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={2} md={2}>
-            <Button fullWidth variant="contained" color="primary" onClick={handleSearch} sx={{ height: '100%' }}>검색</Button>
-          </Grid>
-        </Grid>
+    <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
+      <Grid item xs={12} sm={6} md={5}>
+        <TextField
+          fullWidth
+          type="text"
+          value={searchInput}
+          onChange={handleInputChange}
+          placeholder="병원 이름 또는 주소를 입력"
+          variant="outlined"
+        />
+      </Grid>
+      <Grid item xs={12} sm={4} md={3}>
+        <FormControl fullWidth variant="outlined">
+          <InputLabel id="department-select-label">모든 부서</InputLabel>
+          <Select
+            labelId="department-select-label"
+            value={selectedDepartment}
+            onChange={e => handleFilter(e.target.value)}
+            label="모든 부서"
+          >
+            <MenuItem value="">
+              <em>모든 부서</em>
+            </MenuItem>
+            {departments.map(department => (
+              <MenuItem key={department.id} value={department.name}>
+                {department.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item xs={12} sm={2} md={2}>
+        <Button fullWidth variant="contained" color="primary" onClick={handleSearch} sx={{ height: '100%' }}>검색</Button>
+      </Grid>
+    </Grid>
 
-        <List sx={{ border: '1px solid #ddd', borderRadius: '4px', padding: '0', marginTop: '20px' }}>
-          {hospitals.length > 0 ? (
-            hospitals.map((hospital, index) => (
-              <ListItem
-                key={hospital.id}
-                sx={{
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  borderBottom: index === hospitals.length - 1 ? 'none' : '1px solid #ddd',
-                  padding: '20px' // 내부 여백 추가
-                }}
-              >
-                <Box sx={{ width: '100%', marginBottom: '10px' }}> {/* 아이템 간 여백 추가 */}
-                  <Typography variant="h6" component="strong">{hospital.name}</Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                    <Typography variant="body2">주소: {hospital.district} {hospital.subDistrict}</Typography>
-                    <Typography variant="body2">
-                      {latitude && longitude && hospital.distance !== null
-                        ? `${Math.abs(hospital.distance).toFixed(2)} km`
-                        : '거리 정보를 가져올 수 없습니다.'}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-                    <Typography variant="body2">진료과목:</Typography>
-                    {hospital.departments && hospital.departments.length > 0 ? (
-                      hospital.departments.map(department => (
-                        <Box key={department.id} sx={{ padding: '5px', border: '1px solid #ccc', borderRadius: '5px', whiteSpace: 'nowrap' }}>
-                          <Typography variant="body2">{department.name}</Typography>
-                        </Box>
-                      ))
-                    ) : (
-                      <Typography variant="body2">부서 정보가 없습니다.</Typography>
-                    )}
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                    <Typography variant="body2">전화번호: {hospital.telephoneNumber}</Typography>
-                    <Button variant="contained" color="secondary" onClick={() => handleMapClick(hospital)} sx={{ marginLeft: '10px' }}>지도</Button>
-                  </Box>
+    <List sx={{ border: '1px solid #ddd', borderRadius: '4px', padding: '0', marginTop: '20px' }}>
+      {hospitals.length > 0 ? (
+        hospitals.map((hospital, index) => (
+          <ListItem
+            key={hospital.id}
+            sx={{
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              borderBottom: index === hospitals.length - 1 ? 'none' : '1px solid #ddd',
+              padding: '20px' // 내부 여백 추가
+            }}
+          >
+            <Box sx={{ width: '100%', marginBottom: '10px' }}> {/* 아이템 간 여백 추가 */}
+
+              <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <IconButton
+                  onClick={() => isBookmarked(hospital.id) ? handleRemoveBookmark(hospital.id) : handleAddBookmark(hospital.id)}
+                  sx={{ marginRight: '8px', color: 'primary.main' }}
+                >
+                  {isBookmarked(hospital.id) ? <StarIcon /> : <StarBorderIcon />}
+                </IconButton>
+                <Typography variant="h6" component="strong">
+                  {hospital.name}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', marginBottom: '10px' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+                  <LocationOnIcon sx={{ marginRight: '8px', color: 'primary.main' }} />
+                  <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
+                    {hospital.district} {hospital.subDistrict}
+                  </Typography>
+                  {/* 거리 정보와 간격 조정 */}
+                  <Typography variant="body2" sx={{ marginLeft: 'auto' }}>
+                    {latitude && longitude && hospital.distance !== null
+                      ? `${Math.abs(hospital.distance).toFixed(2)} km`
+                      : '거리 정보를 가져올 수 없습니다.'}
+                  </Typography>
                 </Box>
-                <Box sx={{ marginTop: '10px', width: '100%' }}>
-                  {renderReviews(hospital.id)}
-                </Box>
-                {selectedHospital?.id === hospital.id && renderMap()}
-                {isBookmarked(hospital.id) ? (
-                  <button onClick={() => handleRemoveBookmark(hospital.id)}>북마크 삭제</button>
+              </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                <Typography variant="body2">진료과목:</Typography>
+                {hospital.departments && hospital.departments.length > 0 ? (
+                  hospital.departments.map(department => (
+                    <Box key={department.id} sx={{ padding: '5px', border: '1px solid #ccc', borderRadius: '5px', whiteSpace: 'nowrap' }}>
+                      <Typography variant="body2">{department.name}</Typography>
+                    </Box>
+                  ))
                 ) : (
-                  <button onClick={() => handleAddBookmark(hospital.id)}>북마크 추가</button>
+                  <Typography variant="body2">부서 정보가 없습니다.</Typography>
                 )}
-              </ListItem>
-            ))
-          ) : (
-            <Typography variant="body2" sx={{ padding: '10px' }}>병원이 없습니다</Typography>
-          )}
-        </List>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
+                <Typography variant="body2">전화번호: {hospital.telephoneNumber}</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    sx={{ marginRight: '10px' }}
+                    onClick={() => handleReservation(hospital)}
+                  >
+                    예약
+                  </Button>
+                  <IconButton
+                    onClick={() => handleMapClick(hospital)}
+                    sx={{ color: 'primary.main' }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Box>
+            <Box sx={{ marginTop: '10px', width: '100%' }}>
+              {renderReviews(hospital.id)}
+            </Box>
+            
+            {selectedHospital?.id === hospital.id && renderMap()}
+          </ListItem>
+        ))
+      ) : (
+        <Typography variant="body2" sx={{ padding: '10px' }}>병원이 없습니다</Typography>
+      )}
+    </List>
 
-        <Box className="page-buttons" sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          {renderPageNumbers()}
-        </Box>
-      </Box>
-    </MainContainer>
+    <Box className="page-buttons" sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+      {renderPageNumbers()}
+    </Box>
+  </Box>
+</MainContainer>
+
   );
 };
 

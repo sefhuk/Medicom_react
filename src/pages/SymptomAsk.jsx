@@ -1,28 +1,43 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import MainContainer from '../components/global/MainContainer';
-import { Box, Grid, Container, Typography, TextField, Button } from '@mui/material';
+import { Box, Grid, Container, Typography, TextField, Button, Stepper, StepLabel, Step } from '@mui/material';
 import axios from 'axios';
+import { Loading } from '../components/Loading'; 
+import { axiosInstance } from '../utils/axios';
+
 
 function SymptomAsk() {
   const [textFieldValue, setTextFieldValue] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
 
   const handleNext = async () => {
+    if (textFieldValue.trim() === '') {
+      setError(true);
+    }
+    else {
+      setLoading(true); 
     try {
-      const response = await axios.post('http://localhost:8000/gemini', {
-        description: textFieldValue,
+      const response = await axiosInstance.post('/gemini', {
+        message: textFieldValue,
       });
 
-      // 서버 응답 데이터를 상태로 저장하고 다음 페이지로 이동
+      // 서버 응답 데이터를 상태로 저장
       navigate('diagnosis', { state: { 
         message: response.data.message,
         departments: response.data.departments
       } });
     } catch (error) {
       console.error('Error submitting the symptom description:', error);
+    } finally {
+      setLoading(false);
     }
+  }
   };
+
+  const steps = ['증상 입력', 'AI 진단', '가까운 병원 추천'];
 
   return (
     <MainContainer>
@@ -30,7 +45,13 @@ function SymptomAsk() {
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sx={{ marginTop: '30%' }}>
-              {/* Stepper */}
+              <Stepper activeStep={0} alternativeLabel>
+                {steps.map((label, index) => (
+                  <Step key={index}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                  ))}
+              </Stepper>
             </Grid>
             <Grid item xs={12}>
               <Typography variant='h1'>01</Typography>
@@ -47,6 +68,8 @@ function SymptomAsk() {
                 sx={{ width: '100%' }}
                 value={textFieldValue}
                 onChange={(e) => setTextFieldValue(e.target.value)}
+                error={error}
+                helperText={error ? '텍스트를 입력해주세요' : ''}
               />
             </Grid>
             <Grid item xs={12}>
@@ -56,12 +79,13 @@ function SymptomAsk() {
                 onClick={handleNext} 
                 sx={{ marginTop: 2 }}
               >
-                제출하기
+                다음
               </Button>
             </Grid>
           </Grid>
         </Box>
       </Container>
+      <Loading open={loading} />
     </MainContainer>
   );
 }

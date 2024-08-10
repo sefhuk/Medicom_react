@@ -6,6 +6,7 @@ import { Box, Button, Modal } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { userauthState } from '../../utils/atom';
 import EditModal from './modal/EditModal';
+import { useNavigate } from 'react-router';
 
 const style = {
   position: 'absolute',
@@ -30,6 +31,8 @@ function Message({ data, repeat, self }) {
   };
   const handleClose = () => setOpen(false);
 
+  const navigate = useNavigate();
+
   const messageTime = () => {
     let date = fromatDate(new Date(data.createdAt));
 
@@ -41,13 +44,17 @@ function Message({ data, repeat, self }) {
     return date;
   };
 
-  const requestHospital = async () => {
-    alert('API 연결 전');
-    // try {
-    //   await axiosInstance.get('');
-    // } catch (err) {
-    //   alert(err);
-    // }
+  const requestHospital = async e => {
+    const isConfirmed = window.confirm('결과 페이지로 이동합니다');
+    if (!isConfirmed) {
+      return;
+    }
+
+    navigate('/hospitals/maps', {
+      state: {
+        departments: [e.target.innerText]
+      }
+    });
   };
 
   return (
@@ -68,7 +75,7 @@ function Message({ data, repeat, self }) {
       </Modal>
       <Container self={self}>
         {self || (
-          <TopContainer repeat={repeat} self={self}>
+          <TopContainer repeat={repeat ? repeat : undefined} self={self}>
             {repeat || (
               <ProfileImage
                 user={data.user}
@@ -141,6 +148,8 @@ const BottomContainer = styled.div`
 const Author = styled.p`
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
   margin-left: ${({ self }) => (self ? '0px' : '10px')};
+  margin-top: auto;
+  margin-bottom: auto;
   order: ${({ self }) => (self ? 1 : 2)};
   @media (min-width: 481px) {
     font-size: 1.4rem;

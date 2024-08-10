@@ -58,7 +58,7 @@ function HospitalReservation() {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/hospitals/${hospitalid}/departments`);
+        const response = axiosInstance.get(`/api/hospitals/${hospitalid}/departments`);
         setDepartments(response.data);
         setLoading(false);
       } catch (err) {
@@ -113,7 +113,7 @@ function HospitalReservation() {
       const utcDate = format(selectedDate, 'yyyy-MM-dd');
 
       //instance
-      const response = await axiosInstance.post('http://localhost:8080/api/reservations', {
+      const response = axiosInstance.post('/api/reservations', {
         department: selectedDepartment,
         date: utcDate, // UTC로 변환된 날짜를 전송
         timeSlot: selectedTime

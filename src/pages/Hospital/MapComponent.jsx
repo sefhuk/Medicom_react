@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import MainContainer from '../../components/global/MainContainer';
 import { Box, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { axiosInstance } from '../../utils/axios';
 import { LocationContext } from '../../LocationContext';
 
 const MapComponent = () => {
   const { latitude, longitude } = useContext(LocationContext);
+  const { state } = location;
   const [mapLoaded, setMapLoaded] = useState(false);
   const [hospitals, setHospitals] = useState([]);
   const [filteredHospitals, setFilteredHospitals] = useState([]);
@@ -15,12 +16,15 @@ const MapComponent = () => {
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [error, setError] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const location = useLocation();
   const navigate = useNavigate();
+  const departments = state?.departments || [];
+  
 
   useEffect(() => {
     const fetchHospitalsData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/hospitals/all');
+        const response = await axiosInstance.get('http://localhost:8080/api/hospitals/all');
         setHospitals(response.data);
         console.log('병원 데이터를 가져왔습니다:', response.data);
       } catch (error) {

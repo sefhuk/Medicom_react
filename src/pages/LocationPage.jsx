@@ -31,7 +31,7 @@ function LocationPage() {
           setInfoWindowContent('현재 위치');
   
           // axiosInstance를 사용하여 위치 정보 API 호출
-          axiosInstance.get(`/geocode/coords-to-address?lat=${latitude}&lng=${longitude}`)
+          axiosInstance.get(`/api/geocode/coords-to-address?lat=${latitude}&lng=${longitude}`)
             .then(response => {
               const data = response.data;
               if (data && data.results && data.results.length > 0) {
