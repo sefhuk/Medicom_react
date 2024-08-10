@@ -334,7 +334,6 @@ const HospitalList = () => {
 
   const handleFilter = (departmentName) => {
     setSelectedDepartment(departmentName);
-    setDepartmentInput(departmentName);
   };
 
   const handleMapClick = (hospital) => {
