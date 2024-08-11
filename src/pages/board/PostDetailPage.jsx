@@ -4,7 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import CommentList from '../../components/board/CommentList';
 import Pagination from '../../components/board/CommentPagination';
 import MainContainer from '../../components/global/MainContainer';
-import { Button, CircularProgress, Alert, TextField, Typography, Box, Dialog, DialogContent } from '@mui/material';
+import { Button, CircularProgress, Alert, TextField, Typography, Box, Dialog, DialogContent, IconButton } from '@mui/material';
+import { ThumbUp, ThumbDown, Visibility } from '@mui/icons-material';
 
 function PostDetailPage() {
   const { id } = useParams();
@@ -50,11 +51,21 @@ function PostDetailPage() {
     setLoading(true);
     try {
       const response = await axiosInstance.get(`/comments/post/${id}?page=${page}&size=6`, { headers: getAuthHeaders() });
-      const sortedComments = response.data.content.map(comment => ({
-        ...comment,
-        replies: comment.replies || []
-      }));
-      setComments(sortedComments);
+
+      const commentsData = response.data.content;
+      const nestedComments = commentsData.reduce((acc, comment) => {
+        if (comment.parentId === null) {
+          acc.push({ ...comment, replies: [] });
+        } else {
+          const parentComment = acc.find(c => c.id === comment.parentId);
+          if (parentComment) {
+            parentComment.replies.push(comment);
+          }
+        }
+        return acc;
+      }, []);
+
+      setComments(nestedComments);
       setTotalPages(response.data.totalPages);
       setCurrentPage(page);
     } catch (error) {
@@ -94,15 +105,12 @@ function PostDetailPage() {
       alert('로그인 후 포스트를 삭제할 수 있습니다.');
       return;
     }
-//     if (post.userId !== userId) {
-//       alert('자신이 작성한 게시글만 삭제할 수 있습니다.');
-//       return;
-//     }
+
     try {
       await axiosInstance.delete(`/posts/${id}`, { headers: getAuthHeaders() });
       navigate(boardId ? `/boards/${boardId}` : '/boards');
     } catch (error) {
-      alert('게시글 삭제에 실패했습니다.');
+      alert('자신이 작성한 게시글만 삭제할 수 있습니다.');
     }
   };
 
@@ -118,16 +126,11 @@ function PostDetailPage() {
       return;
     }
 
-//     if (comment.userId !== userId) {
-//       alert('자신이 작성한 댓글만 삭제할 수 있습니다.');
-//       return;
-//     }
-
     try {
       await axiosInstance.delete(`/comments/${commentId}`, { headers: getAuthHeaders() });
       setComments(removeCommentById(commentId, comments));
     } catch (error) {
-      alert('댓글 삭제에 실패했습니다.');
+      alert('자신이 작성한 댓글만 삭제할 수 있습니다.');
     }
   };
 
@@ -143,16 +146,11 @@ function PostDetailPage() {
       return;
     }
 
-//     if (comment.userId !== userId) {
-//       alert('자신이 작성한 댓글만 수정할 수 있습니다.');
-//       return;
-//     }
-
     try {
       const response = await axiosInstance.put(`/comments/${commentId}`, { postId: id, content: content }, { headers: getAuthHeaders() });
       setComments(comments.map(comment => comment.id === commentId ? response.data : comment));
     } catch (error) {
-      alert('댓글 업데이트에 실패했습니다.');
+      alert('자신이 작성한 댓글만 수정할 수 있습니다.');
     }
   };
 
@@ -197,10 +195,7 @@ function PostDetailPage() {
       alert('로그인 후 포스트를 수정할 수 있습니다.');
       return;
     }
-//     if (post.userId !== userId) {
-//       alert('자신이 작성한 게시글만 수정할 수 있습니다.');
-//       return;
-//     }
+
     navigate(`/posts/update/${id}`);
   };
 
@@ -229,6 +224,47 @@ function PostDetailPage() {
     }, []);
   };
 
+  const handleLikePost = async () => {
+    if (!isLoggedIn()) {
+      alert('로그인 후 좋아요를 누를 수 있습니다.');
+      return;
+    }
+
+    try {
+      await axiosInstance.post(`/posts/${id}/like`, null, { headers: getAuthHeaders() });
+      fetchPost(); // 좋아요가 업데이트되었으니 다시 포스트를 가져옵니다.
+    } catch (error) {
+      alert('좋아요 추가에 실패했습니다.');
+    }
+  };
+
+  const handleDislikePost = async () => {
+    if (!isLoggedIn()) {
+      alert('로그인 후 싫어요를 누를 수 있습니다.');
+      return;
+    }
+
+    try {
+      await axiosInstance.delete(`/posts/${id}/like`, { headers: getAuthHeaders() });
+      fetchPost(); // 싫어요가 업데이트되었으니 다시 포스트를 가져옵니다.
+    } catch (error) {
+      alert('싫어요 추가에 실패했습니다.');
+    }
+  };
+
+  const handleIncrementViews = async () => {
+    try {
+      await axiosInstance.post(`/posts/${id}/view`, null, { headers: getAuthHeaders() });
+      fetchPost();
+    } catch (error) {
+      console.error('조회수 증가에 실패했습니다.');
+    }
+  };
+
+  useEffect(() => {
+    handleIncrementViews();
+  }, []);
+
   if (loading) return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       <CircularProgress />
@@ -243,13 +279,22 @@ function PostDetailPage() {
       <Box sx={{ textAlign: 'center', mb: 2 }}>
         <Typography variant="h4">{post.title}</Typography>
       </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="caption" display="block">
           {post.userName}
         </Typography>
-        <Typography variant="caption" display="block">
-          {new Date(post.createdAt).toLocaleString()}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <IconButton onClick={handleLikePost} color="primary">
+            <ThumbUp />
+          </IconButton>
+          <Typography variant="caption">{post.likeCount}</Typography>
+          <IconButton onClick={handleDislikePost} color="error">
+            <ThumbDown />
+          </IconButton>
+          <Typography variant="caption">{post.dislikeCount}</Typography>
+          <Visibility sx={{ ml: 2 }} />
+          <Typography variant="caption">{post.viewCount}</Typography>
+        </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Button

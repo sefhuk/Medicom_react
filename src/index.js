@@ -93,9 +93,10 @@ const router = createBrowserRouter([
         element: <PrivateRoute />,
         children: [
           // 로그인이 필요한 페이지 - 시작
-          { path: 'location', element: <LocationPage /> },
           { path: 'symptoms', element: <SymptomAsk /> },
           { path: 'symptoms/diagnosis', element: <SymptomAskSecond /> },
+          { path: 'location', element: <LocationPage /> },
+
           { path: 'location/other', element: <OtherLocationPage />},
           
           { path: 'chat/:chatRoomId/messages', element: <ChatPage /> },

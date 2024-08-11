@@ -41,7 +41,11 @@ function PostList({ posts, boardId }) {
                   </Link>
                 </TableCell>
                 <TableCell align="right">{post.userName}</TableCell>
-                <TableCell align="right">{new Date(post.createdAt).toLocaleDateString()}</TableCell>
+                <TableCell align="right">
+                  {post.updatedAt
+                    ? new Date(post.updatedAt).toLocaleDateString()
+                    : new Date(post.createdAt).toLocaleDateString()}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

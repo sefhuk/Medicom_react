@@ -29,7 +29,7 @@ function SymptomAskSecond() {
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sx={{ marginTop: '30%' }}>
-              <Stepper activeStep={0} alternativeLabel>
+              <Stepper activeStep={1} alternativeLabel>
                 {steps.map((label, index) => (
                   <Step key={index}>
                     <StepLabel>{label}</StepLabel>
