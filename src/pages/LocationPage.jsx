@@ -1,8 +1,9 @@
-import React, { useRef, useEffect, useState, useContext } from 'react';
-import MainContainer from '../components/global/MainContainer';
+import React, { useRef, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { Box, Typography, IconButton } from '@mui/material';
-import MyLocationIcon from '@mui/icons-material/MyLocation'; // Add Material UI icon
-import { LocationContext } from '../LocationContext'; 
+import MyLocationIcon from '@mui/icons-material/MyLocation';
+import { userauthState } from '../utils/atom';
+import MainContainer from '../components/global/MainContainer';
 import { useNavigate } from 'react-router';
 import { axiosInstance } from '../utils/axios';
 
@@ -11,16 +12,10 @@ function LocationPage() {
   const [center, setCenter] = useState(null);
   const [address, setAddress] = useState('');
   const [infoWindowContent, setInfoWindowContent] = useState('현재 위치');
-  const { latitude, longitude, address: contextAddress, setLatitude, setLongitude, setAddress: setContextAddress } = useContext(LocationContext); 
+  const auth = useRecoilValue(userauthState);
   const navigate = useNavigate();
 
-  const handleHomepage = () => {
-    navigate('/');
-  };
-
-  const handleOtherPage = () => {
-    navigate('other');
-  };
+  // 현재 위치 정보 요청
   const fetchCurrentPosition = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -30,7 +25,6 @@ function LocationPage() {
           setAddress('현재 위치 로딩 중...');
           setInfoWindowContent('현재 위치');
   
-          // axiosInstance를 사용하여 위치 정보 API 호출
           axiosInstance.get(`/api/geocode/coords-to-address?lat=${latitude}&lng=${longitude}`)
             .then(response => {
               const data = response.data;
@@ -44,11 +38,6 @@ function LocationPage() {
                 ];
                 const address = addressParts.join(' ');
                 setAddress(address.trim());
-                
-                // LocationContext에 현재 위치 저장
-                setLatitude(latitude);
-                setLongitude(longitude);
-                setContextAddress(address.trim());
               } else {
                 setAddress('주소를 찾을 수 없습니다.');
               }
@@ -68,17 +57,15 @@ function LocationPage() {
       setCenter({ lat: 37.3595704, lng: 127.105399 });
     }
   };
-  
 
   useEffect(() => {
-    if (latitude && longitude) {
-      setCenter({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
-      setAddress(contextAddress || '현재 위치');
-      setInfoWindowContent(contextAddress ? '검색된 위치' : '현재 위치');
-    } else {
-      fetchCurrentPosition();
+    if (!auth.isLoggedIn) {
+      // 로그인이 되어 있지 않은 경우 위치 정보를 요청하지 않음
+      return;
     }
-  }, [latitude, longitude, contextAddress]);
+
+    fetchCurrentPosition();
+  }, [auth.isLoggedIn]);
 
   useEffect(() => {
     if (window.naver && mapRef.current && center) {
@@ -114,67 +101,71 @@ function LocationPage() {
   return (
     <MainContainer>
         <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-        <Box
-            ref={mapRef}
-            sx={{
-            width: '100%',
-            height: '100%',
-            }}
-        />
-        <Box
-            sx={{
-            position: 'absolute',
-            bottom: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: '10px',
-            }}
-        >
+        {auth.isLoggedIn && (
+          <>
             <Box
-            onClick={handleHomepage}
-            sx={{
-                bgcolor: '#A2CA71',
-                height: '5%',
-                borderRadius: '30px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '10px',
-                cursor: 'pointer',
-            }}
-            >
-            <Typography>이 위치로 할게요</Typography>
-            </Box>
+                ref={mapRef}
+                sx={{
+                width: '100%',
+                height: '100%',
+                }}
+            />
             <Box
-            onClick={handleOtherPage}
-            sx={{
-                bgcolor: '#A2CA71',
-                height: '5%',
-                borderRadius: '30px',
+                sx={{
+                position: 'absolute',
+                bottom: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
                 display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '10px',
-                cursor: 'pointer',
-            }}
+                gap: '10px',
+                }}
             >
-            <Typography>다른 위치로 할게요</Typography>
+                <Box
+                onClick={() => navigate('/')}
+                sx={{
+                    bgcolor: '#A2CA71',
+                    height: '5%',
+                    borderRadius: '30px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '10px',
+                    cursor: 'pointer',
+                }}
+                >
+                <Typography>이 위치로 할게요</Typography>
+                </Box>
+                <Box
+                onClick={() => navigate('other')}
+                sx={{
+                    bgcolor: '#A2CA71',
+                    height: '5%',
+                    borderRadius: '30px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '10px',
+                    cursor: 'pointer',
+                }}
+                >
+                <Typography>다른 위치로 할게요</Typography>
+                </Box>
             </Box>
-        </Box>
-        <IconButton
-            onClick={fetchCurrentPosition}
-            sx={{
-            position: 'absolute',
-            bottom: '20px', // Position 20px from the bottom
-            right: '20px', // Position 20px from the right
-            bgcolor: '#fff',
-            borderRadius: '50%',
-            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-            }}
-        >
-            <MyLocationIcon sx={{ color: '#A2CA71' }} />
-        </IconButton>
+            <IconButton
+                onClick={fetchCurrentPosition}
+                sx={{
+                position: 'absolute',
+                bottom: '20px',
+                right: '20px',
+                bgcolor: '#fff',
+                borderRadius: '50%',
+                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                }}
+            >
+                <MyLocationIcon sx={{ color: '#A2CA71' }} />
+            </IconButton>
+          </>
+        )}
         </Box>
     </MainContainer>
   );

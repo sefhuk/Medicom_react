@@ -1,15 +1,17 @@
 import React, { useContext } from 'react';
+import { useRecoilValue } from 'recoil';
 import MainContainer from '../components/global/MainContainer';
-import { LocationContext } from '../LocationContext'; // import 수정
+import { LocationContext } from '../LocationContext'; 
+import { userauthState } from '../utils/atom'; // Recoil 상태 가져오기
 import { useNavigate } from 'react-router';
 import { Container, Grid, Typography, Box } from '@mui/material';
 import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import SearchIcon from '@mui/icons-material/Search';
-import Button from '@mui/material/Button';
 
 function MainPage() {
-  const { address } = useContext(LocationContext); // 수정
+  const { address } = useContext(LocationContext); // 위치 정보를 가져옵니다.
+  const auth = useRecoilValue(userauthState); // 로그인 상태를 가져옵니다.
   const navigate = useNavigate();
 
   const handleChatPage = () => {
@@ -39,7 +41,7 @@ function MainPage() {
         borderRadius: '40px',
         bgcolor: 'lightgray',
         cursor: 'pointer',
-        ...sx, // sx는 props.sx로부터 전달된 스타일을 병합
+        ...sx,
       }}
       {...props}
     />
@@ -76,7 +78,9 @@ function MainPage() {
       <Grid item xs={12}>
         <CustomBoxTypo onClick={handleLocationPage} sx={{ bgcolor: 'black', py: 2, cursor: 'pointer' }}>
           <MyLocationOutlinedIcon sx={{ marginLeft: 3, marginRight: 2, color: 'white' }} />
-          <Typography variant="h6" sx={{ color: 'white' }}>{address}</Typography> {/* 수정 */}
+          <Typography variant="h6" sx={{ color: 'white' }}>
+            {auth.isLoggedIn ? address || '위치 설정 중...' : '위치 설정'}
+          </Typography>
         </CustomBoxTypo>
       </Grid>
       <Container>
