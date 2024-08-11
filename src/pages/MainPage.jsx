@@ -10,8 +10,8 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import SearchIcon from '@mui/icons-material/Search';
 
 function MainPage() {
-  const { address } = useContext(LocationContext); // 위치 정보를 가져옵니다.
-  const auth = useRecoilValue(userauthState); // 로그인 상태를 가져옵니다.
+  const { address } = useContext(LocationContext);
+  const auth = useRecoilValue(userauthState);
   const navigate = useNavigate();
 
   const handleChatPage = () => {
@@ -79,7 +79,8 @@ function MainPage() {
         <CustomBoxTypo onClick={handleLocationPage} sx={{ bgcolor: 'black', py: 2, cursor: 'pointer' }}>
           <MyLocationOutlinedIcon sx={{ marginLeft: 3, marginRight: 2, color: 'white' }} />
           <Typography variant="h6" sx={{ color: 'white' }}>
-            {auth.isLoggedIn ? address || '위치 설정 중...' : '위치 설정'}
+            {auth.isLoggedIn ? address || '위치 설정 중...' : '위치 설정'} 
+            {/* 비로그인 상태에서 위치 안보임  */}
           </Typography>
         </CustomBoxTypo>
       </Grid>
