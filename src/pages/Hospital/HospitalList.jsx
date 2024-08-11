@@ -6,8 +6,7 @@ import { axiosInstance } from '../../utils/axios';
 import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid, IconButton } from '@mui/material';
 import { LocationContext } from '../../LocationContext';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
@@ -20,7 +19,7 @@ const HospitalList = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [searchInput, setSearchInput] = useState('');
-  const [departmentInput, setDepartmentInput] = useState('');
+  const [setDepartmentInput] = useState('');
   const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedHospital, setSelectedHospital] = useState(null);
@@ -51,7 +50,7 @@ const HospitalList = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/departments');
+        const response = await axiosInstance.get('/api/departments');
         setDepartments(response.data || []);
       } catch (error) {
         console.error('fetching departments 에러:', error);
@@ -109,7 +108,7 @@ const HospitalList = () => {
   
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:8080/api/search', {
+        const response = await axiosInstance.get('/api/search', {
           params: {
             ...searchParams,
             latitude,
@@ -332,9 +331,9 @@ const HospitalList = () => {
     setDepartmentInput(e.target.value);
   };
 
+
   const handleFilter = (departmentName) => {
     setSelectedDepartment(departmentName);
-    setDepartmentInput(departmentName);
   };
 
   const handleMapClick = (hospital) => {
