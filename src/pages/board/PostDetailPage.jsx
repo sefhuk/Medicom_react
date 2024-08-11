@@ -255,14 +255,14 @@ function PostDetailPage() {
   const handleIncrementViews = async () => {
     try {
       await axiosInstance.post(`/posts/${id}/view`, null, { headers: getAuthHeaders() });
-      fetchPost(); // 조회수가 업데이트되었으니 다시 포스트를 가져옵니다.
+      fetchPost();
     } catch (error) {
       console.error('조회수 증가에 실패했습니다.');
     }
   };
 
   useEffect(() => {
-    handleIncrementViews(); // 페이지 로드 시 조회수 증가
+    handleIncrementViews();
   }, []);
 
   if (loading) return (
