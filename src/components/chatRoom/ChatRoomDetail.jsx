@@ -13,7 +13,7 @@ function ChatRoomDetail({ data, selectedIndex }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleWrapperClick = () => {
-    if (auth.role === 'ADMIN' && data.type.type !== '서비스센터 상담') {
+    if (auth.role === 'ADMIN' && data.type.type !== '서비스센터 상담' && selectedIndex === 2) {
       return;
     }
 
