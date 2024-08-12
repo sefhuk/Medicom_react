@@ -38,6 +38,7 @@ import OtherLocationPage from './pages/OtherLocationPage.jsx';
 import { LocationProvider } from './LocationContext.jsx';
 import PrivateRoute from './pages/PrivateRoute.jsx';
 import SymptomAskSecond from './pages/SymptomAskSecond.jsx';
+import ReservationSuccess from './pages/Hospital/ReservationSuccess'
 
 
 const queryClient = new QueryClient();
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
 
 
   { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
+  { path: 'hospitals/maps/:hospitalid/reservation/success', element: <ReservationSuccess /> },
   // 로그인 필요없는 페이지 - 끝
   {
     path: '/',
