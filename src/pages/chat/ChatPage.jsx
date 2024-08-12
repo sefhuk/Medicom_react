@@ -3,7 +3,7 @@ import { axiosInstance } from '../../utils/axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainContainer from '../../components/global/MainContainer';
 import Message from '../../components/chatMessage/Message';
-import { Stomp, Client } from '@stomp/stompjs';
+import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
@@ -26,8 +26,12 @@ const fetchData = async (id, setMessages, setError) => {
       });
     }
   } catch (err) {
-    console.log('err', err);
-    // alert('잘못된 접근입니다');
+    try {
+      setError(err.response.data.message);
+    } catch (err) {
+      console.log(err);
+      alert('잘못된 접근입니다. 다시 시도해주세요');
+    }
   }
 };
 
@@ -64,7 +68,13 @@ function ChatPage() {
         replace: true
       });
     } catch (err) {
-      alert(err);
+      try {
+        alert(err.response.data.message);
+      } catch (err) {
+        console.log(err);
+        alert('잘못된 접근입니다. 다시 시도해주세요');
+        navigate('/');
+      }
     }
   };
 
