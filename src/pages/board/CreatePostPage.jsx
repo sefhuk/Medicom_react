@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../../utils/axios';
 import CreatePostForm from '../../components/board/CreatePostForm';
 import MainContainer from '../../components/global/MainContainer';
-import { CircularProgress, Box, Alert } from '@mui/material';
+import { CircularProgress, Box, Alert, Typography, Button } from '@mui/material';
 
 // Auth 헤더를 반환하는 함수
 function getAuthHeaders() {
@@ -31,6 +31,7 @@ function CreatePostPage() {
     }
 
     setLoading(true);
+    setError(null); // Clear previous errors
     try {
       await axiosInstance.post(`/posts`, { ...data, boardId }, {
         headers: getAuthHeaders()
@@ -46,16 +47,30 @@ function CreatePostPage() {
 
   return (
     <MainContainer>
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <>
-          {error && <Alert severity="error">{error}</Alert>}
-          <CreatePostForm onSubmit={handleSubmit} />
-        </>
-      )}
+      <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Typography variant="h3" gutterBottom>
+
+        </Typography>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            {error && <Alert severity="error">{error}</Alert>}
+            <CreatePostForm onSubmit={handleSubmit} />
+            <Box sx={{ mt: 4 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => navigate(`/boards/${boardId}`)}
+              >
+                Back to prev
+              </Button>
+            </Box>
+          </>
+        )}
+      </Box>
     </MainContainer>
   );
 }

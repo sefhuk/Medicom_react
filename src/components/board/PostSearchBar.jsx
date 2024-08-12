@@ -20,7 +20,7 @@ const PostSearchBar = ({ onSearch }) => {
                     response = await axiosInstance.get('/posts/searchByUserName', { params });
                 }
             } else {
-                // 검색어가 없을 때 모든 게시물 가져오기
+
                 response = await axiosInstance.get('/posts', { params });
             }
 

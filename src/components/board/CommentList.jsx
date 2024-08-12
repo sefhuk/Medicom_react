@@ -11,7 +11,7 @@ function CommentList({ comments = [], onDelete, onUpdate, onReply }) {
 
   const handleEditClick = (comment) => {
     setEditCommentId(comment.id);
-    setEditContent(comment.content || '');  // 기본값 설정
+    setEditContent(comment.content || '');
   };
 
   const handleUpdate = () => {
@@ -27,7 +27,7 @@ function CommentList({ comments = [], onDelete, onUpdate, onReply }) {
 
   const handleReplyClick = (comment) => {
     setReplyCommentId(comment.id);
-    setReplyContent('');  // 기본값 설정
+    setReplyContent('');
   };
 
   const handleReply = () => {

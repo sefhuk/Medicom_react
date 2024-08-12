@@ -2,7 +2,7 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link } from '@mui/material';
 
-function PostList({ posts = [], boardId }) {  // posts에 기본값 설정
+function PostList({ posts = [], boardId }) {
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -27,7 +27,7 @@ function PostList({ posts = [], boardId }) {  // posts에 기본값 설정
             </TableRow>
           </TableHead>
           <TableBody>
-            {posts.length > 0 ? (  // posts 배열이 비어있지 않은지 확인
+            {posts.length > 0 ? (
               posts.map((post) => (
                 <TableRow key={post.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component="th" scope="row">
@@ -53,7 +53,7 @@ function PostList({ posts = [], boardId }) {  // posts에 기본값 설정
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} align="center">No posts available</TableCell>  // 데이터가 없을 때 메시지 표시
+                <TableCell colSpan={3} align="center">게시글이 존재하지 않습니다.</TableCell>
               </TableRow>
             )}
           </TableBody>

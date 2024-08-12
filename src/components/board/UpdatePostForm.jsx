@@ -68,7 +68,7 @@ function UpdatePostForm({ post, onUpdate, userId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if the user is the author of the post
+
     if (userId !== post.userId) {
       setError('You do not have permission to update this post.');
       return;
