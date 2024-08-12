@@ -124,10 +124,10 @@ const Title = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
   @media (max-width: 768px) {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
 `;
 
