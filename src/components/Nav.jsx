@@ -126,7 +126,7 @@ const Nav = () => {
           네비게이션바
         </Typography>
         {auth.isLoggedIn ? (
-          <></>
+          <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
         ) : (
           <Button color="inherit" onClick={handleLoginClick}>Login</Button>
         )}
