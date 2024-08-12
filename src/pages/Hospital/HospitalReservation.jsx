@@ -132,17 +132,24 @@ function HospitalReservation() {
       alert('모든 필드를 선택해 주세요.');
       return;
     }
+
+    // 사용자 정보 가져오기
+    const userId = localStorage.getItem('userId');
+    const userRole = localStorage.getItem('userRole');
+
     try {
       const utcDate = format(selectedDate, 'yyyy-MM-dd');
 
       const response = await axiosInstance.post('/api/reservations', {
         department: selectedDepartment,
         date: utcDate,
-        timeSlot: selectedTime
+        timeSlot: selectedTime,
+        userId, // 사용자 ID 포함
+        userRole // 사용자 역할 포함
       });
 
       alert(response.data);
-      navigate('success'); // 성공 시 성공 페이지로 이동
+      navigate('/success'); // 성공 시 성공 페이지로 이동
     } catch (error) {
       if (error.response && error.response.data) {
         alert(error.response.data);

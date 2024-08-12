@@ -379,7 +379,7 @@ const HospitalList = () => {
 
   const handleReservation = () => {
     if (selectedHospital) {
-      navigate(`${selectedHospital.id}/reservation`);
+      navigate(`maps/${selectedHospital.id}/reservation`);
     } else {
       setError('예약할 병원을 선택해주세요.');
     }
