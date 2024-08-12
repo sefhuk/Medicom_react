@@ -1,33 +1,17 @@
 import { Button } from '@mui/material';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import ProfileImage from './ProfileImage';
-import { axiosInstance } from '../../utils/axios';
-import { useRecoilState } from 'recoil';
+import { createChatRoom } from '../../utils/axios';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { chatRoomState, userauthState } from '../../utils/atom';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 function InsertMessage() {
   const [auth] = useRecoilState(userauthState);
-  const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
+  const setChatRoom = useSetRecoilState(chatRoomState);
 
   const navigate = useNavigate();
-
-  const createChatRoom = async (chatRoomType, navigate) => {
-    try {
-      const response = await axiosInstance.post(`/chatrooms`, {
-        chatRoomType
-      });
-      setChatRoom(e => ({
-        ...e,
-        rooms: { ...e.rooms, [`ch_${response.data.id}`]: response.data }
-      }));
-      navigate(`/chat/${response.data.id}/messages`);
-    } catch (err) {
-      alert(err.response.data.message);
-      navigate('/');
-    }
-  };
 
   const handleButtonClick = e => {
     const isConfirmed = window.confirm(`'${e.target.innerText}'을(를) 선택하시겠습니까?`);
@@ -35,7 +19,7 @@ function InsertMessage() {
       return;
     }
 
-    createChatRoom(e.target.getAttribute('type'), navigate);
+    createChatRoom(e.target.getAttribute('type'), navigate, setChatRoom);
   };
 
   useEffect(() => {
@@ -70,14 +54,6 @@ function InsertMessage() {
             고객 센터
           </Button>
         )}
-        {/* <Button
-          type='AI'
-          variant='contained'
-          style={{ marginBottom: '4px' }}
-          onClick={() => alert('API 연결 전')}
-        >
-          AI 상담
-        </Button> */}
       </ButtonWrapper>
     </Container>
   );

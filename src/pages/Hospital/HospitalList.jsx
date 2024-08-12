@@ -142,7 +142,7 @@ const HospitalList = () => {
       setBookmarksLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const response = await axiosInstance.get('/api/bookmark', {
+        const response = await axiosInstance.get('http://localhost:8080/bookmark', {
           headers: {
             Authorization: `${token}`
           }
@@ -161,7 +161,7 @@ const HospitalList = () => {
   const fetchReviews = async (hospitalId, page = 0) => {
     setReviewsLoading(prev => ({ ...prev, [hospitalId]: true }));
     try {
-      const response = await axiosInstance.get(`/api/review/${hospitalId}/Page`, {
+      const response = await axios.get(`http://localhost:8080/review/${hospitalId}/Page`, {
         params: { page, size: reviewPageSize },
       });
 
@@ -171,7 +171,7 @@ const HospitalList = () => {
       const reviewsWithUsernames = await Promise.all(
         response.data.content.map(async review => {
           try {
-            const response = await axiosInstance.get(`/api/review/findUser/${review.userId}`);
+            const userResponse = await axios.get(`http://localhost:8080/review/findUser/${review.userId}`);
             return {
               ...review,
               userName: userResponse.data,
@@ -247,7 +247,7 @@ const HospitalList = () => {
     try {
       const token = localStorage.getItem('token');
 
-      await axiosInstance.delete(`/api/bookmark/${hospitalId}`, {
+      await axiosInstance.delete(`http://localhost:8080/bookmark/${hospitalId}`, {
         headers: {
           Authorization: `${token}`
         }
@@ -379,7 +379,7 @@ const HospitalList = () => {
 
   const handleReservation = () => {
     if (selectedHospital) {
-      navigate(`maps/${selectedHospital.id}/reservation`);
+      navigate(`${selectedHospital.id}/reservation`);
     } else {
       setError('예약할 병원을 선택해주세요.');
     }
@@ -447,7 +447,7 @@ const HospitalList = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                 <IconButton
                   onClick={() => isBookmarked(hospital.id) ? handleRemoveBookmark(hospital.id) : handleAddBookmark(hospital.id)}
-                  sx={{ marginRight: '8px', color: 'primary.main' }}
+                  sx={{ marginRight: '7px', color: 'primary.main' }}
                 >
                   {isBookmarked(hospital.id) ? <StarIcon /> : <StarBorderIcon />}
                 </IconButton>
@@ -460,7 +460,7 @@ const HospitalList = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
                   <LocationOnIcon sx={{ marginRight: '8px', color: 'primary.main' }} />
                   <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-                    {hospital.district} {hospital.subDistrict}
+                    {hospital.address}
                   </Typography>
                   {/* 거리 정보와 간격 조정 */}
                   <Typography variant="body2" sx={{ marginLeft: 'auto' }}>
