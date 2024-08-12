@@ -45,10 +45,7 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
     <Box sx={{ maxWidth: 800, mx: 'auto', mt: 2 }}>
       <List>
         {comments.map(comment => (
-          <ListItem
-            key={comment.id}
-            sx={{ mb: 2 }}
-          >
+          <ListItem key={comment.id} sx={{ mb: 2 }}>
             <Card sx={{ width: '100%' }}>
               <CardContent sx={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar sx={{ mr: 2 }} />
@@ -78,7 +75,9 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
                         {comment.content}
                       </Typography>
                       <Typography variant="caption" display="block" sx={{ mb: 1 }}>
-                        {new Date(comment.createdAt).toLocaleString()}
+                        {comment.updatedAt
+                          ? `${new Date(comment.updatedAt).toLocaleString()}`
+                          : `${new Date(comment.createdAt).toLocaleString()}`}
                       </Typography>
                     </Box>
                   )}

@@ -66,7 +66,7 @@ function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
                         {reply.content}
                       </Typography>
                       <Typography variant="caption" display="block" sx={{ mb: 1 }}>
-                        {new Date(reply.createdAt).toLocaleString()}
+                        {reply.updatedAt ? `${new Date(reply.updatedAt).toLocaleString()}` : `${new Date(reply.createdAt).toLocaleString()}`}
                       </Typography>
                     </Box>
                   )}
@@ -87,22 +87,6 @@ function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
             </Card>
           </ListItem>
         ))}
-        <Box sx={{ p: 2, bgcolor: '#f5f5f5' }}>
-          <TextField
-            value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            placeholder="Add a reply..."
-          />
-          <Button onClick={handleReply} variant="contained" color="primary" sx={{ mr: 1 }}>
-            Add Reply
-          </Button>
-          <Button onClick={handleCancelReply} variant="outlined" color="secondary">
-            Cancel
-          </Button>
-        </Box>
       </List>
     </Box>
   );
