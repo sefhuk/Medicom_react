@@ -146,7 +146,7 @@ function ChatPage() {
                 newMessages.push(data);
 
                 if (data.user.id !== auth.userId) {
-                  axiosInstance.post('/chat-messages/status', { chatMessageId: data.id });
+                  axiosInstance.post('/chat-messages/status', { id: data.id });
                 }
               }
 
