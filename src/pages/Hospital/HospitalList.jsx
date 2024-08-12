@@ -142,7 +142,7 @@ const HospitalList = () => {
       setBookmarksLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const response = await axiosInstance.get('http://localhost:8080/bookmark', {
+        const response = await axiosInstance.get('/api/bookmark', {
           headers: {
             Authorization: `${token}`
           }
@@ -161,7 +161,7 @@ const HospitalList = () => {
   const fetchReviews = async (hospitalId, page = 0) => {
     setReviewsLoading(prev => ({ ...prev, [hospitalId]: true }));
     try {
-      const response = await axios.get(`http://localhost:8080/review/${hospitalId}/Page`, {
+      const response = await axiosInstance.get(`/api/review/${hospitalId}/Page`, {
         params: { page, size: reviewPageSize },
       });
 
@@ -171,7 +171,7 @@ const HospitalList = () => {
       const reviewsWithUsernames = await Promise.all(
         response.data.content.map(async review => {
           try {
-            const userResponse = await axios.get(`http://localhost:8080/review/findUser/${review.userId}`);
+            const response = await axiosInstance.get(`/api/review/findUser/${review.userId}`);
             return {
               ...review,
               userName: userResponse.data,
@@ -247,7 +247,7 @@ const HospitalList = () => {
     try {
       const token = localStorage.getItem('token');
 
-      await axiosInstance.delete(`http://localhost:8080/bookmark/${hospitalId}`, {
+      await axiosInstance.delete(`/api/bookmark/${hospitalId}`, {
         headers: {
           Authorization: `${token}`
         }
