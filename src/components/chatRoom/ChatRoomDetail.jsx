@@ -13,7 +13,7 @@ function ChatRoomDetail({ data, selectedIndex }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleWrapperClick = () => {
-    if (auth.role === 'ADMIN' && data.type.type !== '서비스센터 상담') {
+    if (auth.role === 'ADMIN' && data.type.type !== '서비스센터 상담' && selectedIndex === 2) {
       return;
     }
 
@@ -39,19 +39,25 @@ function ChatRoomDetail({ data, selectedIndex }) {
             )
           ) : selectedIndex === 1 ? (
             data.user1.name
-          ) : auth.role !== 'USER' ? (
-            data.user1.name
-          ) : data.user2 ? (
+          ) : data.status.status === '수락 대기' ? (
+            data.type.type
+          ) : data.user1.id === auth.userId ? (
             <div>
               {data.user2.name}
-              <Role>{data.user2.role === 'DOCTOR' ? '  의사' : '  관리자'}</Role>
-
+              <Role>{data.user2.role === 'USER' ? '' : ` ${data.user2.role}`}</Role>
               {data.user2.role === 'DOCTOR' && (
                 <HospitalName>{data.doctorProfile.hospitalName}</HospitalName>
               )}
             </div>
           ) : (
-            data.type.type
+            <div>
+              {data.user1.name}
+              <Role>{data.user1.role === 'USER' ? '' : ` ${data.user1.role}`}</Role>
+
+              {data.user1.role === 'DOCTOR' && (
+                <HospitalName>{data.doctorProfile.hospitalName}</HospitalName>
+              )}
+            </div>
           )}
           {selectedIndex === 2 && <ChatType>{data.type.type}</ChatType>}
         </Title>
