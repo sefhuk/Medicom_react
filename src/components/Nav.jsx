@@ -22,38 +22,13 @@ const Nav = () => {
     setOpen(newOpen);
   };
 
-  const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
 
   const handleLoginClick = () => {
     navigate('/login');
+  };
+
+  const handleHomePage = () => {
+    navigate('/');
   };
 
   const handleLogoutClick = async () => {
@@ -94,9 +69,9 @@ const Nav = () => {
   }
 
   return (
-    <AppBar position="static" sx={{ bgcolor: 'black', textAlign: 'center' }}>
+    <AppBar position="static" sx={{ bgcolor: 'white', textAlign: 'center', boxShadow: 'none' }}>
       <Toolbar>
-        <IconButton
+        {/* <IconButton
           size="large"
           edge="start"
           color="inherit"
@@ -105,8 +80,8 @@ const Nav = () => {
           sx={{ mr: 2 }}
         >
           <MenuIcon />
-        </IconButton>
-        <Drawer anchor="left"
+        </IconButton> */}
+        {/* <Drawer anchor="left"
           open={open} onClose={toggleDrawer(false)}
           sx={{
             maxWidth: '60dvh',
@@ -120,13 +95,17 @@ const Nav = () => {
             }
           }}
         >
-          {DrawerList}
-        </Drawer>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        </Drawer> */}
+        {/* <Typography variant="h6" sx={{ flexGrow: 1 }}>
           네비게이션바
-        </Typography>
+        </Typography> */}
+        
+        <Box sx = {{my: 2, cursor: 'pointer'}} onClick={handleHomePage}>
+          <img src='/images/Group_Logo.svg'/>
+        </Box>
+  
         {auth.isLoggedIn ? (
-          <LoginIcon />
+          <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
         ) : (
           <Button color="inherit" onClick={handleLoginClick}>Login</Button>
         )}

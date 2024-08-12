@@ -13,15 +13,25 @@ import { Loading } from '../../components/Loading';
 
 const fetchData = async (id, setMessages, setError) => {
   try {
-    const response = await axiosInstance.get(`/chatmessages`, {
+    const response = await axiosInstance.get(`/chat-messages`, {
       params: {
         chatRoomId: id
       }
     });
     setMessages(response.data);
+
+    if (response.data.length !== 0) {
+      axiosInstance.post('/chat-messages/status', {
+        id: Number(response.data[response.data.length - 1].id)
+      });
+    }
   } catch (err) {
-    setError(err.response.message);
-    alert('잘못된 접근입니다');
+    try {
+      setError(err.response.data.message);
+    } catch (err) {
+      console.log(err);
+      alert('잘못된 접근입니다. 다시 시도해주세요');
+    }
   }
 };
 
@@ -58,7 +68,13 @@ function ChatPage() {
         replace: true
       });
     } catch (err) {
-      alert(err);
+      try {
+        alert(err.response.data.message);
+      } catch (err) {
+        console.log(err);
+        alert('잘못된 접근입니다. 다시 시도해주세요');
+        navigate('/');
+      }
     }
   };
 
@@ -82,6 +98,7 @@ function ChatPage() {
     }
 
     if (chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '비활성화') {
+      setLoading(false);
       return;
     }
 
@@ -137,6 +154,10 @@ function ChatPage() {
 
               if (!isModified) {
                 newMessages.push(data);
+
+                if (data.user.id !== auth.userId) {
+                  axiosInstance.post('/chat-messages/status', { id: data.id });
+                }
               }
 
               return newMessages;
@@ -219,9 +240,8 @@ function ChatPage() {
             >
               매칭을 기다리고 있습니다
             </div>
-            {auth.role !== 'USER' && (
+            {chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id !== auth.userId && (
               <Button
-                type='SERVICE'
                 variant='contained'
                 style={{ width: '50%', marginBottom: '4px' }}
                 onClick={acceptChatRoom}

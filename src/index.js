@@ -38,6 +38,11 @@ import OtherLocationPage from './pages/OtherLocationPage.jsx';
 import { LocationProvider } from './LocationContext.jsx';
 import PrivateRoute from './pages/PrivateRoute.jsx';
 import SymptomAskSecond from './pages/SymptomAskSecond.jsx';
+import RequestEmailVerification from './pages/user/RequestEmailVerification';
+import FindEmail from './pages/user/FindEmail';
+import ShowEmail from './components/ShowEmail';
+
+import ReservationSuccess from './pages/Hospital/ReservationSuccess'
 
 
 const queryClient = new QueryClient();
@@ -63,6 +68,19 @@ const router = createBrowserRouter([
 
 
   { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
+  {
+    path: '/email-verified',
+    element: <RequestEmailVerification />
+  },
+  {
+    path: '/find-email',
+    element: <FindEmail />
+  },
+  {
+    path: '/show-email',
+    element: <ShowEmail />
+  },
+  { path: 'hospitals/maps/:hospitalid/reservation/success', element: <ReservationSuccess /> },
   // 로그인 필요없는 페이지 - 끝
   {
     path: '/',
@@ -77,9 +95,10 @@ const router = createBrowserRouter([
         element: <PrivateRoute />,
         children: [
           // 로그인이 필요한 페이지 - 시작
-          { path: 'location', element: <LocationPage /> },
           { path: 'symptoms', element: <SymptomAsk /> },
           { path: 'symptoms/diagnosis', element: <SymptomAskSecond /> },
+          { path: 'location', element: <LocationPage /> },
+
           { path: 'location/other', element: <OtherLocationPage />},
           
           { path: 'chat/:chatRoomId/messages', element: <ChatPage /> },

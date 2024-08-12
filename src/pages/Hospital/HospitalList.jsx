@@ -447,7 +447,7 @@ const HospitalList = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                 <IconButton
                   onClick={() => isBookmarked(hospital.id) ? handleRemoveBookmark(hospital.id) : handleAddBookmark(hospital.id)}
-                  sx={{ marginRight: '8px', color: 'primary.main' }}
+                  sx={{ marginRight: '7px', color: 'primary.main' }}
                 >
                   {isBookmarked(hospital.id) ? <StarIcon /> : <StarBorderIcon />}
                 </IconButton>
@@ -460,7 +460,7 @@ const HospitalList = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
                   <LocationOnIcon sx={{ marginRight: '8px', color: 'primary.main' }} />
                   <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-                    {hospital.district} {hospital.subDistrict}
+                    {hospital.address}
                   </Typography>
                   {/* 거리 정보와 간격 조정 */}
                   <Typography variant="body2" sx={{ marginLeft: 'auto' }}>
