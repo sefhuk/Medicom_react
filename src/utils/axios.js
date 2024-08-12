@@ -33,7 +33,10 @@ axiosInstance.interceptors.response.use(
 
 export const userLogin = async (email, password) => {
   try {
-    const response = await axiosInstance.post('/login', { email, password });
+    const response = await axios.create({
+      baseURL: process.env.REACT_APP_API_BASE_URL,
+      withCredentials: true
+    }).post('/login', { email, password });
     const token = response.headers['authorization'];
     const userId = response.data.userId;
     const role = response.data.role;
