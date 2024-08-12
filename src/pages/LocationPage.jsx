@@ -134,32 +134,34 @@ function LocationPage() {
             <Box
             onClick={handleHomepage}
             sx={{
-                bgcolor: '#A2CA71',
+                bgcolor: '#F3F4F0',
                 height: '5%',
                 borderRadius: '30px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
+                textAlign: 'center',
                 padding: '10px',
                 cursor: 'pointer',
             }}
             >
-            <Typography>이 위치로 할게요</Typography>
+            <Typography>현재 위치 설정</Typography>
             </Box>
             <Box
             onClick={handleOtherPage}
             sx={{
-                bgcolor: '#A2CA71',
+                bgcolor: '#F3F4F0',
                 height: '5%',
                 borderRadius: '30px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
+                textAlign: 'center',
                 padding: '10px',
                 cursor: 'pointer',
             }}
             >
-            <Typography>다른 위치로 할게요</Typography>
+            <Typography>다른 위치 찾기</Typography>
             </Box>
         </Box>
         <IconButton

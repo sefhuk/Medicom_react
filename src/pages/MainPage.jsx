@@ -4,10 +4,11 @@ import MainContainer from '../components/global/MainContainer';
 import { LocationContext } from '../LocationContext'; 
 import { userauthState } from '../utils/atom'; // Recoil 상태 가져오기
 import { useNavigate } from 'react-router';
-import { Container, Grid, Typography, Box } from '@mui/material';
+import { Container, Grid, Typography, Box, Hidden } from '@mui/material';
 import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import SearchIcon from '@mui/icons-material/Search';
+import '../index.css';
 
 function MainPage() {
   const { address } = useContext(LocationContext);
@@ -38,9 +39,10 @@ function MainPage() {
         flexDirection: 'row',
         alignItems: 'center',
         height: '20vh',
-        borderRadius: '40px',
+        borderRadius: '20px',
         bgcolor: 'lightgray',
         cursor: 'pointer',
+        // boxShadow: 10,
         ...sx,
       }}
       {...props}
@@ -54,6 +56,7 @@ function MainPage() {
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%', 
+        // bgcolor:'#F3F4F0'
         ...sx,
       }}
       {...props}
@@ -63,10 +66,14 @@ function MainPage() {
   const CustomMiniBox = ({ sx = {}, ...props }) => (
     <Box
       sx={{
-        width: '10vh', 
-        aspectRatio: '1 / 1',
-        bgcolor: 'white', 
-        borderRadius: '20px',
+        bgcolor:'#F3F4F0',
+        borderRadius: '15px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '30vh',
+        overflow: 'hidden',
         ...sx,
       }}
       {...props}
@@ -76,9 +83,9 @@ function MainPage() {
   return (
     <MainContainer>
       <Grid item xs={12}>
-        <CustomBoxTypo onClick={handleLocationPage} sx={{ bgcolor: 'black', py: 2, cursor: 'pointer' }}>
-          <MyLocationOutlinedIcon sx={{ marginLeft: 3, marginRight: 2, color: 'white' }} />
-          <Typography variant="h6" sx={{ color: 'white' }}>
+        <CustomBoxTypo onClick={handleLocationPage} sx={{ bgcolor:'#F3F4F0', py: 2, cursor: 'pointer', borderRadius: '30px' }}>
+          <MyLocationOutlinedIcon sx={{ marginLeft: 3, marginRight: 2, color: 'black' }} />
+          <Typography variant="h6" sx={{ color: 'black' }}>
             {auth.isLoggedIn ? address || '위치 설정 중...' : '위치 설정'} 
             {/* 비로그인 상태에서 위치 안보임  */}
           </Typography>
@@ -96,35 +103,39 @@ function MainPage() {
 
             <Grid item xs={12}>
               <CustomBoxTypo>
-                <Typography variant="h6">병원 어디로 가지?</Typography>
+                <Typography variant="h5" sx = {{fontWeight: 'bold'}}>병원 어디로 가지?</Typography>
               </CustomBoxTypo>
             </Grid>
 
+
             <Grid item xs={6}>
-              <CustomBox onClick={handleChatPage} sx={{ bgcolor: '#A2CA71', flexDirection: 'column', alignItems: 'left'}}>
-                <CustomMiniBox sx={{ marginLeft: 3 }}>
-                  {/* 아이콘 */}
-                </CustomMiniBox>
-                <Typography sx={{ marginRight: 3, marginLeft: 'auto', marginTop: 3 }}>의사와 실시간 상담</Typography>
-              </CustomBox>
+            <CustomBox onClick={handleChatPage} sx={{ bgcolor: '#4A885D', flexDirection:'column', height: '31vh' }}>
+              <CustomMiniBox>
+                <img src='/images/doctortwo.svg' alt="Doctor" style={{ marginTop: '1vh', width: '100%', height: '100%'}} />
+              </CustomMiniBox>
+              <Typography variant="h6" sx={{ marginTop: 3, color: 'white' }}>의사와 실시간 상담</Typography>
+              <Typography variant="h8" sx={{ marginBottom: 3, color: 'white' }}>전문의와 상담할 수 있어요.</Typography>
+            </CustomBox>
+
             </Grid>
             <Grid item xs={6}>
-              <CustomBox onClick={handleAIPage} sx={{ bgcolor: '#BEDC74', flexDirection: 'column', alignItems: 'left' }}>
-                <CustomMiniBox sx={{ marginLeft: 3 }}>
-                  {/* 아이콘 */}
+              <CustomBox onClick={handleAIPage} sx={{ bgcolor: '#4A885D', flexDirection:'column', height: '31vh' }}>
+                <CustomMiniBox>
+                  <img src='/images/AItwo.svg' alt="Doctor" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
                 </CustomMiniBox>
-                <Typography sx={{ marginRight: 3, marginLeft: 'auto', marginTop: 3 }}>증상 입력으로 AI 진단</Typography>
+                <Typography variant="h6" sx={{ marginTop: 3, color: 'white' }}>AI로 증상 진단</Typography>
+                <Typography variant="h8" sx={{ marginBottom: 3, color: 'white' }}>AI가 바로 답변해줄거에요.</Typography>
               </CustomBox>
             </Grid>
 
             <Grid item xs={12}>
               <CustomBoxTypo>
-                <Typography variant="h6">내 주변 진료과 찾기</Typography>
+                <Typography variant="h5" sx = {{fontWeight: 'bold'}}>내 주변 진료과 찾기</Typography>
               </CustomBoxTypo>
             </Grid>
 
             <Grid item xs={12}>
-              <CustomBox onClick={handleSearchPage} sx={{ height: '10vh', border: 3, borderColor: 'lightgrey', bgcolor: 'white' }}>
+              <CustomBox onClick={handleSearchPage} sx={{ height: '10vh', bgcolor:'#F3F4F0' }}>
                 <Box sx={{ flex: 1, marginLeft: 3 }}>
                   <Typography variant='h6'>진료과 기반 검색</Typography>
                   <Typography sx={{ color: 'gray' }}>진료과 별로 찾을 수 있어요.</Typography>
@@ -134,7 +145,7 @@ function MainPage() {
             </Grid>
 
             <Grid item xs={12}>
-              <CustomBox sx={{ height: '10vh', border: 3, borderColor: 'lightgrey', bgcolor: 'white' }}>
+              <CustomBox sx={{ height: '10vh', bgcolor:'#F3F4F0' }}>
                 <Box sx={{ flex: 1, marginLeft: 3 }}>
                   <Typography variant='h6'>일반 검색</Typography>
                   <Typography sx={{ color: 'gray' }}>모든 병원을 찾을 수 있어요.</Typography>
