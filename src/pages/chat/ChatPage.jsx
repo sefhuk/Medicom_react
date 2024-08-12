@@ -13,7 +13,7 @@ import { Loading } from '../../components/Loading';
 
 const fetchData = async (id, setMessages, setError) => {
   try {
-    const response = await axiosInstance.get(`/chatmessages`, {
+    const response = await axiosInstance.get(`/chat-messages`, {
       params: {
         chatRoomId: id
       }
