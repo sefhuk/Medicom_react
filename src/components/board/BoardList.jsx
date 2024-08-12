@@ -11,11 +11,15 @@ function BoardList({ boards }) {
           Create New Board
         </Button>
         <List>
-          {boards.map(board => (
+          {boards?.map(board => (
             <ListItem key={board.id} button component={Link} to={`/boards/${board.id}`}>
               <ListItemText primary={board.name} />
             </ListItem>
-          ))}
+          )) || (
+            <Typography variant="body1" color="textSecondary">
+              게시판이 없습니다.
+            </Typography>
+          )}
         </List>
       </Box>
     </Container>
