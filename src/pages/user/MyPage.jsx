@@ -194,6 +194,10 @@ const MyPage = () => {
     navigate('/my-activity');
   }
 
+  const OnClickAdminPage = () => {
+    navigate('/admin-page');
+  }
+
   const { userInfo, editField, formData, dialogOpen, postcodeOpen, addressData, imageUploadOpen } = state;
 
 
@@ -302,7 +306,7 @@ const MyPage = () => {
               회원 탈퇴
             </Button>
           </Box>
-          <Button variant="contained" color="black">관리자 페이지</Button>
+          <Button variant="contained" color="black" onClick={OnClickAdminPage}>관리자 페이지</Button>
         </ThemeProvider>
       </Paper>
       <Dialog open={imageUploadOpen} onClose={handleImageUploadClose}>
