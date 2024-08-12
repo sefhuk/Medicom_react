@@ -1,22 +1,24 @@
 import React, { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import MainContainer from '../components/global/MainContainer';
 import { LocationContext } from '../LocationContext'; 
-import { userauthState } from '../utils/atom'; // Recoil 상태 가져오기
+import { chatRoomState, userauthState } from '../utils/atom'; // Recoil 상태 가져오기
 import { useNavigate } from 'react-router';
 import { Container, Grid, Typography, Box, Hidden } from '@mui/material';
 import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import SearchIcon from '@mui/icons-material/Search';
+import { createChatRoom } from '../utils/axios';
 import '../index.css';
 
 function MainPage() {
   const { address } = useContext(LocationContext);
   const auth = useRecoilValue(userauthState);
+  const setChatRoom = useSetRecoilState(chatRoomState);
   const navigate = useNavigate();
 
   const handleChatPage = () => {
-    navigate('/'); // 의사와 채팅 페이지로 이동
+    createChatRoom('DOCTOR', navigate, setChatRoom);
   };
 
   const handleAIPage = () => {

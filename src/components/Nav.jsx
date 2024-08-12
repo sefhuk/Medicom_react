@@ -103,14 +103,12 @@ const Nav = () => {
         <Box sx = {{my: 2, cursor: 'pointer'}} onClick={handleHomePage}>
           <img src='/images/Group_Logo.svg'/>
         </Box>
-        <Box sx = {{marginLeft: 'auto'}}>
-          {auth.isLoggedIn ? (
-            <LoginIcon />
-          ) : (
-            <Button color="primary" onClick={handleLoginClick} style={{ color: 'black' }}>Login</Button>
-          )}
-        </Box>
-        
+  
+        {auth.isLoggedIn ? (
+          <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
+        ) : (
+          <Button color="inherit" onClick={handleLoginClick}>Login</Button>
+        )}
       </Toolbar>
     </AppBar>
   );

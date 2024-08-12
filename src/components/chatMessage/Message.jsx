@@ -96,7 +96,7 @@ function Message({ data, repeat, self }) {
                 <Button
                   variant='contained'
                   onClick={requestHospital}
-                  sx={{ width: '40%', backgroundColor: '#272424' }}
+                  sx={{ width: '80%', backgroundColor: '#272424' }}
                 >
                   {data.content.split(' ')[1]}
                 </Button>
