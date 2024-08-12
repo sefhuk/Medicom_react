@@ -7,6 +7,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import { Loading } from '../components/Loading'; 
 import { axiosInstance } from '../utils/axios';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useMediaQuery } from '@mui/material';
 
 function SymptomAsk() {
   const [textFieldValue, setTextFieldValue] = useState('');
@@ -14,6 +15,7 @@ function SymptomAsk() {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
@@ -153,7 +155,7 @@ function SymptomAsk() {
         anchor="bottom"
         open={drawerOpen}
         onClose={toggleDrawer(false)}
-        sx={{ '& .MuiDrawer-paper': { width: '60dvh', margin: '0 auto' } }} 
+        sx={{ '& .MuiDrawer-paper': { width: isMobile ? '100%' : '60dvh', margin: '0 auto' } }} 
       >
         <Box sx={{ padding: 2 }}>
           <Grid container spacing={2}>
