@@ -3,7 +3,7 @@ import { axiosInstance } from '../../utils/axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainContainer from '../../components/global/MainContainer';
 import Message from '../../components/chatMessage/Message';
-import { Stomp } from '@stomp/stompjs';
+import { Stomp, Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
@@ -19,9 +19,15 @@ const fetchData = async (id, setMessages, setError) => {
       }
     });
     setMessages(response.data);
+
+    if (response.data.length !== 0) {
+      axiosInstance.post('/chat-messages/status', {
+        id: Number(response.data[response.data.length - 1].id)
+      });
+    }
   } catch (err) {
-    setError(err.response.message);
-    alert('잘못된 접근입니다');
+    console.log('err', err);
+    // alert('잘못된 접근입니다');
   }
 };
 
@@ -82,6 +88,7 @@ function ChatPage() {
     }
 
     if (chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '비활성화') {
+      setLoading(false);
       return;
     }
 
@@ -137,6 +144,10 @@ function ChatPage() {
 
               if (!isModified) {
                 newMessages.push(data);
+
+                if (data.user.id !== auth.userId) {
+                  axiosInstance.post('/chat-messages/status', { chatMessageId: data.id });
+                }
               }
 
               return newMessages;
