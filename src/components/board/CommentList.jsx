@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography, List, ListItem, IconButton, Card, C
 import { Edit as EditIcon, Delete as DeleteIcon, Reply as ReplyIcon } from '@mui/icons-material';
 import ReplyList from './ReplyList';
 
-function CommentList({ comments, onDelete, onUpdate, onReply }) {
+function CommentList({ comments = [], onDelete, onUpdate, onReply }) {
   const [editCommentId, setEditCommentId] = useState(null);
   const [editContent, setEditContent] = useState('');
   const [replyCommentId, setReplyCommentId] = useState(null);
@@ -11,7 +11,7 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
 
   const handleEditClick = (comment) => {
     setEditCommentId(comment.id);
-    setEditContent(comment.content);
+    setEditContent(comment.content || '');  // 기본값 설정
   };
 
   const handleUpdate = () => {
@@ -27,7 +27,7 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
 
   const handleReplyClick = (comment) => {
     setReplyCommentId(comment.id);
-    setReplyContent('');
+    setReplyContent('');  // 기본값 설정
   };
 
   const handleReply = () => {
@@ -69,15 +69,17 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
                   ) : (
                     <Box>
                       <Typography variant="subtitle1" gutterBottom>
-                        {comment.userName}
+                        {comment.userName || 'Unknown User'}
                       </Typography>
                       <Typography variant="body1" gutterBottom>
-                        {comment.content}
+                        {comment.content || 'No content'}
                       </Typography>
                       <Typography variant="caption" display="block" sx={{ mb: 1 }}>
                         {comment.updatedAt
-                          ? `${new Date(comment.updatedAt).toLocaleString()}`
-                          : `${new Date(comment.createdAt).toLocaleString()}`}
+                          ? new Date(comment.updatedAt).toLocaleString()
+                          : (comment.createdAt
+                            ? new Date(comment.createdAt).toLocaleString()
+                            : 'Unknown date')}
                       </Typography>
                     </Box>
                   )}
@@ -118,7 +120,7 @@ function CommentList({ comments, onDelete, onUpdate, onReply }) {
                   </Button>
                 </Box>
               )}
-              {comment.replies && comment.replies.length > 0 && (
+              {(comment.replies && comment.replies.length > 0) && (
                 <ReplyList
                   replies={comment.replies}
                   onDelete={onDelete}
