@@ -10,6 +10,7 @@ import { useNavigate} from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
+import { Loading } from "../../components/Loading";
 
 const HospitalList = () => {
   const { latitude, longitude } = useContext(LocationContext);
@@ -334,7 +335,6 @@ const HospitalList = () => {
 
   const handleFilter = (departmentName) => {
     setSelectedDepartment(departmentName);
-    setDepartmentInput(departmentName);
   };
 
   const handleMapClick = (hospital) => {
@@ -387,7 +387,7 @@ const HospitalList = () => {
   };
 
 
-  if (loading) return <p>로딩 중 ...</p>;
+  if (loading) return <Loading open={true} />;
   if (error) return <p>Error fetching data: {error.message}</p>;
 
   return (
@@ -448,7 +448,7 @@ const HospitalList = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                 <IconButton
                   onClick={() => isBookmarked(hospital.id) ? handleRemoveBookmark(hospital.id) : handleAddBookmark(hospital.id)}
-                  sx={{ marginRight: '8px', color: 'primary.main' }}
+                  sx={{ marginRight: '7px', color: 'primary.main' }}
                 >
                   {isBookmarked(hospital.id) ? <StarIcon /> : <StarBorderIcon />}
                 </IconButton>
@@ -461,7 +461,7 @@ const HospitalList = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
                   <LocationOnIcon sx={{ marginRight: '8px', color: 'primary.main' }} />
                   <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-                    {hospital.district} {hospital.subDistrict}
+                    {hospital.address}
                   </Typography>
                   {/* 거리 정보와 간격 조정 */}
                   <Typography variant="body2" sx={{ marginLeft: 'auto' }}>

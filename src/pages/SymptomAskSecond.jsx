@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import MainContainer from '../components/global/MainContainer';
 import { Box, Grid, Container, Typography, Button, Stepper, StepLabel, Step } from '@mui/material';
@@ -22,6 +22,11 @@ function SymptomAskSecond() {
   };
 
   const steps = ['증상 입력', 'AI 진단', '가까운 병원 추천'];
+
+  useEffect(() => {
+    console.log('departments:', departments);
+    console.log('departments의 타입:', Array.isArray(departments) ? '배열' : '배열이 아님');
+  }, [departments]);
 
   return (
     <MainContainer>

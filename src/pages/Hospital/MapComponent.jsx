@@ -7,26 +7,26 @@ import { LocationContext } from '../../LocationContext';
 
 const MapComponent = () => {
   const { latitude, longitude } = useContext(LocationContext);
-  const { state } = location;
   const [mapLoaded, setMapLoaded] = useState(false);
   const [hospitals, setHospitals] = useState([]);
   const [filteredHospitals, setFilteredHospitals] = useState([]);
-  const [departmentInput, setDepartmentInput] = useState('');
   const [map, setMap] = useState(null);
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [error, setError] = useState(null);
   const [markers, setMarkers] = useState([]);
-  const location = useLocation();
+  const [showDetails, setShowDetails] = useState(false);
   const navigate = useNavigate();
-  const departments = state?.departments || [];
-  
+  const routeLocation = useLocation();
+  const { state } = routeLocation;
+  const { departments = [] } = state || {};
 
   useEffect(() => {
     const fetchHospitalsData = async () => {
       try {
-        const response = await axiosInstance.get('http://localhost:8080/api/hospitals/all');
+        const response = await axiosInstance.get('/api/hospitals/all');
         setHospitals(response.data);
         console.log('병원 데이터를 가져왔습니다:', response.data);
+        handleDepartmentSearch();
       } catch (error) {
         setError(error.message);
         console.error('병원 데이터 가져오기 오류:', error);
@@ -39,7 +39,7 @@ const MapComponent = () => {
   useEffect(() => {
     if (latitude && longitude && hospitals.length > 0) {
       const distance = (lat1, lng1, lat2, lng2) => {
-        const R = 6371;  // 지구의 반경 (킬로미터 단위)
+        const R = 6371;
         const dLat = (lat2 - lat1) * (Math.PI / 180);
         const dLng = (lng2 - lng1) * (Math.PI / 180);
         const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -84,11 +84,13 @@ const MapComponent = () => {
           title: item.name
         });
 
-        window.naver.maps.Event.addListener(marker, 'click', function() {
+        window.naver.maps.Event.addListener(marker, 'click', () => {
           if (selectedHospital && selectedHospital.id === item.id) {
             setSelectedHospital(null);
+            setShowDetails(false);
           } else {
             setSelectedHospital(item);
+            setShowDetails(true);
           }
         });
 
@@ -123,13 +125,15 @@ const MapComponent = () => {
   }, []);
 
   const handleDepartmentSearch = () => {
-    if (departmentInput.trim() === '') {
-      setError('부서명을 입력해주세요.');
+    if (departments.length === 0) {
+      setError('부서명이 입력되지 않았습니다.');
       return;
     }
 
+    const departmentsArray = departments.map(dep => dep.trim());
+
     const filteredByDepartment = filteredHospitals.filter(hospital =>
-      hospital.departments.some(department => department.name === departmentInput)
+      hospital.departments.some(department => departmentsArray.includes(department.name))
     );
 
     setFilteredHospitals(filteredByDepartment);
@@ -144,11 +148,13 @@ const MapComponent = () => {
           title: item.name
         });
 
-        window.naver.maps.Event.addListener(marker, 'click', function() {
+        window.naver.maps.Event.addListener(marker, 'click', () => {
           if (selectedHospital && selectedHospital.id === item.id) {
             setSelectedHospital(null);
+            setShowDetails(false);
           } else {
             setSelectedHospital(item);
+            setShowDetails(true);
           }
         });
 
@@ -158,6 +164,10 @@ const MapComponent = () => {
       setMarkers(newMarkers);
     }
   };
+
+  useEffect(() => {
+    handleDepartmentSearch();
+  }, [departments]);
 
   const handleReservation = () => {
     if (selectedHospital) {
@@ -173,96 +183,160 @@ const MapComponent = () => {
 
   return (
     <MainContainer>
-      <Box sx={{ mb: 1, textAlign: 'center', mt: 2 }}>
-        {"OO님의 추천 진료과는 다음과 같습니다."}
-      </Box>
       <Box
-        height="50px"
-        width="95%"
-        my={4}
         display="flex"
+        flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        gap={4}
-        p={2}
-        sx={{ border: '2px solid grey' }}
+        my={4}
       >
-        <input
-          type="text"
-          value={departmentInput}
-          onChange={(e) => setDepartmentInput(e.target.value)}
-          placeholder="부서명을 입력하세요"
-          style={{ margin: '10px' }}
-        />
-        <button onClick={handleDepartmentSearch}>
-          검색
-        </button>
-      </Box>
-      <Box sx={{ mb: 2, textAlign: 'center' }}>
-        {"OO님의 현재 위치에 따른 병원 검색 결과"}
-      </Box>
-      <Button variant="contained" color="primary" onClick={handleViewAll}>
-        전체 리스트 보기
-      </Button>
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        width: '95%',
-        height: '50%',
-        mx: 'auto',
-      }}>
-        <Box id="map" sx={{ width: '100%', height: '100%' }}></Box>
-        {error && <Box sx={{ color: 'red' }}>{error}</Box>}
-        {selectedHospital && (
-          <Box sx={{
-            position: 'absolute',
-            top: '110%',
-            width: '90%',
-            height: 'auto',
-            backgroundColor: 'white',
-            padding: '20px',
-            boxShadow: '0px -4px 8px rgba(0,0,0,0.2)',
-            borderTop: '2px solid #007BFF',
-            zIndex: 1,
-            textAlign: 'left',
-          }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{selectedHospital.name}</Typography>
-            <Typography><strong>주소:</strong> {selectedHospital.address}</Typography>
-            <Typography><strong>진료과목:</strong></Typography>
-            <ul style={{
-              listStyleType: 'none',
-              padding: 0,
-              margin: 0,
-              display: 'flex',
-              justifyContent: 'flex-start',
-              flexWrap: 'wrap'
-            }}>
-              {selectedHospital.departments.map(department => (
-                <li key={department.id} style={{
-                  marginRight: '20px',
-                  whiteSpace: 'nowrap'
-                }}>
-                  #{department.name}
-                </li>
-              ))}
-            </ul>
-            <button onClick={handleReservation} style={{
-              backgroundColor: '#007BFF',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              padding: '10px 15px',
-              cursor: 'pointer',
-              fontSize: '16px',
-              marginTop: '10px'
-            }}>
-              병원 예약
-            </button>
+        <Box sx={{ mb: 2, textAlign: 'center', fontSize: '23px' }}>
+          추천 진료과는 다음과 같습니다.
+        </Box>
+        <Box
+          height="auto"
+          width="85%"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          gap={4}
+          p={2}
+          sx={{ border: '1px solid grey', mb: 2, borderRadius: '5px' }}
+        >
+          <Box sx={{ margin: '5px', padding: 'px', width: '100%', textAlign: 'center' }}>
+            {departments
+              .slice()
+              .sort()
+              .join(', ')}
           </Box>
-        )}
+        </Box>
+        <Box display="flex" alignItems="center" mb={2} p={1}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              textAlign: 'center',
+              fontSize: '20px',
+              mr: 2,
+            }}
+          >
+            현재 위치에 따른 5km 이내 병원
+          </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleViewAll}
+          >
+            병원 더보기
+          </Button>
+        </Box>
+
+        <Box
+          sx={{
+            mb: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            border: '1px solid grey',
+            padding: '10px',
+            paddingLeft: '20px',
+            borderRadius: '5px',
+            width: '85%',
+            mx: 'auto',
+          }}
+        >
+          <Box sx={{ fontSize: '16px' }}>
+            검색 결과 : {filteredHospitals.length}건
+          </Box>
+          <Button
+            onClick={handleDepartmentSearch}
+            variant="contained"
+            color="primary"
+            sx={{ marginLeft: '10px' }}
+          >
+            병원 찾기
+          </Button>
+        </Box>
+        <Box sx={{ textAlign: 'right', fontSize: '12px', color: 'gray', mt: 1, ml: 'auto', pr: 4 }}>
+          *병원 찾기 버튼을 눌려주세요
+        </Box>
+
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          position="relative"
+          width="90%"
+          mx="auto"
+          mt={3}
+        >
+          <Box
+            id="map"
+            sx={{
+              width: '95%', // 지도 박스의 너비를 95%로 설정
+              height: '400px',
+              border: '1px solid gray',
+              mb: 2,
+            }}
+          >
+            {/* 지도 컴포넌트 */}
+          </Box>
+
+          {error && <Box sx={{ color: 'red', mb: 2 }}>{error}</Box>}
+
+          {selectedHospital && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '110%',
+                width: '90%',
+                backgroundColor: 'white',
+                padding: '20px',
+                zIndex: 1,
+                textAlign: 'left',
+                border: '1px solid gray',
+                borderRadius: '5px',
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                {selectedHospital.name}
+              </Typography>
+              <Typography>
+                <strong>주소:</strong> {selectedHospital.address}
+              </Typography>
+              <Typography>
+                <strong>진료과목:</strong>
+              </Typography>
+              <ul
+                style={{
+                  listStyleType: 'none',
+                  padding: 0,
+                  margin: 0,
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  flexWrap: 'wrap',
+                }}
+              >
+                {selectedHospital.departments.map((department) => (
+                  <li
+                    key={department.id}
+                    style={{
+                      marginRight: '20px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    #{department.name}
+                  </li>
+                ))}
+              </ul>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}> {/* 버튼을 오른쪽으로 정렬 */}
+                <Button onClick={handleReservation} variant="contained" color="primary" sx={{ marginTop: '10px' }}>
+                  병원 예약
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </Box>
       </Box>
     </MainContainer>
 
@@ -270,4 +344,3 @@ const MapComponent = () => {
 };
 
 export default MapComponent;
-
