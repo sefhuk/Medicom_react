@@ -240,9 +240,8 @@ function ChatPage() {
             >
               매칭을 기다리고 있습니다
             </div>
-            {auth.role !== 'USER' && (
+            {chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id !== auth.userId && (
               <Button
-                type='SERVICE'
                 variant='contained'
                 style={{ width: '50%', marginBottom: '4px' }}
                 onClick={acceptChatRoom}
