@@ -17,7 +17,7 @@ axiosInstance.interceptors.response.use(
           baseURL: process.env.REACT_APP_API_BASE_URL,
           withCredentials: true
         }).get('/refresh-token');
-        const newToken = data.headers['authorization'];
+        const newToken = data.headers['Authorization'];
         localStorage.setItem('token', newToken);
         axiosInstance.defaults.headers.common['Authorization'] = `${newToken}`;
         originalRequest.headers['Authorization'] = `${newToken}`;
@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
 export const userLogin = async (email, password) => {
     try{
       const response = await axiosInstance.post('/login', {email, password});
-      const token = response.headers['authorization'];
+      const token = response.headers['Authorization'];
       const userId = response.data.userId;
       const role = response.data.role;
       
