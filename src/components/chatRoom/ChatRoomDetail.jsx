@@ -58,15 +58,20 @@ function ChatRoomDetail({ data, selectedIndex }) {
         <Preview>
           {selectedIndex !== 2 ? (
             <>
-              {data.status.status !== '진행' && `(${data.status.status})`}{' '}
-              {data.lastMessage !== null
-                ? data.lastMessage.content
-                    .replace(/\n/g, ' ')
-                    .replace(
-                      'dpt: ',
-                      data.lastMessage.user.role === 'DOCTOR' ? '진료과 정보 제공: ' : 'dpt: '
-                    )
-                : '메시지가 없습니다'}
+              {data?.newMessageCount > 0 && (
+                <NewMessageCount>{data.newMessageCount}</NewMessageCount>
+              )}
+              <PreviewText>
+                {data.status.status !== '진행' && `(${data.status.status})`}{' '}
+                {data.lastMessage !== null
+                  ? data.lastMessage.content
+                      .replace(/\n/g, ' ')
+                      .replace(
+                        'dpt: ',
+                        data.lastMessage.user.role === 'DOCTOR' ? '진료과 정보 제공: ' : 'dpt: '
+                      )
+                  : '메시지가 없습니다'}
+              </PreviewText>
             </>
           ) : (
             <div style={{ display: 'flex' }}>
@@ -124,10 +129,10 @@ const Title = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
   @media (max-width: 768px) {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
 `;
 
@@ -156,13 +161,40 @@ const ChatType = styled.p`
 `;
 
 const Preview = styled.div`
+  display: flex;
+  align-items: center;
   width: 70%;
   font-size: 1.1rem;
-  overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
   @media (max-width: 768px) {
     font-size: 1rem;
+  }
+`;
+
+const PreviewText = styled.p`
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+`;
+
+const NewMessageCount = styled.p`
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  background-color: #ff4d4d;
+  border-radius: 50%;
+  color: #fff; /* 숫자 색상 */
+  font-weight: bold;
+  margin: auto 10px auto 0px;
+  font-size: 1rem;
+  padding: 1px;
+  @media (max-width: 500px) {
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 0.9rem;
   }
 `;
 
