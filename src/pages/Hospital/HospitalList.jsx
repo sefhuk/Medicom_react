@@ -422,6 +422,58 @@ const HospitalList = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      if (!latitude || !longitude) return;
+
+      setLoading(true);
+      try {
+        const response = await axiosInstance.get('/api/search', {
+          params: {
+            ...searchParams,
+            latitude,
+            longitude,
+          },
+        });
+
+        let hospitalsData = response.data.content;
+
+        const hospitalsWithAvgRating = await Promise.all(
+          hospitalsData.map(async (hospital) => {
+            const avgRatingAndReviewCount = await fetchAvgRatingAndReviewCount(hospital.id);
+            return {
+              ...hospital,
+              avgRating: avgRatingAndReviewCount ? avgRatingAndReviewCount.avgRating : 0.0,
+              reviewCount: avgRatingAndReviewCount ? avgRatingAndReviewCount.reviewCount : 0,
+            };
+          })
+        );
+
+        hospitalsWithAvgRating.sort((a, b) => a.distance - b.distance);
+
+        setHospitals(hospitalsWithAvgRating);
+        setTotalPages(response.data.totalPages || 0);
+      } catch (error) {
+        setError(error);
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHospitals();
+  }, [searchParams, currentPage, latitude, longitude]);
+
+  const fetchAvgRatingAndReviewCount = async (hospitalId) => {
+    try {
+      const response = await axiosInstance.get(`/review/avg/${hospitalId}`);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+
 
   if (loading) return <Loading open={true} />;
   if (error) return <p>Error fetching data: {error.message}</p>;
@@ -504,6 +556,12 @@ const HospitalList = () => {
                           : '거리 정보를 가져올 수 없습니다.'}
                       </Typography>
                     </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <StarIcon sx={{ color: 'gold', marginRight: '5px' }} />
+                    <Typography variant="body2">
+                      평균 평점: {hospital.avgRating !== undefined ? hospital.avgRating.toFixed(1) : "평점 없음"} ({hospital.reviewCount || 0} 리뷰)
+                    </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
                     <Typography variant="body2">진료과목:</Typography>
