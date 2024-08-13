@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import MainContainer from '../components/global/MainContainer';
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, Typography, IconButton, Button } from '@mui/material';
 import MyLocationIcon from '@mui/icons-material/MyLocation'; // Add Material UI icon
 import { LocationContext } from '../LocationContext'; 
 import { useNavigate } from 'react-router';
@@ -176,7 +176,7 @@ function LocationPage() {
         <Box
             sx={{
             position: 'absolute',
-            bottom: '20px',
+            bottom: '10%',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
@@ -220,7 +220,7 @@ function LocationPage() {
             onClick={fetchCurrentPosition}
             sx={{
             position: 'absolute',
-            bottom: '20px',
+            bottom: '5dvh',
             right: '20px',
             bgcolor: '#fff',
             borderRadius: '50%',
