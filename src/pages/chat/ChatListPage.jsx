@@ -15,6 +15,7 @@ import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import { useNavigate } from 'react-router';
+import { Loading } from '../../components/Loading';
 
 function ChatListPage() {
   const [auth] = useRecoilState(userauthState);
@@ -25,7 +26,7 @@ function ChatListPage() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [options, setOptions] = useState([
+  const [options] = useState([
     '상담 진행 목록',
     ...(auth.role !== 'USER' ? ['상담 수락 대기 목록'] : []),
     ...(auth.role === 'ADMIN' ? ['전체 상담 목록'] : [])
@@ -104,6 +105,7 @@ function ChatListPage() {
 
   return (
     <MainContainer>
+      <Loading open={isLoading} />
       <Wrapper>
         <ButtonGroup
           sx={{ width: '28%' }}
@@ -192,7 +194,6 @@ function ChatListPage() {
       </Wrapper>
       <div style={{ height: '78dvh', overflowY: 'scroll' }}>
         {error && <Notice>{error}</Notice>}
-        {isLoading && <Notice>로딩 중 입니다..</Notice>}
         {data &&
           data.map(e => <ChatRoomDetail key={e.id} data={e} selectedIndex={selectedIndex} />)}
       </div>
