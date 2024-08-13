@@ -191,20 +191,24 @@ function PostDetailPage() {
   };
 
   const handleUpdatePost = () => {
-    if (!isLoggedIn()) {
-      alert('로그인 후 포스트를 수정할 수 있습니다.');
-      return;
-    }
+  if (!isLoggedIn()) {
+    alert('로그인 후 포스트를 수정할 수 있습니다.');
+    return;
+  }
 
-    const loggedInUserId = localStorage.getItem('userId'); // Assume you store the logged-in user's ID in local storage
+  const loggedInUserId = localStorage.getItem('userId');
+  console.log('Current user ID:', loggedInUserId);
+  console.log('Post user ID:', userId);
+  console.log('Type of loggedInUserId:', typeof loggedInUserId);
+  console.log('Type of userId:', typeof userId);
 
-    if (loggedInUserId !== userId) {
-      alert('자신이 작성한 게시글만 수정할 수 있습니다.');
-      return;
-    }
+  if (Number(loggedInUserId) !== userId) {
+    alert('자신이 작성한 게시글만 수정할 수 있습니다.');
+    return;
+  }
 
-    navigate(`/posts/update/${id}`);
-  };
+  navigate(`/posts/update/${id}`);
+};
 
   const findCommentById = (id, comments) => {
     for (const comment of comments) {
@@ -241,7 +245,7 @@ function PostDetailPage() {
       await axiosInstance.post(`/posts/${id}/like`, null, { headers: getAuthHeaders() });
       fetchPost(); // 좋아요가 업데이트되었으니 다시 포스트를 가져옵니다.
     } catch (error) {
-      alert('좋아요 추가에 실패했습니다.');
+      alert('이미 좋아요를 누른 게시물입니다.');
     }
   };
 
@@ -255,7 +259,7 @@ function PostDetailPage() {
       await axiosInstance.delete(`/posts/${id}/like`, { headers: getAuthHeaders() });
       fetchPost(); // 싫어요가 업데이트되었으니 다시 포스트를 가져옵니다.
     } catch (error) {
-      alert('싫어요 추가에 실패했습니다.');
+      alert('이미 좋아요를 취소한 게시물 입니다.');
     }
   };
 

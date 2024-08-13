@@ -69,11 +69,6 @@ function UpdatePostForm({ post, onUpdate, userId }) {
     e.preventDefault();
 
 
-    if (userId !== post.userId) {
-      setError('You do not have permission to update this post.');
-      return;
-    }
-
     setLoading(true);
     let imageUrls = post.imageUrls.map(img => img.link).filter(url => !removedImageUrls.includes(url));
     if (images.length > 0) {
@@ -93,30 +88,6 @@ function UpdatePostForm({ post, onUpdate, userId }) {
     setImages(prevImages => prevImages.filter((_, i) => i !== index));
   };
 
-  if (userId !== post.userId) {
-    return (
-      <Container maxWidth="sm">
-        <Box
-          sx={{
-            mt: 3,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            backgroundColor: '#fff',
-            borderRadius: 2,
-            boxShadow: 3,
-            p: 3,
-          }}
-        >
-          <Alert severity="error">자신이 작성한 게시글만 수정할 수 있습니다.</Alert>
-          <Button variant="contained" color="primary" href="/" sx={{ mt: 2 }}>
-            Go Back
-          </Button>
-        </Box>
-      </Container>
-    );
-  }
 
   return (
     <Container maxWidth="sm">
