@@ -286,6 +286,7 @@ function PostDetailPage() {
 
   return (
     <MainContainer>
+    <Box sx={{ padding: '0 16px' }}>
       <br />
       <Box sx={{ textAlign: 'center', mb: 2 }}>
         <Typography variant="h4">{post.title}</Typography>
@@ -384,6 +385,7 @@ function PostDetailPage() {
           />
         </DialogContent>
       </Dialog>
+      </Box>
     </MainContainer>
   );
 }

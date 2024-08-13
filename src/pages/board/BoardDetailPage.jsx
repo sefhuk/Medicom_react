@@ -88,7 +88,7 @@ function BoardDetailPage() {
 
     return (
         <MainContainer>
-            <Box sx={{ marginTop: 2 }}>
+            <Box sx={{ marginTop: 2, padding: '0 16px'}}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
                     <PostSearchBar onSearch={handleSearch} />
                 </Box>
