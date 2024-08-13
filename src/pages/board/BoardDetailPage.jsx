@@ -17,8 +17,12 @@ function BoardDetailPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
-    const [sortType, setSortType] = useState('default'); // 기본 정렬 타입
+    const [sortType, setSortType] = useState('default');
+    const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
+
+    const userRole = localStorage.getItem('userRole');
+    const loggedInUserId = Number(localStorage.getItem('userId'));
 
     const fetchPosts = useCallback((page, query, sort) => {
         setLoading(true);
@@ -88,12 +92,13 @@ function BoardDetailPage() {
 
     return (
         <MainContainer>
-            <Box sx={{ marginTop: 2 }}>
+            <Box sx={{ marginTop: 2, padding: '0 16px'}}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
                     <PostSearchBar onSearch={handleSearch} />
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
                     <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{board.name}</Typography>
+                    {(userRole === 'ADMIN' || loggedInUserId === userId) && (
                     <Box>
                         <Button component={Link} to={`/boards/update/${id}`} variant="contained" color="primary" sx={{ marginRight: 1 }}>
                             UPDATE
@@ -102,6 +107,7 @@ function BoardDetailPage() {
                             DELETE
                         </Button>
                     </Box>
+                    )}
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
                     <ToggleButtonGroup

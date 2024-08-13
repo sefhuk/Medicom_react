@@ -23,6 +23,9 @@ function PostDetailPage() {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
 
+  const userRole = localStorage.getItem('userRole');
+  const loggedInUserId = Number(localStorage.getItem('userId'));
+
   function getAuthHeaders() {
     const token = localStorage.getItem('token');
     return {
@@ -191,24 +194,18 @@ function PostDetailPage() {
   };
 
   const handleUpdatePost = () => {
-  if (!isLoggedIn()) {
-    alert('로그인 후 포스트를 수정할 수 있습니다.');
-    return;
-  }
+    if (!isLoggedIn()) {
+      alert('로그인 후 포스트를 수정할 수 있습니다.');
+      return;
+    }
 
-  const loggedInUserId = localStorage.getItem('userId');
-  console.log('Current user ID:', loggedInUserId);
-  console.log('Post user ID:', userId);
-  console.log('Type of loggedInUserId:', typeof loggedInUserId);
-  console.log('Type of userId:', typeof userId);
+    if (loggedInUserId !== userId && userRole !== 'ADMIN') {
+      alert('자신이 작성한 게시글만 수정할 수 있습니다.');
+      return;
+    }
 
-  if (Number(loggedInUserId) !== userId) {
-    alert('자신이 작성한 게시글만 수정할 수 있습니다.');
-    return;
-  }
-
-  navigate(`/posts/update/${id}`);
-};
+    navigate(`/posts/update/${id}`);
+  };
 
   const findCommentById = (id, comments) => {
     for (const comment of comments) {
@@ -286,104 +283,108 @@ function PostDetailPage() {
 
   return (
     <MainContainer>
-      <br />
-      <Box sx={{ textAlign: 'center', mb: 2 }}>
-        <Typography variant="h4">{post.title}</Typography>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="caption" display="block">
-          {post.userName}
+      <Box sx={{ padding: '0 16px' }}>
+        <br />
+        <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <Typography variant="h4">{post.title}</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="caption" display="block">
+            {post.userName}
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <IconButton onClick={handleLikePost} color="primary">
+              <ThumbUp />
+            </IconButton>
+            <Typography variant="caption">{post.likeCount}</Typography>
+            <IconButton onClick={handleDislikePost} color="error">
+              <ThumbDown />
+            </IconButton>
+            <Typography variant="caption">{post.dislikeCount}</Typography>
+            <Visibility sx={{ ml: 2 }} />
+            <Typography variant="caption">{post.viewCount}</Typography>
+          </Box>
+        </Box>
+        {(loggedInUserId === userId || userRole === 'ADMIN') && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mr: 1 }}
+              onClick={handleUpdatePost}
+            >
+              UPDATE
+            </Button>
+            <Button variant="contained" color="error" onClick={handleDeletePost}>DELETE</Button>
+          </Box>
+        )}
+        <Typography variant="body1" paragraph>
+          {post.content}
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <IconButton onClick={handleLikePost} color="primary">
-            <ThumbUp />
-          </IconButton>
-          <Typography variant="caption">{post.likeCount}</Typography>
-          <IconButton onClick={handleDislikePost} color="error">
-            <ThumbDown />
-          </IconButton>
-          <Typography variant="caption">{post.dislikeCount}</Typography>
-          <Visibility sx={{ ml: 2 }} />
-          <Typography variant="caption">{post.viewCount}</Typography>
-        </Box>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ mr: 1 }}
-          onClick={handleUpdatePost}
-        >
-          UPDATE
-        </Button>
-        <Button variant="contained" color="error" onClick={handleDeletePost}>DELETE</Button>
-      </Box>
-      <Typography variant="body1" paragraph>
-        {post.content}
-      </Typography>
-      {post.imageUrls && post.imageUrls.length > 0 && (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-          {post.imageUrls.map((img, index) => (
-            <img
-              key={index}
-              src={img.link}
-              alt={`image-${index}`}
-              style={{
-                width: '425px',
-                height: 'auto',
-                objectFit: 'cover',
-                cursor: 'pointer',
-                borderRadius: '8px',
-              }}
-              onClick={() => handleImageClick(img.link)}
-            />
-          ))}
-        </Box>
-      )}
-      <br />
-      <form onSubmit={handleCommentSubmit}>
-        <TextField
-          label="Add Comment..."
-          multiline
-          rows={2}
-          variant="outlined"
-          fullWidth
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-        />
-        <Button type="submit" variant="contained" color="primary" style={{ marginTop: '16px' }}>
-          Comment
-        </Button>
-      </form>
-      <CommentList
-        comments={comments}
-        onDelete={handleDeleteComment}
-        onUpdate={handleUpdateComment}
-        onReply={handleReplyComment}
-      />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogContent>
-          <img
-            src={selectedImage}
-            alt="Expanded View"
-            style={{
-              width: '100%',
-              height: 'auto',
-              objectFit: 'contain',
-            }}
+        {post.imageUrls && post.imageUrls.length > 0 && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {post.imageUrls.map((img, index) => (
+              <img
+                key={index}
+                src={img.link}
+                alt={`image-${index}`}
+                style={{
+                  width: '425px',
+                  height: 'auto',
+                  objectFit: 'cover',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                }}
+                onClick={() => handleImageClick(img.link)}
+              />
+            ))}
+          </Box>
+        )}
+        <br />
+        <form onSubmit={handleCommentSubmit}>
+          <TextField
+            label="Add Comment..."
+            multiline
+            rows={2}
+            variant="outlined"
+            fullWidth
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
           />
-        </DialogContent>
-      </Dialog>
+          <Button type="submit" variant="contained" color="primary" style={{ marginTop: '16px' }}>
+            Comment
+          </Button>
+        </form>
+        <CommentList
+          comments={comments}
+          onDelete={handleDeleteComment}
+          onUpdate={handleUpdateComment}
+          onReply={handleReplyComment}
+        />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogContent>
+            <img
+              src={selectedImage}
+              alt="Expanded View"
+              style={{
+                width: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      </Box>
     </MainContainer>
   );
 }
