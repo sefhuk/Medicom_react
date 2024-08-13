@@ -163,12 +163,14 @@ function LocationPage() {
 
   return (
     <MainContainer>
-        <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+        <Box sx={{ position: 'relative', width: '100%', height: '100%'}}>
         <Box
             ref={mapRef}
             sx={{
             width: '100%',
             height: '100%',
+            margin: 0,
+            padding: 0,
             }}
         />
         <Box
@@ -218,8 +220,8 @@ function LocationPage() {
             onClick={fetchCurrentPosition}
             sx={{
             position: 'absolute',
-            bottom: '20px', // Position 20px from the bottom
-            right: '20px', // Position 20px from the right
+            bottom: '20px',
+            right: '20px',
             bgcolor: '#fff',
             borderRadius: '50%',
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
