@@ -43,6 +43,7 @@ import FindEmail from './pages/user/FindEmail';
 import ShowEmail from './components/ShowEmail';
 
 import ReservationSuccess from './pages/Hospital/ReservationSuccess'
+import ReservationList from './pages/user/ReservationList';
 
 
 const queryClient = new QueryClient();
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
     element: <ShowEmail />
   },
   { path: 'hospitals/maps/:hospitalid/reservation/success', element: <ReservationSuccess /> },
+  {
+    path: '/reservations',
+    element: <ReservationList />
+  },
   // 로그인 필요없는 페이지 - 끝
   {
     path: '/',
