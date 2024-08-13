@@ -29,7 +29,7 @@ const BookmarksPage = () => {
       setState(prevState => ({ ...prevState }));
       try {
         const token = localStorage.getItem('token');
-        const response = await axiosInstance.get('http://localhost:8080/bookmark', {
+        const response = await axiosInstance.get('/bookmark', {
           headers: {
             Authorization: `${token}`
           }
@@ -37,7 +37,7 @@ const BookmarksPage = () => {
 
         const bookmarkData = response.data;
         const hospitalDataPromises = bookmarkData.map(async (bookmark) => {
-          const hospitalResponse = await axiosInstance.get(`http://localhost:8080/api/hospitals/${bookmark.hospitalId}`);
+          const hospitalResponse = await axiosInstance.get(`/api/hospitals/${bookmark.hospitalId}`);
           return {
             ...bookmark,
             hospital: hospitalResponse.data,
@@ -61,7 +61,7 @@ const BookmarksPage = () => {
   }, []);
 
   const handleHospitalClick = async (hospitalId) => {
-    const hospitalResponse = await axiosInstance.get(`http://localhost:8080/api/hospitals/${hospitalId}`);
+    const hospitalResponse = await axiosInstance.get(`/api/hospitals/${hospitalId}`);
     setState(prevState => ({
       ...prevState,
       selectedHospital: hospitalResponse.data,

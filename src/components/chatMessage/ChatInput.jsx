@@ -26,7 +26,12 @@ function ChatInput({ sendMessage, enable }) {
   const [input, setInput] = useState(enable ? '' : '입력할 수 없습니다');
 
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    if (enable) {
+      setOpen(true);
+    }
+  };
+
   const handleClose = () => setOpen(false);
 
   const button = useRef(null);

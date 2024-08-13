@@ -43,6 +43,7 @@ import FindEmail from './pages/user/FindEmail';
 import ShowEmail from './components/ShowEmail';
 
 import ReservationSuccess from './pages/Hospital/ReservationSuccess'
+import ReservationList from './pages/user/ReservationList';
 
 
 const queryClient = new QueryClient();
@@ -62,12 +63,6 @@ const router = createBrowserRouter([
     element: <SocialLoginSuccess />
   },
 
-  { path: 'hospitals', element: <HospitalList /> },
-  { path: 'hospitals/maps', element: <MapComponent /> },
-  { path: 'hospitals/list', element: <HospitalResult />},
-
-
-  { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
   {
     path: '/email-verified',
     element: <RequestEmailVerification />
@@ -81,6 +76,10 @@ const router = createBrowserRouter([
     element: <ShowEmail />
   },
   { path: 'hospitals/maps/:hospitalid/reservation/success', element: <ReservationSuccess /> },
+  {
+    path: '/reservations',
+    element: <ReservationList />
+  },
   // 로그인 필요없는 페이지 - 끝
   {
     path: '/',
@@ -107,6 +106,13 @@ const router = createBrowserRouter([
 
 
           //hospitalpage
+
+          { path: 'hospitals', element: <HospitalList /> },
+          { path: 'hospitals/maps', element: <MapComponent /> },
+          { path: 'hospitals/list', element: <HospitalResult />},
+
+
+          { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
 
           {
             path: 'admin-page',

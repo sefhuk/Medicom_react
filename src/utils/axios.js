@@ -1,4 +1,5 @@
 import axios, { request } from 'axios';
+import { useNavigate } from 'react-router';
 
 export const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -24,6 +25,11 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers['Authorization'] = `${newToken}`;
         return axiosInstance(originalRequest);
       } catch (e) {
+        setAuthState({ isLoggedIn: false });
+        localStorage.removeItem('token');
+        deleteCookie('refreshToken');
+        navigate = useNavigate();
+        navigate('/login')
         return Promise.reject(e);
       }
     }
