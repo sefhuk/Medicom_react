@@ -163,7 +163,7 @@ const HospitalList = () => {
   const fetchReviews = async (hospitalId, page = 0) => {
     setReviewsLoading(prev => ({ ...prev, [hospitalId]: true }));
     try {
-      const response = await axios.get(`/review/${hospitalId}/Page`, {
+      const response = await axiosInstance.get(`/review/${hospitalId}/Page`, {
         params: { page, size: reviewPageSize },
       });
 
@@ -173,7 +173,7 @@ const HospitalList = () => {
       const reviewsWithUsernames = await Promise.all(
         response.data.content.map(async review => {
           try {
-            const userResponse = await axios.get(`/review/findUser/${review.userId}`);
+            const userResponse = await axiosInstance.get(`/review/findUser/${review.userId}`);
             return {
               ...review,
               userName: userResponse.data,
