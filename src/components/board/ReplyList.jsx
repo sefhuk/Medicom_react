@@ -2,20 +2,22 @@ import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, List, ListItem, IconButton, Card, CardContent, CardActions, Avatar } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 
-function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
+function ReplyList({ replies = [], onDelete, onUpdate, onReply, parentId }) {
   const [editReplyId, setEditReplyId] = useState(null);
   const [editContent, setEditContent] = useState('');
   const [replyContent, setReplyContent] = useState('');
 
   const handleEditClick = (reply) => {
-    setEditReplyId(reply.id);
-    setEditContent(reply.content);
+    setEditReplyId(reply?.id ?? null);
+    setEditContent(reply?.content ?? '');
   };
 
   const handleUpdate = () => {
-    onUpdate(editReplyId, editContent);
-    setEditReplyId(null);
-    setEditContent('');
+    if (editReplyId !== null) {
+      onUpdate(editReplyId, editContent);
+      setEditReplyId(null);
+      setEditContent('');
+    }
   };
 
   const handleCancelEdit = () => {
@@ -24,8 +26,10 @@ function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
   };
 
   const handleReply = () => {
-    onReply(parentId, replyContent);
-    setReplyContent('');
+    if (parentId) {
+      onReply(parentId, replyContent);
+      setReplyContent('');
+    }
   };
 
   const handleCancelReply = () => {
@@ -36,12 +40,12 @@ function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
     <Box sx={{ ml: 4 }}>
       <List>
         {replies.map(reply => (
-          <ListItem key={reply.id} sx={{ mb: 2 }}>
+          <ListItem key={reply?.id} sx={{ mb: 2 }}>
             <Card sx={{ width: '100%' }}>
               <CardContent sx={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar sx={{ mr: 2 }} />
                 <Box sx={{ flex: 1 }}>
-                  {editReplyId === reply.id ? (
+                  {editReplyId === reply?.id ? (
                     <Box>
                       <TextField
                         value={editContent}
@@ -60,25 +64,29 @@ function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
                   ) : (
                     <Box>
                       <Typography variant="subtitle2" gutterBottom>
-                        {reply.userName}
+                        {reply?.userName || 'Anonymous'}
                       </Typography>
                       <Typography variant="body2" gutterBottom>
-                        {reply.content}
+                        {reply?.content || 'No content'}
                       </Typography>
                       <Typography variant="caption" display="block" sx={{ mb: 1 }}>
-                        {new Date(reply.createdAt).toLocaleString()}
+                        {reply?.updatedAt
+                          ? new Date(reply.updatedAt).toLocaleString()
+                          : reply?.createdAt
+                            ? new Date(reply.createdAt).toLocaleString()
+                            : 'Unknown date'}
                       </Typography>
                     </Box>
                   )}
                 </Box>
               </CardContent>
               <CardActions>
-                {editReplyId !== reply.id && (
+                {editReplyId !== reply?.id && (
                   <>
                     <IconButton onClick={() => handleEditClick(reply)} color="primary">
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => onDelete(reply.id)} color="error">
+                    <IconButton onClick={() => onDelete(reply?.id)} color="error">
                       <DeleteIcon />
                     </IconButton>
                   </>
@@ -87,22 +95,6 @@ function ReplyList({ replies, onDelete, onUpdate, onReply, parentId }) {
             </Card>
           </ListItem>
         ))}
-        <Box sx={{ p: 2, bgcolor: '#f5f5f5' }}>
-          <TextField
-            value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            placeholder="Add a reply..."
-          />
-          <Button onClick={handleReply} variant="contained" color="primary" sx={{ mr: 1 }}>
-            Add Reply
-          </Button>
-          <Button onClick={handleCancelReply} variant="outlined" color="secondary">
-            Cancel
-          </Button>
-        </Box>
       </List>
     </Box>
   );

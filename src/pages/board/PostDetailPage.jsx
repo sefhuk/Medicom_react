@@ -196,6 +196,13 @@ function PostDetailPage() {
       return;
     }
 
+    const loggedInUserId = localStorage.getItem('userId'); // Assume you store the logged-in user's ID in local storage
+
+    if (loggedInUserId !== userId) {
+      alert('자신이 작성한 게시글만 수정할 수 있습니다.');
+      return;
+    }
+
     navigate(`/posts/update/${id}`);
   };
 

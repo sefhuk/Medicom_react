@@ -5,7 +5,7 @@ import PostList from '../../components/board/PostList';
 import MainContainer from '../../components/global/MainContainer';
 import Pagination from '../../components/board/Pagination';
 import PostSearchBar from '../../components/board/PostSearchBar';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert } from '@mui/material';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography } from '@mui/material';
 
 function BoardDetailPage() {
     const { id } = useParams();
@@ -23,7 +23,7 @@ function BoardDetailPage() {
         setLoading(true);
         axiosInstance.get(`/posts/board/${id}`, {
             params: {
-                title: query || '', // 검색어가 없으면 빈 문자열로 전체 게시물 검색
+                title: query || '',
                 page: page,
                 size: 6
             }
@@ -58,7 +58,7 @@ function BoardDetailPage() {
     const handleSearch = (data) => {
         setPosts(data.content);
         setTotalPages(data.totalPages);
-        setCurrentPage(0); // 페이지 리셋
+        setCurrentPage(0);
     };
 
     const handlePageChange = (page) => {
@@ -71,26 +71,28 @@ function BoardDetailPage() {
 
     return (
         <MainContainer>
-            <br />
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-                <PostSearchBar onSearch={handleSearch} />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h1>{board.name}</h1>
-                <div>
-                    <Link to={`/boards/update/${id}`}>
-                        <Button variant="contained" color="primary" style={{ marginRight: '8px' }}>UPDATE</Button>
-                    </Link>
-                    <Button variant="contained" color="error" onClick={() => setOpenDialog(true)}>Delete</Button>
-                </div>
-            </div>
-            <PostList posts={posts} boardId={id} />
-            <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
+            <Box sx={{ marginTop: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
+                    <PostSearchBar onSearch={handleSearch} />
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{board.name}</Typography>
+                    <Box>
+                        <Button component={Link} to={`/boards/update/${id}`} variant="contained" color="primary" sx={{ marginRight: 1 }}>
+                            UPDATE
+                        </Button>
+                        <Button variant="contained" color="error" onClick={() => setOpenDialog(true)}>
+                            DELETE
+                        </Button>
+                    </Box>
+                </Box>
+                <PostList posts={posts} boardId={id} />
+                <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+                    <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
+                </Box>
+            </Box>
 
-            <Dialog
-                open={openDialog}
-                onClose={() => setOpenDialog(false)}
-            >
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <DialogTitle>게시판 삭제</DialogTitle>
                 <DialogContent>정말로 게시판을 삭제하시겠습니까?</DialogContent>
                 <DialogActions>

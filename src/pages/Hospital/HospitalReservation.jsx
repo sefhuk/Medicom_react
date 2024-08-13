@@ -141,6 +141,7 @@ function HospitalReservation() {
       const utcDate = format(selectedDate, 'yyyy-MM-dd');
 
       const response = await axiosInstance.post('/api/reservations', {
+        hospitalid: hospitalid,
         department: selectedDepartment,
         date: utcDate,
         timeSlot: selectedTime,

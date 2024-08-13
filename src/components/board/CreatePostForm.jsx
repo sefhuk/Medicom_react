@@ -85,7 +85,7 @@ function CreatePostForm({ onSubmit }) {
           p: 3,
         }}
       >
-        <Typography variant="h4" gutterBottom>Create Post</Typography>
+        <Typography variant="h3" gutterBottom>Create Post</Typography>
         <TextField
           label="Title"
           value={title}

@@ -4,7 +4,7 @@ import MainContainer from '../../components/global/MainContainer';
 import BoardList from '../../components/board/BoardList';
 import Pagination from '../../components/board/Pagination';
 import BoardSearchBar from '../../components/board/BoardSearchBar';
-import { CircularProgress, Alert } from '@mui/material';
+import { CircularProgress, Alert, Container, Grid, Typography, Box } from '@mui/material';
 
 function BoardListPage() {
     const [boards, setBoards] = useState([]);
@@ -18,7 +18,7 @@ function BoardListPage() {
         setLoading(true);
         axiosInstance.get('/boards/search', {
             params: {
-                name: query || '', // 검색어가 없으면 빈 문자열로 전체 게시물 검색
+                name: query || '',
                 page: page,
                 size: 6
             }
@@ -38,7 +38,7 @@ function BoardListPage() {
     const handleSearch = (data) => {
         setBoards(data.content);
         setTotalPages(data.totalPages);
-        setCurrentPage(0); // 페이지 리셋
+        setCurrentPage(0);
     };
 
     const handlePageChange = (page) => {
@@ -50,12 +50,43 @@ function BoardListPage() {
 
     return (
         <MainContainer>
-            <br />
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-                <BoardSearchBar onSearch={handleSearch} />
-            </div>
-            <BoardList boards={boards} />
-            <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
+            <Container>
+                <Box sx={{ flexGrow: 1, marginTop: 2 }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 3 }}>
+                                <BoardSearchBar onSearch={handleSearch} />
+                            </Box>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    flexDirection: 'column',
+                                    bgcolor: '#F3F4F0',
+                                    borderRadius: '20px',
+                                    padding: 3,
+                                    boxShadow: 3,
+                                }}
+                            >
+                                <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                                    게시판 목록
+                                </Typography>
+                                <BoardList boards={boards} />
+                            </Box>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
+                                <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Container>
         </MainContainer>
     );
 }

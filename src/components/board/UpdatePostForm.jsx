@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Container, Box, Typography, CircularProgress, IconButton } from '@mui/material';
+import { TextField, Button, Container, Box, Typography, CircularProgress, IconButton, Alert } from '@mui/material';
 import { storage } from '../../firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-function UpdatePostForm({ post, onUpdate }) {
+function UpdatePostForm({ post, onUpdate, userId }) {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState(post.imageUrls.map(img => img.link) || []);
   const [removedImageUrls, setRemovedImageUrls] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setTitle(post.title);
@@ -37,7 +38,7 @@ function UpdatePostForm({ post, onUpdate }) {
   };
 
   const updatePreviewUrls = (files) => {
-    const urls = files.map(file => {
+    files.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrls(prev => [...prev, reader.result]);
@@ -66,8 +67,14 @@ function UpdatePostForm({ post, onUpdate }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
+
+    if (userId !== post.userId) {
+      setError('You do not have permission to update this post.');
+      return;
+    }
+
+    setLoading(true);
     let imageUrls = post.imageUrls.map(img => img.link).filter(url => !removedImageUrls.includes(url));
     if (images.length > 0) {
       const uploadedUrls = await uploadImages();
@@ -85,6 +92,31 @@ function UpdatePostForm({ post, onUpdate }) {
     setPreviewUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
     setImages(prevImages => prevImages.filter((_, i) => i !== index));
   };
+
+  if (userId !== post.userId) {
+    return (
+      <Container maxWidth="sm">
+        <Box
+          sx={{
+            mt: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            backgroundColor: '#fff',
+            borderRadius: 2,
+            boxShadow: 3,
+            p: 3,
+          }}
+        >
+          <Alert severity="error">자신이 작성한 게시글만 수정할 수 있습니다.</Alert>
+          <Button variant="contained" color="primary" href="/" sx={{ mt: 2 }}>
+            Go Back
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="sm">
@@ -104,6 +136,7 @@ function UpdatePostForm({ post, onUpdate }) {
         }}
       >
         <Typography variant="h4" gutterBottom>Update Post</Typography>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <TextField
           label="Title"
           value={title}
