@@ -84,11 +84,11 @@ function OtherLocationPage() {
         console.log('Geocode API response:', data);
 
         if (data && data.addresses && data.addresses.length > 0) {
-          const { roadAddress, x, y } = data.addresses[0];
+          const { x, y } = data.addresses[0];
 
           setLatitude(y);
           setLongitude(x);
-          setContextAddress(roadAddress);
+          setContextAddress(selectedAddress.roadAddr);
 
           navigate('/location');
         } else {
