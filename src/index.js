@@ -63,12 +63,6 @@ const router = createBrowserRouter([
     element: <SocialLoginSuccess />
   },
 
-  { path: 'hospitals', element: <HospitalList /> },
-  { path: 'hospitals/maps', element: <MapComponent /> },
-  { path: 'hospitals/list', element: <HospitalResult />},
-
-
-  { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
   {
     path: '/email-verified',
     element: <RequestEmailVerification />
@@ -112,6 +106,13 @@ const router = createBrowserRouter([
 
 
           //hospitalpage
+
+          { path: 'hospitals', element: <HospitalList /> },
+          { path: 'hospitals/maps', element: <MapComponent /> },
+          { path: 'hospitals/list', element: <HospitalResult />},
+
+
+          { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
 
           {
             path: 'admin-page',
