@@ -5,7 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { axiosInstance } from '../../utils/axios';
 import MainContainer from "../../components/global/MainContainer";
 import { deleteCookie } from '../../utils/cookies';
-import { userauthState } from '../../utils/atom';
+import { chatRoomState, userauthState } from '../../utils/atom';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
@@ -64,6 +64,7 @@ const MyPage = () => {
   const navigate = useNavigate();
   const setAuthState = useSetRecoilState(userauthState);
   const auth = useRecoilValue(userauthState);
+  const setChatRoom = useSetRecoilState(chatRoomState);
 
   useEffect(() => {
     if (!auth.isLoggedIn) {
@@ -187,6 +188,7 @@ const MyPage = () => {
     setAuthState({ isLoggedIn: false });
     localStorage.removeItem('token');
     deleteCookie('refreshToken');
+    setChatRoom(c => ({ rooms: {}, selectedIndex: 0 }))
     navigate('/');
   };
 
