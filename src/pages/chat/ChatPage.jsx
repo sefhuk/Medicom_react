@@ -10,6 +10,7 @@ import { useRecoilState } from 'recoil';
 import { chatRoomState, stompState, userauthState } from '../../utils/atom';
 import { Button, ButtonGroup } from '@mui/material';
 import { Loading } from '../../components/Loading';
+import InsertMessage from '../../components/chatMessage/InsertMessage';
 
 const fetchData = async (id, setMessages, setError) => {
   try {
@@ -201,6 +202,8 @@ function ChatPage() {
       <div style={{ height: '1dvh' }} />
       <div style={{ overflowY: 'scroll', height: '72dvh' }}>
         {error && <div>{error}</div>}
+        {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' &&
+          chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId && <InsertMessage />}
         {messages &&
           messages.map((e, idx) => {
             return e.user.id === Number(auth.userId) ? (
@@ -229,17 +232,6 @@ function ChatPage() {
               margin: 'auto'
             }}
           >
-            <div
-              style={{
-                height: '40%',
-                fontWeight: 'bold',
-                fontSize: '1.5rem',
-                lineHeight: '10dvh',
-                textAlign: 'center'
-              }}
-            >
-              매칭을 기다리고 있습니다
-            </div>
             {chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id !== auth.userId && (
               <Button
                 variant='contained'
@@ -251,7 +243,7 @@ function ChatPage() {
             )}
           </div>
         )}
-        <div ref={tmp} style={{ height: '3dvh' }} />
+        <div ref={tmp} style={{ height: '5dvh' }} />
         <ChatInput
           sendMessage={sendMessage}
           enable={
