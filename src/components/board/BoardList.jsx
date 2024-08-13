@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Box, Button, Typography, List, ListItem, ListItemText } from '@mui/material';
 
 function BoardList({ boards = [] }) {
+  const userRole = localStorage.getItem('userRole');
+
   return (
     <Box sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: '15px', padding: 2 }}>
       {boards.length > 0 ? (
@@ -24,15 +26,18 @@ function BoardList({ boards = [] }) {
           게시판이 없습니다.
         </Typography>
       )}
-      <Button
-        variant="contained"
-        color="primary"
-        component={Link}
-        to="/boards/create"
-        sx={{ marginTop: 2, width: '100%' }}
-      >
-        새 게시판 만들기
-      </Button>
+
+      {userRole === 'ADMIN' && (
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to="/boards/create"
+          sx={{ marginTop: 2, width: '100%' }}
+        >
+          새 게시판 만들기
+        </Button>
+      )}
     </Box>
   );
 }
