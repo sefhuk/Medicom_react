@@ -4,11 +4,10 @@ import { Paper, Typography, Box, Button, IconButton, Tab } from "@mui/material";
 import Avatar from '@mui/material/Avatar';
 import { axiosInstance } from "../../utils/axios";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from "react-router";
 import { GetUserRoleString } from "../../utils/stringUtil";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-
+import { Loading } from "../../components/Loading";
 
 function stringToColor(string) {
   let hash = 0;
@@ -41,6 +40,7 @@ function StringAvatar(name) {
 
 const UserList = () =>{
 
+  const [loading, setLoading] = useState(false);
   const [userList, setUserList] = useState(null);
   const [pageSelect, setPageSelect] = useState(0);
   const [tabValue, setTabValue] = useState('0');
@@ -108,16 +108,16 @@ const UserList = () =>{
           </TabList>
           <Box sx={{border: '1px solid grey' }}></Box>
             <TabPanel value='0' sx={{padding: '0'}}>
-            {userList ? <AllUserList /> : <Typography variant='body1'>Loading..</Typography>}
+            {userList ? <AllUserList /> : <Loading open={loading} />}
             </TabPanel>
             <TabPanel value='1' sx={{padding: '0'}}>
-            {userList ? <FilterUserList role='USER' /> : <Typography variant='body1'>Loading..</Typography>}
+            {userList ? <FilterUserList role='USER' /> : <Loading open={loading}/>}
             </TabPanel>    
             <TabPanel value='2' sx={{padding: '0'}}>
-            {userList ? <FilterUserList role='DOCTOR' /> : <Typography variant='body1'>Loading..</Typography>}
+            {userList ? <FilterUserList role='DOCTOR' /> : <Loading open={loading}/>}
             </TabPanel>      
             <TabPanel value='3' sx={{padding: '0'}}>
-            {userList ? <FilterUserList role='ADMIN' /> : <Typography variant='body1'>Loading..</Typography>}
+            {userList ? <FilterUserList role='ADMIN' /> : <Loading open={loading}/>}
             </TabPanel>  
         </TabContext>
       </Paper>
