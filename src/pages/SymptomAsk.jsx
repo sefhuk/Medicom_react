@@ -8,7 +8,7 @@ import { Loading } from '../components/Loading';
 import { axiosInstance } from '../utils/axios';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useMediaQuery } from '@mui/material';
-import Btn from '../components/global/Btn';
+import { Btn, TextF } from '../components/global/CustomComponents';
 
 function SymptomAsk() {
   const [textFieldValue, setTextFieldValue] = useState('');

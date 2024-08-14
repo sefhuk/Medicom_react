@@ -4,7 +4,7 @@ import { Box, Typography, Button, Container, Grid } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { axiosInstance } from '../../utils/axios';
 import { LocationContext } from '../../LocationContext';
-import Btn from '../../components/global/Btn';
+import { Btn, TextF } from '../../components/global/CustomComponents';
 
 const MapComponent = () => {
   const { latitude, longitude } = useContext(LocationContext);
