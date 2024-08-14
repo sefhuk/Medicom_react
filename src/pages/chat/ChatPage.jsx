@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { axiosInstance } from '../../utils/axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import MainContainer from '../../components/global/MainContainer';
 import Message from '../../components/chatMessage/Message';
 import { Stomp } from '@stomp/stompjs';
@@ -98,7 +98,7 @@ function ChatPage() {
   useEffect(() => {
     fetchData(params.chatRoomId, setMessages, setError, navigate);
 
-    if (chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '비활성화') {
+    if (chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '비활성화') {
       setLoading(false);
       return;
     }
@@ -175,7 +175,7 @@ function ChatPage() {
   }, []);
 
   useEffect(() => {
-    if (tmp != null) tmp.current.scrollIntoView({ behavior: 'smooth' });
+    tmp?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
@@ -183,6 +183,10 @@ function ChatPage() {
       setStomp({ sendMessage: sendMessage });
     }
   }, [stompClient]);
+
+  if(!chatRoom?.rooms[`ch_${params.chatRoomId}`]) {
+    return <Navigate to={'/chatlist'}/>
+  }
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
@@ -202,7 +206,7 @@ function ChatPage() {
       <div style={{ height: '1dvh' }} />
       <div style={{ overflowY: 'scroll', height: '72dvh' }}>
         {error && <div>{error}</div>}
-        {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' &&
+        {chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '수락 대기' &&
           chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId && <InsertMessage />}
         {messages.length !== 0 &&
           messages.map((e, idx) => {
@@ -222,7 +226,7 @@ function ChatPage() {
               />
             );
           })}
-        {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' &&
+        {chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '수락 대기' &&
           chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id !== auth.userId && (
             <div
               style={{
@@ -246,9 +250,9 @@ function ChatPage() {
         <ChatInput
           sendMessage={sendMessage}
           enable={
-            (chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId ||
+            (chatRoom.rooms[`ch_${params.chatRoomId}`]?.user1.id === auth.userId ||
               chatRoom.rooms[`ch_${params.chatRoomId}`]?.user2?.id === auth.userId) &&
-            chatRoom.rooms[`ch_${params.chatRoomId}`].status.status !== '비활성화'
+            chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status !== '비활성화'
           }
         />
       </div>

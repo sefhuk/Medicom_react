@@ -1,12 +1,10 @@
-import axios, { request } from 'axios';
-import { useNavigate } from 'react-router';
+import axios from 'axios';
 import { deleteCookie } from '../utils/cookies';
-import { useSetRecoilState } from 'recoil';
-import { userauthState } from '../utils/atom';
 
 export const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
-  withCredentials: true
+  withCredentials: true,
+  headers: { Authorization: localStorage.getItem('token') }
 });
 
 axiosInstance.interceptors.response.use(
