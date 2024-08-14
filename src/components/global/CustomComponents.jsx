@@ -61,13 +61,14 @@ const StyledButtonTwo = styled(Button)(({ theme }) => ({
 }));
 
 // Btn 컴포넌트
-const Btn = (props) => {
-  return <StyledButton {...props}>{props.children}</StyledButton>;
+const Btn = ({ type = 'button', ...props }) => {
+  return <StyledButton type={type} {...props}>{props.children}</StyledButton>;
 };
 
-const Btntwo = (props) => {
-    return <StyledButtonTwo {...props}>{props.children}</StyledButtonTwo>;
+const Btntwo = ({ type = 'button', ...props }) => {
+    return <StyledButtonTwo type={type} {...props}>{props.children}</StyledButtonTwo>;
 }
+
 
 // 컴포넌트 export
 export { TextF, Btn, Btntwo };

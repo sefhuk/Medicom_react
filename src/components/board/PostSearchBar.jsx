@@ -53,8 +53,8 @@ const PostSearchBar = ({ onSearch }) => {
                 onChange={(e) => setSearchType(e.target.value)}
                 sx={{ mr: 1, borderRadius: '30px' }}
             >
-                <MenuItem value="title">Title</MenuItem>
-                <MenuItem value="userName">User Name</MenuItem>
+                <MenuItem value="title">제목</MenuItem>
+                <MenuItem value="userName">이름</MenuItem>
             </Select>
             <TextF
                 value={searchTerm}
