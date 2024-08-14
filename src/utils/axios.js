@@ -1,5 +1,8 @@
 import axios, { request } from 'axios';
 import { useNavigate } from 'react-router';
+import { deleteCookie } from '../utils/cookies';
+import { useSetRecoilState } from 'recoil';
+import { userauthState } from '../utils/atom';
 
 export const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -13,7 +16,7 @@ axiosInstance.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const { data } = await axios
+        const data = await axios
           .create({
             baseURL: process.env.REACT_APP_API_BASE_URL,
             withCredentials: true
@@ -25,11 +28,8 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers['Authorization'] = `${newToken}`;
         return axiosInstance(originalRequest);
       } catch (e) {
-        setAuthState({ isLoggedIn: false });
         localStorage.removeItem('token');
         deleteCookie('refreshToken');
-        navigate = useNavigate();
-        navigate('/login')
         return Promise.reject(e);
       }
     }

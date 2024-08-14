@@ -20,7 +20,7 @@ export const CustomScrollBox = styled(Box)(({ theme }) => ({
   '&::-webkit-scrollbar-thumb': {
     backgroundColor: '#ffffff',
     borderRadius: '8px',
-    boxShadow: '0 0 8px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0',
     transition: 'background-color 0.3s',
   },
   '&:hover::-webkit-scrollbar-thumb': {

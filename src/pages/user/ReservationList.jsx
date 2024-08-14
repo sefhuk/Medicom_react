@@ -74,6 +74,8 @@ const ReservationList = () => {
       };
       await axiosInstance.post(`/review/${selectedReservation.hospitalid}`, reviewData);
       alert('리뷰가 성공적으로 작성되었습니다.');
+      await axiosInstance.delete(`/api/reservations/${selectedReservation.id}`);
+      window.location.reload();
       setReviewDialogOpen(false);
     } catch (error) {
       console.error(error);
@@ -141,7 +143,7 @@ const ReservationList = () => {
               reservations.map((reservation) => (
                 <ListItem key={reservation.id} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <ListItemText
-                    primary={<>{reservation.department} 진료 <br /> 예약일시 : {reservation.date} {reservation.timeSlot}</>}
+                    primary={<>예약일시 : {reservation.date} {reservation.timeSlot}</>}
                     secondary={`예약자 성함: ${reservation.userName}`}
                   />
                   <Box>

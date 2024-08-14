@@ -43,44 +43,25 @@ const generateTimeSlots = (startHour, endHour, interval) => {
 
 function HospitalReservation() {
   const { hospitalid } = useParams(); // URL에서 병원 id 가져오기
-  const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedDepartment, setSelectedDepartment] = useState(""); // 진료과 선택
   const [selectedDate, setSelectedDate] = useState(null); // 날짜 선택
   const [selectedTime, setSelectedTime] = useState(null); // 예약 시간 선택
   const [expanded, setExpanded] = useState({
     panel1: false,
     panel2: false,
-    panel3: false,
   }); // accordion 열림 상태 초기에 false로 설정
   const [isAvailable, setIsAvailable] = useState(true); // 예약 가능 여부
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchDepartments = async () => {
-      try {
-        const response = await axiosInstance.get(`/api/hospitals/${hospitalid}/departments`);
-        setDepartments(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err);
-        setLoading(false);
-      }
-    };
-
-    fetchDepartments();
-  }, [hospitalid]);
-
-  useEffect(() => {
     const checkAvailability = async () => {
-      if (selectedDepartment && selectedDate && selectedTime) {
+      if (selectedDate && selectedTime) {
         try {
           const utcDate = format(selectedDate, 'yyyy-MM-dd');
           const response = await axiosInstance.get('/api/reservations/check-availability', {
             params: {
-              department: selectedDepartment,
               date: utcDate,
               timeSlot: selectedTime
             }
@@ -93,17 +74,7 @@ function HospitalReservation() {
     };
 
     checkAvailability();
-  }, [selectedDepartment, selectedDate, selectedTime]);
-
-  // 진료과 선택 핸들러
-  const handleDepartmentChange = (event) => {
-    const { value, checked } = event.target;
-    if (checked) {
-      setSelectedDepartment(value);
-    } else {
-      setSelectedDepartment("");
-    }
-  };
+  }, [selectedDate, selectedTime]);
 
   // 날짜 선택 핸들러
   const handleDateChange = (date) => {
@@ -114,6 +85,8 @@ function HospitalReservation() {
       setSelectedDate(null);
     }
   };
+
+  const today = new Date();
 
   // Accordion 클릭 시 열림
   const handleAccordionChange = (panel) => (event, isExpanded) => {
@@ -128,7 +101,7 @@ function HospitalReservation() {
 
   // 예약 제출 핸들러
   const handleSubmit = async () => {
-    if (!selectedDate || !selectedTime || !selectedDepartment) {
+    if (!selectedDate || !selectedTime) {
       alert('모든 필드를 선택해 주세요.');
       return;
     }
@@ -142,7 +115,6 @@ function HospitalReservation() {
 
       const response = await axiosInstance.post('/api/reservations', {
         hospitalid: hospitalid,
-        department: selectedDepartment,
         date: utcDate,
         timeSlot: selectedTime,
         userId, // 사용자 ID 포함
@@ -163,48 +135,13 @@ function HospitalReservation() {
   return (
     <MainContainer>
       <CustomScrollBox>
-        {/* 진료받으실 과 선택 */}
+
+        {/* 예약 날짜 선택 */}
         <Accordion expanded={expanded.panel1} onChange={handleAccordionChange('panel1')}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
-          >
-            <Typography>진료받으실 과를 선택해주세요</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Box>
-              {departments.map((department) => (
-                <CustomFormControlLabel
-                  key={department.id}
-                  control={
-                    <Checkbox
-                      value={department.name}
-                      checked={selectedDepartment === department.name}
-                      onChange={handleDepartmentChange}
-                    />
-                  }
-                  label={department.name}
-                  sx={{
-                    backgroundColor: selectedDepartment === department.name ? 'lightblue' : 'transparent',
-                    borderRadius: '4px',
-                    padding: '8px',
-                    marginBottom: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                />
-              ))}
-            </Box>
-          </AccordionDetails>
-        </Accordion>
-
-        {/* 예약 날짜 선택 */}
-        <Accordion expanded={expanded.panel2} onChange={handleAccordionChange('panel2')}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel2a-content"
-            id="panel2a-header"
           >
             <Typography>예약 날짜</Typography>
           </AccordionSummary>
@@ -214,6 +151,7 @@ function HospitalReservation() {
                 <DatePicker
                   label="날짜 선택"
                   value={selectedDate}
+                  minDate={today} //오늘 날짜 이전 선택 불가
                   onChange={handleDateChange}
                   renderInput={(params) => <TextField {...params} />}
                 />
@@ -223,11 +161,11 @@ function HospitalReservation() {
         </Accordion>
 
         {/* 예약 시간 선택 */}
-        <Accordion expanded={expanded.panel3} onChange={handleAccordionChange('panel3')}>
+        <Accordion expanded={expanded.panel2} onChange={handleAccordionChange('panel2')}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel3a-content"
-            id="panel3a-header"
+            aria-controls="panel2a-content"
+            id="panel2a-header"
           >
             <Typography>예약 시간</Typography>
           </AccordionSummary>
@@ -263,9 +201,9 @@ function HospitalReservation() {
 
         {/* 예약 제출 버튼 */}
         <Box mt={2}>
-          <button 
-            onClick={handleSubmit} 
-            disabled={!selectedDepartment || !selectedDate || !selectedTime || !isAvailable}
+          <button
+            onClick={handleSubmit}
+            disabled={!selectedDate || !selectedTime || !isAvailable}
           >
             예약 제출
           </button>
