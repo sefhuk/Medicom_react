@@ -64,11 +64,15 @@ const Banner = () => {
         {diseases.length > 0 ? (
           diseases.map((disease) => (
             <SlideBox key={disease.id}>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" color="text.primary" sx={{ mb: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                <img
+                  src='/images/Trophy.png'
+                  alt="Top"
+                  style={{ width: '30px', height: '30px' }}/>
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                   TOP {disease.rank}
                 </Typography>
-                <Typography variant="h6" color="text.primary">
+                <Typography variant="h6">
                   {disease.diseaseName}
                 </Typography>
               </Box>
