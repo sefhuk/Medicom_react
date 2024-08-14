@@ -120,7 +120,7 @@ function CommentList({ comments = [], onDelete, onUpdate, onReply }) {
                   </Button>
                 </Box>
               )}
-              {(comment.replies && comment.replies.length > 0) && (
+              {comment.replies && comment.replies.length > 0 && (
                 <ReplyList
                   replies={comment.replies}
                   onDelete={onDelete}

@@ -7,6 +7,13 @@ import Pagination from '../../components/board/Pagination';
 import PostSearchBar from '../../components/board/PostSearchBar';
 import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return {
+      'Authorization': `${token}`
+    };
+};
+
 function BoardDetailPage() {
     const { id } = useParams();
     const [board, setBoard] = useState(null);
@@ -38,7 +45,8 @@ function BoardDetailPage() {
                 title: query || '',
                 page: page,
                 size: 6
-            }
+            },
+            headers: getAuthHeaders()
         })
         .then(response => {
             setPosts(response.data.content);
@@ -49,7 +57,7 @@ function BoardDetailPage() {
     }, [id]);
 
     useEffect(() => {
-        axiosInstance.get(`/boards/${id}`)
+        axiosInstance.get(`/boards/${id}`, { headers: getAuthHeaders() })
             .then(response => setBoard(response.data))
             .catch(() => setError('게시판 정보를 가져오는 데 실패했습니다.'));
 
@@ -58,7 +66,7 @@ function BoardDetailPage() {
 
     const handleDeleteBoard = async () => {
         try {
-            await axiosInstance.delete(`/boards/${id}`);
+            await axiosInstance.delete(`/boards/${id}`, { headers: getAuthHeaders() });
             navigate('/boards');
         } catch {
             setError('게시판 삭제에 실패했습니다.');
