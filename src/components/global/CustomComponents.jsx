@@ -47,4 +47,22 @@ const Btn = (props) => {
   return <StyledButton {...props}>{props.children}</StyledButton>;
 };
 
-export { TextF, Btn };
+const SmallBtn = (props) => {
+  return <StyledSmallButton {...props}>{props.children}</StyledSmallButton>;
+};
+
+const StyledSmallButton = styled(Button)(({ theme }) => ({
+  backgroundColor: '#E9E9E9',
+  color: '#000',
+  width: '90px',
+  height: '30px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '30px',
+  '&:hover': {
+    backgroundColor: '#E2E2E2',
+  },
+}));
+
+export { TextF, Btn, SmallBtn };

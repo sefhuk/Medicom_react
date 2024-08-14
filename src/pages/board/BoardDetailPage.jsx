@@ -5,7 +5,8 @@ import PostList from '../../components/board/PostList';
 import MainContainer from '../../components/global/MainContainer';
 import Pagination from '../../components/board/Pagination';
 import PostSearchBar from '../../components/board/PostSearchBar';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Btn, SmallBtn } from '../../components/global/CustomComponents'; // Btn과 SmallBtn 컴포넌트를 import합니다.
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
@@ -25,12 +26,12 @@ function BoardDetailPage() {
     const [error, setError] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [sortType, setSortType] = useState('default');
-    const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
 
     const userRole = localStorage.getItem('userRole');
     const loggedInUserId = Number(localStorage.getItem('userId'));
 
+    // Fetch posts with search and sort functionality
     const fetchPosts = useCallback((page, query, sort) => {
         setLoading(true);
         let url = `/posts/board/${id}`;
@@ -56,6 +57,7 @@ function BoardDetailPage() {
         .finally(() => setLoading(false));
     }, [id]);
 
+    // Fetch board info and posts initially
     useEffect(() => {
         axiosInstance.get(`/boards/${id}`, { headers: getAuthHeaders() })
             .then(response => setBoard(response.data))
@@ -75,10 +77,9 @@ function BoardDetailPage() {
         }
     };
 
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-        setCurrentPage(0);
-        fetchPosts(0, query, sortType);
+    const handleSearch = (result) => {
+        setPosts(result.content);
+        setTotalPages(result.totalPages);
     };
 
     const handlePageChange = (page) => {
@@ -100,20 +101,29 @@ function BoardDetailPage() {
 
     return (
         <MainContainer>
-            <Box sx={{ marginTop: 2, padding: '0 16px'}}>
+            <Box sx={{ marginTop: 2, padding: '0 16px' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
-                    <PostSearchBar onSearch={handleSearch} />
+                    <PostSearchBar onSearch={handleSearch} boardId={id} />
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
                     <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{board.name}</Typography>
-                    {(userRole === 'ADMIN' || loggedInUserId === userId) && (
-                    <Box>
-                        <Button component={Link} to={`/boards/update/${id}`} variant="contained" color="primary" sx={{ marginRight: 1 }}>
+                    {(userRole === 'ADMIN' || loggedInUserId === board.userId) && (
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <SmallBtn
+                          component={Link}
+                          to={`/boards/update/${id}`}
+                          variant="contained"
+                          color="primary"
+                        >
                             UPDATE
-                        </Button>
-                        <Button variant="contained" color="error" onClick={() => setOpenDialog(true)}>
+                        </SmallBtn>
+                        <SmallBtn
+                          variant="contained"
+                          color="error"
+                          onClick={() => setOpenDialog(true)}
+                        >
                             DELETE
-                        </Button>
+                        </SmallBtn>
                     </Box>
                     )}
                 </Box>
@@ -146,8 +156,8 @@ function BoardDetailPage() {
                 <DialogTitle>게시판 삭제</DialogTitle>
                 <DialogContent>정말로 게시판을 삭제하시겠습니까?</DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)} color="primary">취소</Button>
-                    <Button onClick={handleDeleteBoard} color="error">삭제</Button>
+                    <Btn onClick={() => setOpenDialog(false)} color="primary">취소</Btn>
+                    <Btn onClick={handleDeleteBoard} color="error">삭제</Btn>
                 </DialogActions>
             </Dialog>
         </MainContainer>

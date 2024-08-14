@@ -4,8 +4,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import CommentList from '../../components/board/CommentList';
 import Pagination from '../../components/board/CommentPagination';
 import MainContainer from '../../components/global/MainContainer';
-import { Button, CircularProgress, Alert, TextField, Typography, Box, Dialog, DialogContent, IconButton } from '@mui/material';
+import { CircularProgress, Alert, Typography, Box, Dialog, DialogContent, IconButton } from '@mui/material';
 import { ThumbUp, ThumbDown, Visibility } from '@mui/icons-material';
+import { SmallBtn, Btn, TextF } from '../../components/global/CustomComponents';
 
 function PostDetailPage() {
   const { id } = useParams();
@@ -262,15 +263,15 @@ function PostDetailPage() {
         </Box>
         {(loggedInUserId === userId || userRole === 'ADMIN') && (
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-            <Button
+            <SmallBtn
               variant="contained"
               color="primary"
               sx={{ mr: 1 }}
               onClick={handleUpdatePost}
             >
               UPDATE
-            </Button>
-            <Button variant="contained" color="error" onClick={handleDeletePost}>DELETE</Button>
+            </SmallBtn>
+            <SmallBtn variant="contained" color="error" onClick={handleDeletePost}>DELETE</SmallBtn>
           </Box>
         )}
         <Typography variant="body1" paragraph>
@@ -297,7 +298,7 @@ function PostDetailPage() {
         )}
         <br />
         <form onSubmit={handleCommentSubmit}>
-          <TextField
+          <TextF
             label="Add Comment..."
             multiline
             rows={2}
@@ -306,9 +307,9 @@ function PostDetailPage() {
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
           />
-          <Button type="submit" variant="contained" color="primary" style={{ marginTop: '16px' }}>
+          <Btn type="submit" variant="contained" color="primary" style={{ marginTop: '16px' }}>
             Comment
-          </Button>
+          </Btn>
         </form>
         <CommentList
           comments={comments}

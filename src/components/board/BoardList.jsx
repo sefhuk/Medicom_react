@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Button, Typography, List, ListItem, ListItemText } from '@mui/material';
+import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
+import { Btn } from '../../components/global/CustomComponents'; // 경로를 수정하여 Btn 컴포넌트를 가져옵니다.
 
 function BoardList({ boards = [] }) {
   const userRole = localStorage.getItem('userRole');
@@ -28,7 +29,7 @@ function BoardList({ boards = [] }) {
       )}
 
       {userRole === 'ADMIN' && (
-        <Button
+        <Btn
           variant="contained"
           color="primary"
           component={Link}
@@ -36,7 +37,7 @@ function BoardList({ boards = [] }) {
           sx={{ marginTop: 2, width: '100%' }}
         >
           새 게시판 만들기
-        </Button>
+        </Btn>
       )}
     </Box>
   );

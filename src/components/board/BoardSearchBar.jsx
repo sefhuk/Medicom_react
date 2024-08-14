@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
 import { Btn, TextF } from '../../components/global/CustomComponents';
 
@@ -32,14 +32,12 @@ const BoardSearchBar = ({ onSearch }) => {
                 fullWidth
                 sx={{ marginRight: 2 }}
             />
-            <Button
-                variant="contained"
-                color="primary"
+            <Btn
                 onClick={handleSearch}
                 sx={{ paddingX: 3 }}
             >
                 Search
-            </Button>
+            </Btn>
         </Box>
     );
 };

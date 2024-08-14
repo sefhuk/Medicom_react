@@ -1,21 +1,19 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link } from '@mui/material';
+import { Btn, TextF } from '../../components/global/CustomComponents';
 
 function PostList({ posts = [], boardId }) {
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h6">Posts</Typography>
-        <Button
+        <Btn
           component={RouterLink}
           to={`/posts/create/${boardId}`}
-          variant="contained"
-          color="primary"
-          sx={{ ml: 2 }}
         >
-          Create New Post
-        </Button>
+          Create Post
+        </Btn>
       </Box>
       <TableContainer component={Paper} sx={{ borderRadius: '15px', boxShadow: 3 }}>
         <Table>
