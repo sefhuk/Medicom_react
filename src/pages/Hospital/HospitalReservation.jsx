@@ -86,6 +86,8 @@ function HospitalReservation() {
     }
   };
 
+  const today = new Date();
+
   // Accordion 클릭 시 열림
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpanded((prevState) => ({
@@ -149,6 +151,7 @@ function HospitalReservation() {
                 <DatePicker
                   label="날짜 선택"
                   value={selectedDate}
+                  minDate={today} //오늘 날짜 이전 선택 불가
                   onChange={handleDateChange}
                   renderInput={(params) => <TextField {...params} />}
                 />

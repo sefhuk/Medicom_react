@@ -90,7 +90,7 @@ function MainPage() {
       <Grid item xs={12}>
         <CustomBoxTypo onClick={handleLocationPage} sx={{ bgcolor:'#F3F4F0', padding: 2, cursor: 'pointer', borderRadius: '30px' }}>
           <MyLocationOutlinedIcon sx={{  color: 'black', marginRight: 1 }} />
-          <Typography variant="h6" sx={{ color: 'black' }}>
+          <Typography variant="h8" sx={{ color: 'black' }}>
             {auth.isLoggedIn ? address || '위치 설정 중...' : '위치 설정'} 
             {/* 비로그인 상태에서 위치 안보임  */}
           </Typography>
@@ -120,8 +120,8 @@ function MainPage() {
               <CustomMiniBox>
                 <img src='/images/doctortwo.svg' alt="Doctor" style={{ marginTop: '1vh', width: '100%', height: '100%'}} />
               </CustomMiniBox>
-              <Typography variant="h6" sx={{ marginTop: 3, color: 'white' }}>의사와 실시간 상담</Typography>
-              <Typography variant="h8" sx={{ marginBottom: 3, mx: 3, color: 'white' }}>전문의와 상담할 수 있어요.</Typography>
+              <Typography variant="h6" sx={{ marginTop: 2, color: 'white', fontWeight: 'bold' }}>의사 실시간 상담</Typography>
+              <Typography variant="h8" sx={{ marginBottom: 2, mx: 3, color: 'white' }}>전문의와 상담할 수 있어요.</Typography>
             </CustomBox>
 
             </Grid>
@@ -130,8 +130,8 @@ function MainPage() {
                 <CustomMiniBox>
                   <img src='/images/AItwo.svg' alt="Doctor" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
                 </CustomMiniBox>
-                <Typography variant="h6" sx={{ marginTop: 3, color: 'white' }}>AI로 증상 진단</Typography>
-                <Typography variant="h8" sx={{ marginBottom: 3, mx: 3, color: 'white' }}>AI가 바로 답변해줄거에요.</Typography>
+                <Typography variant="h6" sx={{ marginTop: 2, color: 'white', fontWeight: 'bold' }}>AI로 증상 진단</Typography>
+                <Typography variant="h9" sx={{ marginBottom: 2, mx: 3, color: 'white' }}>AI가 바로 답변해줄거에요.</Typography>
               </CustomBox>
             </Grid>
 
