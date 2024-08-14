@@ -141,8 +141,8 @@ function MainPage() {
             </Grid>
 
             <Grid item xs={12}>
-              <CustomBox onClick={handleSearchPage} sx={{ height: '10vh', bgcolor:'#F3F4F0' }}>
-                <Box sx={{ flex: 1, marginLeft: 3 }}>
+              <CustomBox onClick={handleSearchPage} sx={{ height: '10vh', px: 2, textAlign: 'left', bgcolor:'#F3F4F0' }}>
+                <Box>
                   <Typography variant='h6'>진료과 기반 검색</Typography>
                   <Typography sx={{ color: 'gray' }}>진료과 별로 찾을 수 있어요.</Typography>
                 </Box>
