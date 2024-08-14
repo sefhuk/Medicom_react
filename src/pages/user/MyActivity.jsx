@@ -34,7 +34,7 @@ const MyActivity = () => {
         {[
           { label: '내 채팅 내역', path: '/chatlist' },
           { label: '예약 내역', path: '/reservations' },
-          { label: '내가 쓴 글', path: '/' },
+          { label: '내가 쓴 글', path: '/my-posts' },
           { label: '나의 리뷰', path: '/my-reviews' },
           { label: '즐겨찾기', path: '/bookmarks' },
         ].map((item) => (
