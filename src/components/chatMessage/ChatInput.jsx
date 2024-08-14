@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import AdvancedModal from '../chatRoom/modal/AdvancedModal';
-import { useRecoilState } from 'recoil';
-import { stompState } from '../../utils/atom';
+import { useRecoilValue } from 'recoil';
+import { chatRoomState, stompState, userauthState } from '../../utils/atom';
+import { useParams } from 'react-router';
 
 const style = {
   position: 'absolute',
@@ -21,13 +22,19 @@ const style = {
 };
 
 function ChatInput({ sendMessage, enable }) {
-  const [stomp] = useRecoilState(stompState);
+  const params = useParams();
+
+  const stomp = useRecoilValue(stompState);
+  const chatRoom = useRecoilValue(chatRoomState);
+  const auth = useRecoilValue(userauthState);
 
   const [input, setInput] = useState(enable ? '' : '입력할 수 없습니다');
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
-    if (enable) {
+    const room = chatRoom.rooms[`ch_${params.chatRoomId}`];
+
+    if (auth.userId === room.user1.id || auth.userId === room.user2.id) {
       setOpen(true);
     }
   };
