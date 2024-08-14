@@ -26,12 +26,12 @@ function PostDetailPage() {
   const userRole = localStorage.getItem('userRole');
   const loggedInUserId = Number(localStorage.getItem('userId'));
 
-  function getAuthHeaders() {
+  const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
     return {
       'Authorization': `${token}`
     };
-  }
+  };
 
   const isLoggedIn = () => {
     const token = localStorage.getItem('token');
@@ -96,8 +96,8 @@ function PostDetailPage() {
     }
     try {
       const response = await axiosInstance.post('/comments', { postId: id, content: commentText, userName }, { headers: getAuthHeaders() });
-      setComments([...comments, response.data]);
       setCommentText('');
+      fetchComments(currentPage); // 새로운 댓글을 추가한 후, 현재 페이지의 댓글 목록을 다시 가져옴
     } catch (error) {
       alert('댓글을 추가하는 데 실패했습니다.');
     }
@@ -123,15 +123,9 @@ function PostDetailPage() {
       return;
     }
 
-    const comment = findCommentById(commentId, comments);
-    if (!comment) {
-      alert('댓글을 찾을 수 없습니다.');
-      return;
-    }
-
     try {
       await axiosInstance.delete(`/comments/${commentId}`, { headers: getAuthHeaders() });
-      setComments(removeCommentById(commentId, comments));
+      fetchComments(currentPage); // 댓글 삭제 후, 현재 페이지의 댓글 목록을 다시 가져옴
     } catch (error) {
       alert('자신이 작성한 댓글만 삭제할 수 있습니다.');
     }
@@ -143,15 +137,9 @@ function PostDetailPage() {
       return;
     }
 
-    const comment = findCommentById(commentId, comments);
-    if (!comment) {
-      alert('댓글을 찾을 수 없습니다.');
-      return;
-    }
-
     try {
-      const response = await axiosInstance.put(`/comments/${commentId}`, { postId: id, content: content }, { headers: getAuthHeaders() });
-      setComments(comments.map(comment => comment.id === commentId ? response.data : comment));
+      await axiosInstance.put(`/comments/${commentId}`, { postId: id, content: content }, { headers: getAuthHeaders() });
+      fetchComments(currentPage); // 댓글 수정 후, 현재 페이지의 댓글 목록을 다시 가져옴
     } catch (error) {
       alert('자신이 작성한 댓글만 수정할 수 있습니다.');
     }
@@ -164,16 +152,8 @@ function PostDetailPage() {
     }
 
     try {
-      const response = await axiosInstance.post('/comments', { postId: id, content: content, parentId: parentId, userName }, { headers: getAuthHeaders() });
-      setComments(comments.map(comment => {
-        if (comment.id === parentId) {
-          return {
-            ...comment,
-            replies: [...(comment.replies || []), response.data]
-          };
-        }
-        return comment;
-      }));
+      await axiosInstance.post('/comments', { postId: id, content: content, parentId: parentId, userName }, { headers: getAuthHeaders() });
+      fetchComments(currentPage); // 답글 추가 후, 현재 페이지의 댓글 목록을 다시 가져옴
     } catch (error) {
       alert('답글 추가에 실패했습니다.');
     }
@@ -205,31 +185,6 @@ function PostDetailPage() {
     }
 
     navigate(`/posts/update/${id}`);
-  };
-
-  const findCommentById = (id, comments) => {
-    for (const comment of comments) {
-      if (comment.id === id) {
-        return comment;
-      }
-      if (comment.replies) {
-        const found = findCommentById(id, comment.replies);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
-
-  const removeCommentById = (id, comments) => {
-    return comments.reduce((result, comment) => {
-      if (comment.id !== id) {
-        result.push({
-          ...comment,
-          replies: removeCommentById(id, comment.replies || [])
-        });
-      }
-      return result;
-    }, []);
   };
 
   const handleLikePost = async () => {
@@ -329,7 +284,7 @@ function PostDetailPage() {
                 src={img.link}
                 alt={`image-${index}`}
                 style={{
-                  width: '425px',
+                  width: '386px',
                   height: 'auto',
                   objectFit: 'cover',
                   cursor: 'pointer',

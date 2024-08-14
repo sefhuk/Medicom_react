@@ -12,35 +12,6 @@ import { Button, ButtonGroup } from '@mui/material';
 import { Loading } from '../../components/Loading';
 import InsertMessage from '../../components/chatMessage/InsertMessage';
 
-const fetchData = async (id, setMessages, setError, navigate) => {
-  try {
-    const response = await axiosInstance.get(`/chat-messages`, {
-      params: {
-        chatRoomId: id
-      }
-    });
-
-    if (typeof response.data !== 'object') {
-      throw new Error();
-    }
-
-    setMessages(response.data);
-
-    if (response.data.length !== 0) {
-      axiosInstance.post('/chat-messages/status', {
-        id: Number(response.data[response.data.length - 1].id)
-      });
-    }
-  } catch (err) {
-    try {
-      setError(err.response.data.message);
-    } catch (err) {
-      alert('잘못된 접근입니다');
-      navigate('/');
-    }
-  }
-};
-
 function ChatPage() {
   const params = useParams();
 
@@ -95,8 +66,37 @@ function ChatPage() {
     stompClient.publish({ destination: `/app/chat/${Number(params.chatRoomId)}`, body });
   };
 
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get(`/chat-messages`, {
+        params: {
+          chatRoomId: Number(params.chatRoomId)
+        }
+      });
+
+      if (typeof response.data !== 'object') {
+        throw new Error();
+      }
+
+      setMessages(response.data);
+
+      if (response.data.length !== 0) {
+        axiosInstance.post('/chat-messages/status', {
+          id: Number(response.data[response.data.length - 1].id)
+        });
+      }
+    } catch (err) {
+      try {
+        setError(err.response.data.message);
+      } catch (err) {
+        alert('잘못된 접근입니다');
+        navigate('/');
+      }
+    }
+  };
+
   useEffect(() => {
-    fetchData(params.chatRoomId, setMessages, setError, navigate);
+    fetchData();
 
     if (chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '비활성화') {
       setLoading(false);
@@ -184,8 +184,8 @@ function ChatPage() {
     }
   }, [stompClient]);
 
-  if(!chatRoom?.rooms[`ch_${params.chatRoomId}`]) {
-    return <Navigate to={'/chatlist'}/>
+  if (!chatRoom?.rooms[`ch_${params.chatRoomId}`]) {
+    return <Navigate to={'/chatlist'} />;
   }
 
   return (
