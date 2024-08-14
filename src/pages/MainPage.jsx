@@ -20,8 +20,13 @@ function MainPage() {
   const navigate = useNavigate();
 
   const handleChatPage = () => {
+    if(!auth.isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+    
     if(auth.role === 'DOCTOR') {
-      alert("의사 회원은 사용할 수 없는 기능입니다");
+      alert('의사 회원은 사용할 수 없는 기능입니다');
       return;
     }
     
