@@ -82,12 +82,15 @@ function SymptomAsk() {
       <Container>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sx={{ marginTop: '30%' }}>
+            <Grid item xs={12} sx={{ marginTop: '40%' }}>
             </Grid>
             <Grid item xs={12}>
               <Typography variant='h3' sx={{ color: '#4A885D', fontWeight: 'bold' }}>1</Typography>
               <Typography variant='h5' sx={{ fontWeight: 'bold' }}>증상에 대해 자유롭게 설명해주세요.</Typography>
               <Typography variant='h8' sx={{ color: 'grey' }}>예시: 배가 아프고 식은땀이 나</Typography>
+              {/* <Box>
+                <img src='/images/symptom.png'/>
+              </Box> */}
             </Grid>
             <Grid item xs={10}>
               <TextField
@@ -120,7 +123,7 @@ function SymptomAsk() {
               </Btn>
             </Grid>
             {/* 간단한 증상 */}
-            <Grid item xs={12} sx = {{ marginTop: '40%',
+            <Grid item xs={12} sx = {{ marginTop: '20%',
                display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <Btn onClick={toggleDrawer(true)} 
                 sx={{

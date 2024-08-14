@@ -105,8 +105,11 @@ function MainPage() {
           <Grid container spacing={2}>
             {/* 상단 배너 부분 */}
             <Grid item xs={12} sx={{ marginTop: 4 }}>
-
-              <Banner /> {/* 배너 컴포넌트 사용 */}
+              <CustomBoxTypo>
+                <Typography variant="h5" sx = {{fontWeight: 'bold'}}>이번주 유행 질병 알아보기</Typography>
+              </CustomBoxTypo>
+              <Typography variant="h10" sx = {{color: 'grey'}}>해당 순위는 네이버 순위를 참고합니다.</Typography>
+              <Banner/>
             </Grid>
 
             <Grid item xs={12}>
@@ -118,7 +121,7 @@ function MainPage() {
             <Grid item xs={6}>
             <CustomBox onClick={handleChatPage} sx={{ bgcolor: '#4A885D', flexDirection:'column', height: '31vh' }}>
               <CustomMiniBox>
-                <img src='/images/doctortwo.svg' alt="Doctor" style={{ marginTop: '1vh', width: '100%', height: '100%'}} />
+                <img src='/images/doctorimg.png' alt="Doctor" style={{ marginTop: '1vh', height: '100%'}} />
               </CustomMiniBox>
               <Typography variant="h6" sx={{ marginTop: 2, color: 'white' }}>의사 실시간 상담</Typography>
               <Typography variant="h8" sx={{ marginBottom: 2, mx: 3, color: 'white' }}>전문의와 상담할 수 있어요.</Typography>

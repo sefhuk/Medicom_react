@@ -1,54 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../utils/axios';
 import Slider from 'react-slick';
-import { Box, Typography, IconButton } from '@mui/material';
-import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
-import banner1 from '../assets/banner1.png';
-import banner2 from '../assets/banner2.png'; 
+import { Box, Typography } from '@mui/material';
+import { styled } from '@mui/system';
 
-// 슬라이더 화살표 버튼
-const PrevArrow = ({ onClick }) => (
-  <IconButton
-    onClick={onClick}
-    sx={{
-      position: 'absolute',
-      top: '50%',
-      left: 0,
-      transform: 'translateY(-50%)',
-      zIndex: 1,
-    }}
-  >
-    <ArrowBackIos />
-  </IconButton>
-);
-
-const NextArrow = ({ onClick }) => (
-  <IconButton
-    onClick={onClick}
-    sx={{
-      position: 'absolute',
-      top: '50%',
-      right: 0,
-      transform: 'translateY(-50%)',
-      zIndex: 1,
-    }}
-  >
-    <ArrowForwardIos />
-  </IconButton>
-);
-
-// 슬라이더 설정
-const sliderSettings = {
-  dots: false,
+// Slick Slider 설정
+const settings = {
+  centerMode: true,
+  centerPadding: '20px',
   infinite: true,
-  speed: 500,
-  slidesToShow: 1,
+  speed: 1000, // 슬라이드 전환 속도
+  slidesToShow: 3, // 보일 슬라이드 수
   slidesToScroll: 1,
-  autoplay: true,
-  autoplaySpeed: 3000, // 3초마다 슬라이드 변경
-  prevArrow: <PrevArrow />,
-  nextArrow: <NextArrow />,
+  autoplay: true, // 자동 재생
+  autoplaySpeed: 3000, // 자동 재생 간격
+  cssEase: 'ease-in-out',
+  pauseOnHover: false,
 };
+
+// 스타일드 컴포넌트
+const StyledSlider = styled(Slider)`
+  .slick-slide {
+    padding: 0 10px; /* 슬라이드 간의 간격 추가 */
+  }
+
+  .slick-slide > div {
+    width: 100%; /* 슬라이드의 너비를 100%로 설정 */
+    display: flex;
+    justify-content: center;
+  }
+
+  .slick-track {
+    display: flex;
+  }
+`;
+
+const SlideBox = styled(Box)`
+  background-color: #FCFCFC;
+  border-radius: 10px;
+  border: 1px solid #E9E9EA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px; /* 슬라이드 내 여백 */
+`;
 
 const Banner = () => {
   const [diseases, setDiseases] = useState([]);
@@ -64,162 +59,29 @@ const Banner = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: 1,
-        borderRadius: '20px',
-        bgcolor: 'transparent',
-        textAlign: 'center',
-        width: '90%',
-        margin: 'auto',
-        maxWidth: 800,
-        position: 'relative',
-      }}
-    >
-      <Box
-        sx={{
-          width: '100%',
-          maxWidth: 600,
-          padding: 0,
-          borderRadius: '20px',
-          position: 'relative',
-          overflow: 'hidden', 
-        }}
-      >
-        <Slider {...sliderSettings}>
-          {/* 첫 번째 슬라이드: 이미지 */}
-          <Box
-            sx={{
-              height: '250px', 
-              width: '100%',
-              borderRadius: '20px', 
-              overflow: 'hidden',
-              display: 'flex',
-              alignItems: 'center', 
-              boxShadow: '1',
-            }}
-          >
-            <img
-              src={banner1}
-              alt="Banner"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                borderRadius: '20px',
-              }}
-            />
-          </Box>
-
-          {/* 나머지 슬라이드: 질병 정보 */}
-          {diseases.length > 0 ? (
-            diseases.map((disease) => (
-              <Box
-                key={disease.id}
-                sx={{
-                  position: 'relative',
-                  height: '250px', 
-                  width: '100%',
-                  borderRadius: '20px',
-                  overflow: 'hidden',
-                  backgroundImage: `url(${banner2})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  boxShadow: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    position: 'relative',
-                    height: '250px',
-                    width: '100%',
-                    borderRadius: '20px',
-                    overflow: 'hidden',
-                    backgroundImage: `url(${banner2})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    boxShadow: 1,
-                  }}
-                >
-                  {/* Rank 텍스트 위치 설정 */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: '15%',
-                      left: '35%',
-                      transform: 'translate(-50%, -50%)',
-                      color: 'black',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <Typography variant="h3" sx={{ mt: 2, fontWeight: 700, fontFamily: 'Pretendard-Regular' }}>
-                      TOP {disease.rank}
-                    </Typography>
-                  </Box>
-
-                  {/* DiseaseName 텍스트 위치 설정 */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: '35%',
-                      left: '60%',
-                      transform: 'translate(-50%, -50%)',
-                      color: 'black',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <Typography variant="h4" sx={{ fontWeight: 700, fontFamily: 'Pretendard-Regular' }}>
-                      {disease.diseaseName}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-            ))
-          ) : (
-            <Box
-              sx={{
-                position: 'relative',
-                height: '250px',
-                width: '100%',
-                borderRadius: '20px',
-                overflow: 'hidden',
-                backgroundImage: `url(${banner2})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                boxShadow: 1,
-              }}
-            >
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  color: 'white',
-                  textAlign: 'center',
-                }}
-              >
-                <Typography variant="h6">
-                  로딩중
+    <Box sx={{ width: '100%', maxWidth: '800px', marginTop: 3 }}>
+      <StyledSlider {...settings}>
+        {diseases.length > 0 ? (
+          diseases.map((disease) => (
+            <SlideBox key={disease.id}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h4" color="text.primary" sx={{ mb: 1 }}>
+                  TOP {disease.rank}
+                </Typography>
+                <Typography variant="h6" color="text.primary">
+                  {disease.diseaseName}
                 </Typography>
               </Box>
-            </Box>
-          )}
-        </Slider>
-
-      </Box>
+            </SlideBox>
+          ))
+        ) : (
+          <SlideBox>
+            <Typography variant="h6" color="text.primary">
+              로딩중...
+            </Typography>
+          </SlideBox>
+        )}
+      </StyledSlider>
     </Box>
   );
 };
