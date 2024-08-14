@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router';
 import { Box, Typography, Container, Pagination } from '@mui/material';
 import { LocationContext } from '../LocationContext';
 import MainContainer from '../components/global/MainContainer';
-import TextF from '../components/global/TextF';
-import Btn from '../components/global/Btn';
+import { Btn, TextF } from '../components/global/CustomComponents';;
 
 function OtherLocationPage() {
   const [address, setAddress] = useState('');

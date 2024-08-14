@@ -59,7 +59,7 @@ const Banner = () => {
   }, []);
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '800px', marginTop: 3 }}>
+    <Box sx={{ width: '100%', marginTop: 3 }}>
       <StyledSlider {...settings}>
         {diseases.length > 0 ? (
           diseases.map((disease) => (
@@ -69,10 +69,10 @@ const Banner = () => {
                   src='/images/Trophy.png'
                   alt="Top"
                   style={{ width: '30px', height: '30px' }}/>
-                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                   TOP {disease.rank}
                 </Typography>
-                <Typography variant="h6">
+                <Typography variant="h8">
                   {disease.diseaseName}
                 </Typography>
               </Box>

@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import MainContainer from '../components/global/MainContainer';
 import { Box, Grid, Container, Typography, Button, Stepper, StepLabel, Step } from '@mui/material';
-import Btn from '../components/global/Btn';
+import { Btn, TextF } from '../components/global/CustomComponents';
 
 function SymptomAskSecond() {
   const location = useLocation();

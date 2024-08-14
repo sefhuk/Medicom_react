@@ -5,7 +5,7 @@ import MyLocationIcon from '@mui/icons-material/MyLocation'; // Add Material UI 
 import { LocationContext } from '../LocationContext'; 
 import { useNavigate } from 'react-router';
 import { axiosInstance } from '../utils/axios';
-import Btn from '../components/global/Btn';
+import { Btn, TextF } from '../components/global/CustomComponents';
 
 function LocationPage() {
   const mapRef = useRef(null);
