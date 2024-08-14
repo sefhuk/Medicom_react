@@ -5,7 +5,7 @@ import PostList from '../../components/board/PostList';
 import MainContainer from '../../components/global/MainContainer';
 import Pagination from '../../components/board/Pagination';
 import PostSearchBar from '../../components/board/PostSearchBar';
-import { Grid, Container, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography } from '@mui/material';
+import { Grid, Container, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography } from '@mui/material';
 import { Btn, TextF, SmallBtn } from '../../components/global/CustomComponents';
 
 const getAuthHeaders = () => {
@@ -114,7 +114,7 @@ function BoardDetailPage() {
                         </Grid>
                         <Grid item xs={12}>
                             <Box sx={{ display: 'flex' }}>
-                                <Btn
+                                <Button
                                     onClick={() => handleSortChange('default')}
                                     sx={{
                                         color: sortType === 'default' ? 'black' : 'text.primary',
@@ -123,8 +123,8 @@ function BoardDetailPage() {
                                     }}
                                 >
                                     최신순
-                                </Btn>
-                                <Btn
+                                </Button>
+                                <Button
                                     onClick={() => handleSortChange('views')}
                                     sx={{
                                         color: sortType === 'views' ? 'black' : 'text.primary',
@@ -133,8 +133,8 @@ function BoardDetailPage() {
                                     }}
                                 >
                                     조회수순
-                                </Btn>
-                                <Btn
+                                </Button>
+                                <Button
                                     onClick={() => handleSortChange('likes')}
                                     sx={{
                                         color: sortType === 'likes' ? 'black' : 'text.primary',
@@ -143,7 +143,7 @@ function BoardDetailPage() {
                                     }}
                                 >
                                     추천순
-                                </Btn>
+                                </Button>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', ml: 'auto' }}>
                                     <Box sx={{ display: 'flex', gap: 1 }}>
                                         {(userRole === 'ADMIN' || loggedInUserId === board.userId) && (

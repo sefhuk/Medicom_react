@@ -30,8 +30,6 @@ function BoardList({ boards = [] }) {
 
       {userRole === 'ADMIN' && (
         <Btn
-          variant="contained"
-          color="primary"
           component={Link}
           to="/boards/create"
           sx={{ marginTop: 2, width: '100%' }}

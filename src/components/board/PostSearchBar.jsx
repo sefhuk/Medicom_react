@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Select, MenuItem } from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
-import { Btn, TextF } from '../../components/global/CustomComponents';
+import { Btntwo, TextF } from '../../components/global/CustomComponents';
 
 const PostSearchBar = ({ onSearch, boardId }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -52,9 +52,9 @@ const PostSearchBar = ({ onSearch, boardId }) => {
                 sx={{ mr: 1 }}
                 fullWidth
             />
-            <Btn onClick={handleSearch}>
-                검색
-            </Btn>
+            <Btntwo onClick={handleSearch}>
+                search
+            </Btntwo>
         </Box>
     );
 };
