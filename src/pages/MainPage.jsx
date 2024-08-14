@@ -42,7 +42,6 @@ function MainPage() {
         justifyContent: 'center',
         flexDirection: 'row',
         alignItems: 'center',
-        textAlign: 'center',
         height: '20vh',
         borderRadius: '20px',
         bgcolor: 'lightgray',
@@ -59,7 +58,7 @@ function MainPage() {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        width: '100%',
+        width: '100%', 
         boxSizing: 'border-box', //총 요소 너비에 padding을 추가
         // bgcolor:'#F3F4F0'
         ...sx,
@@ -92,6 +91,7 @@ function MainPage() {
           <MyLocationOutlinedIcon sx={{  color: 'black', marginRight: 1 }} />
           <Typography variant="h8" sx={{ color: 'black' }}>
             {auth.isLoggedIn ? address || '위치 설정 중...' : '위치 설정'} 
+            {/* 비로그인 상태에서 위치 안보임  */}
           </Typography>
         </CustomBoxTypo>
       </Grid>
@@ -104,9 +104,6 @@ function MainPage() {
               <Banner /> {/* 배너 컴포넌트 사용 */}
             </Grid>
 
-
-
-            {/* 2단 */}
             <Grid item xs={12}>
               <CustomBoxTypo>
                 <Typography variant="h5" sx = {{fontWeight: 'bold'}}>병원 어디로 가지?</Typography>
@@ -114,14 +111,13 @@ function MainPage() {
             </Grid>
 
             <Grid item xs={6}>
-            <CustomBox onClick={handleChatPage} sx={{ bgcolor: '#4A885D', flexDirection:'column', height: '31vh' }}>
-              <CustomMiniBox>
-                <img src='/images/doctortwo.svg' alt="Doctor" style={{ marginTop: '1vh', width: '100%', height: '100%'}} />
-              </CustomMiniBox>
-              <Typography variant="h6" sx={{ marginTop: 3, color: 'white' }}>의사와 실시간 상담</Typography>
-              <Typography variant="h8" sx={{ marginBottom: 3, color: 'white' }}>전문의와 상담할 수 있어요.</Typography>
-            </CustomBox>
-
+              <CustomBox onClick={handleChatPage} sx={{ bgcolor: '#4A885D', flexDirection:'column', height: '31vh' }}>
+                <CustomMiniBox>
+                  <img src='/images/doctortwo.svg' alt="Doctor" style={{ marginTop: '1vh', width: '100%', height: '100%'}} />
+                </CustomMiniBox>
+                <Typography variant="h6" sx={{ marginTop: 2, color: 'white', fontWeight: 'bold' }}>의사 실시간 상담</Typography>
+              <Typography variant="h8" sx={{ marginBottom: 2, mx: 3, color: 'white' }}>전문의와 상담할 수 있어요.</Typography>
+              </CustomBox>
             </Grid>
             <Grid item xs={6}>
               <CustomBox onClick={handleAIPage} sx={{ bgcolor: '#4A885D', flexDirection:'column', height: '31vh' }}>
@@ -133,22 +129,19 @@ function MainPage() {
               </CustomBox>
             </Grid>
 
-
-
-            {/* 3단 */}
             <Grid item xs={12}>
               <CustomBoxTypo>
-                <Typography variant="h5" sx = {{ fontWeight: 'bold' }}>내 주변 진료과 찾기</Typography>
+                <Typography variant="h5" sx = {{fontWeight: 'bold'}}>내 주변 진료과 찾기</Typography>
               </CustomBoxTypo>
             </Grid>
 
             <Grid item xs={12}>
-              <CustomBox onClick={handleSearchPage} sx={{ height: '10vh', px: 2, textAlign: 'left', bgcolor:'#F3F4F0' }}>
-                <Box>
+              <CustomBox onClick={handleSearchPage} sx={{ height: '10vh', bgcolor:'#F3F4F0' }}>
+                <Box sx={{ flex: 1, marginLeft: 3 }}>
                   <Typography variant='h6'>진료과 기반 검색</Typography>
                   <Typography sx={{ color: 'gray' }}>진료과 별로 찾을 수 있어요.</Typography>
                 </Box>
-                <LocalHospitalIcon fontSize="large" sx={{ marginLeft: 'auto', height: '100%' }} />
+                <LocalHospitalIcon fontSize="large" sx={{ marginLeft: 'auto', marginRight: 3, height: '100%' }} />
               </CustomBox>
             </Grid>
 
