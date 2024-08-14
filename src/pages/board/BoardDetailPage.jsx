@@ -102,7 +102,7 @@ function BoardDetailPage() {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                                <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
                                     {board.name}
                                 </Typography>
                             </Box>
