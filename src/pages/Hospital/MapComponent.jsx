@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import MainContainer from '../../components/global/MainContainer';
-import { Box, Typography, Button, Container, Grid } from '@mui/material';
+import { Box, Typography, Container, Grid } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { axiosInstance } from '../../utils/axios';
 import { LocationContext } from '../../LocationContext';
-import { Btn, TextF } from '../../components/global/CustomComponents';
+import { Btn } from '../../components/global/CustomComponents';
 
 const MapComponent = () => {
   const { latitude, longitude } = useContext(LocationContext);
@@ -21,13 +21,14 @@ const MapComponent = () => {
   const { state } = routeLocation;
   const { departments = [] } = state || {};
 
+  // Fetch hospitals data
   useEffect(() => {
     const fetchHospitalsData = async () => {
       try {
         const response = await axiosInstance.get('/api/hospitals/all');
         setHospitals(response.data);
         console.log('병원 데이터를 가져왔습니다:', response.data);
-        handleDepartmentSearch();
+        handleDepartmentSearch(); // 초기 데이터 로드 시 검색
       } catch (error) {
         setError(error.message);
         console.error('병원 데이터 가져오기 오류:', error);
@@ -37,6 +38,7 @@ const MapComponent = () => {
     fetchHospitalsData();
   }, []);
 
+  // Filter hospitals based on location
   useEffect(() => {
     if (latitude && longitude && hospitals.length > 0) {
       const distance = (lat1, lng1, lat2, lng2) => {
@@ -60,6 +62,7 @@ const MapComponent = () => {
     }
   }, [latitude, longitude, hospitals]);
 
+  // Initialize the map
   useEffect(() => {
     if (mapLoaded && latitude && longitude) {
       const mapDiv = document.getElementById('map');
@@ -74,6 +77,7 @@ const MapComponent = () => {
     }
   }, [mapLoaded, latitude, longitude]);
 
+  // Update markers on the map
   useEffect(() => {
     if (map && filteredHospitals.length > 0) {
       markers.forEach(marker => marker.setMap(null));
@@ -102,6 +106,7 @@ const MapComponent = () => {
     }
   }, [map, filteredHospitals, selectedHospital]);
 
+  // Load Naver Maps script
   useEffect(() => {
     const loadMapScript = () => {
       if (!window.naver || !window.naver.maps) {
@@ -125,6 +130,7 @@ const MapComponent = () => {
     };
   }, []);
 
+  // Handle department search
   const handleDepartmentSearch = () => {
     if (departments.length === 0) {
       setError('부서명이 입력되지 않았습니다.');
@@ -166,9 +172,12 @@ const MapComponent = () => {
     }
   };
 
+  // Automatically invoke handleDepartmentSearch when filteredHospitals is updated
   useEffect(() => {
-    handleDepartmentSearch();
-  }, [departments]);
+    if (filteredHospitals.length > 0) {
+      handleDepartmentSearch();
+    }
+  }, [filteredHospitals]);
 
   const handleReservation = () => {
     if (selectedHospital) {
@@ -179,7 +188,7 @@ const MapComponent = () => {
   };
 
   const handleViewAll = () => {
-    navigate('/hospitals/list');
+    navigate('/hospitals/list', { state: { departments } });
   };
 
   return (
@@ -195,7 +204,7 @@ const MapComponent = () => {
             </Grid>
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <Box sx={{ bgcolor: '#F3F4F0', padding: 2, borderRadius: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
+                <Box sx={{ marginLeft: 2 }}>
                   <Typography variant='body1'>
                     현재 위치 5km 이내
                   </Typography>
@@ -203,18 +212,12 @@ const MapComponent = () => {
                     {departments.join(', ')}
                   </Typography>
                 </Box>
-                <Btn onClick={handleDepartmentSearch}>
-                  병원 찾기
-                </Btn>
               </Box>
             </Grid>
             <Grid item xs={12} sx={{ marginTop: 2}}>
-              <Box sx = {{ bgcolor: '#F3F4F0', padding: 2, display: 'flex', borderRadius: '30px', justifyContent: 'space-between' }}>
+              <Box sx = {{ bgcolor: '#F3F4F0', padding: 2, display: 'flex', borderRadius: '30px', justifyContent: 'space-between',paddingLeft: 3, }}>
                 <Typography variant='body1'>
                   검색 결과 : {filteredHospitals.length}건
-                </Typography>
-                <Typography sx={{ fontSize: '12px', color: 'gray', ml: 'auto' }}>
-                  *병원 찾기 버튼을 눌러주세요
                 </Typography>
               </Box>
             </Grid>
@@ -222,7 +225,7 @@ const MapComponent = () => {
               <Box
                 id="map"
                 sx={{
-                  width: '100%', // 지도 박스의 너비를 95%로 설정
+                  width: '100%',
                   height: '400px',
                   mb: 2,
                 }}
@@ -275,13 +278,13 @@ const MapComponent = () => {
                       </li>
                     ))}
                   </ul>
-                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}> {/* 버튼을 오른쪽으로 정렬 */}
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Btn onClick={handleReservation} sx={{ marginTop: '10px' }}>
                       병원 예약
                     </Btn>
                   </Box>
                 </Box>
-          )}
+              )}
             </Grid>
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>                    
               <Btn onClick={handleViewAll}>
@@ -292,7 +295,6 @@ const MapComponent = () => {
         </Box>
       </Container>
     </MainContainer>
-
   );
 };
 

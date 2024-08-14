@@ -5,8 +5,8 @@ import PostList from '../../components/board/PostList';
 import MainContainer from '../../components/global/MainContainer';
 import Pagination from '../../components/board/Pagination';
 import PostSearchBar from '../../components/board/PostSearchBar';
-import { Button, Grid, Container, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography } from '@mui/material';
-import { Btn, TextF } from '../../components/global/CustomComponents';
+import { Grid, Container, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography } from '@mui/material';
+import { Btn, TextF, SmallBtn } from '../../components/global/CustomComponents';
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
@@ -26,12 +26,12 @@ function BoardDetailPage() {
     const [error, setError] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [sortType, setSortType] = useState('default');
-    const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
 
     const userRole = localStorage.getItem('userRole');
     const loggedInUserId = Number(localStorage.getItem('userId'));
 
+    // Fetch posts with search and sort functionality
     const fetchPosts = useCallback((page, query, sort) => {
         setLoading(true);
         let url = `/posts/board/${id}`;
@@ -57,6 +57,7 @@ function BoardDetailPage() {
         .finally(() => setLoading(false));
     }, [id]);
 
+    // Fetch board info and posts initially
     useEffect(() => {
         axiosInstance.get(`/boards/${id}`, { headers: getAuthHeaders() })
             .then(response => setBoard(response.data))
@@ -76,10 +77,9 @@ function BoardDetailPage() {
         }
     };
 
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-        setCurrentPage(0);
-        fetchPosts(0, query, sortType);
+    const handleSearch = (result) => {
+        setPosts(result.content);
+        setTotalPages(result.totalPages);
     };
 
     const handlePageChange = (page) => {
@@ -114,7 +114,7 @@ function BoardDetailPage() {
                         </Grid>
                         <Grid item xs={12}>
                             <Box sx={{ display: 'flex' }}>
-                                <Button
+                                <Btn
                                     onClick={() => handleSortChange('default')}
                                     sx={{
                                         color: sortType === 'default' ? 'black' : 'text.primary',
@@ -123,8 +123,8 @@ function BoardDetailPage() {
                                     }}
                                 >
                                     최신순
-                                </Button>
-                                <Button
+                                </Btn>
+                                <Btn
                                     onClick={() => handleSortChange('views')}
                                     sx={{
                                         color: sortType === 'views' ? 'black' : 'text.primary',
@@ -133,8 +133,8 @@ function BoardDetailPage() {
                                     }}
                                 >
                                     조회수순
-                                </Button>
-                                <Button
+                                </Btn>
+                                <Btn
                                     onClick={() => handleSortChange('likes')}
                                     sx={{
                                         color: sortType === 'likes' ? 'black' : 'text.primary',
@@ -143,10 +143,10 @@ function BoardDetailPage() {
                                     }}
                                 >
                                     추천순
-                                </Button>
+                                </Btn>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', ml: 'auto' }}>
                                     <Box sx={{ display: 'flex', gap: 1 }}>
-                                        {(userRole === 'ADMIN' || loggedInUserId === userId) && (
+                                        {(userRole === 'ADMIN' || loggedInUserId === board.userId) && (
                                             <>
                                                 <Btn component={Link} to={`/boards/update/${id}`} sx={{ marginRight: 1, width: '15px' }}>
                                                     UPDATE
@@ -179,8 +179,8 @@ function BoardDetailPage() {
                 <DialogTitle>게시판 삭제</DialogTitle>
                 <DialogContent>정말로 게시판을 삭제하시겠습니까?</DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)} color="primary">취소</Button>
-                    <Button onClick={handleDeleteBoard} color="error">삭제</Button>
+                    <Btn onClick={() => setOpenDialog(false)} color="primary">취소</Btn>
+                    <Btn onClick={handleDeleteBoard} color="error">삭제</Btn>
                 </DialogActions>
             </Dialog>
         </MainContainer>

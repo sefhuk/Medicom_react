@@ -61,14 +61,31 @@ const StyledButtonTwo = styled(Button)(({ theme }) => ({
 }));
 
 // Btn 컴포넌트
-const Btn = ({ type = 'button', ...props }) => {
-  return <StyledButton type={type} {...props}>{props.children}</StyledButton>;
+const Btn = ({ ...props }) => {
+  return <StyledButton  {...props}>{props.children}</StyledButton>;
 };
 
-const Btntwo = ({ type = 'button', ...props }) => {
-    return <StyledButtonTwo type={type} {...props}>{props.children}</StyledButtonTwo>;
+const Btntwo = ({ ...props }) => {
+    return <StyledButtonTwo {...props}>{props.children}</StyledButtonTwo>;
 }
 
+const SmallBtn = (props) => {
+  return <StyledSmallButton {...props}>{props.children}</StyledSmallButton>;
+};
+
+const StyledSmallButton = styled(Button)(({ theme }) => ({
+  backgroundColor: '#E9E9E9',
+  color: '#000',
+  width: '90px',
+  height: '30px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '30px',
+  '&:hover': {
+    backgroundColor: '#E2E2E2',
+  },
+}));
 
 // 컴포넌트 export
-export { TextF, Btn, Btntwo };
+export { TextF, Btn, Btntwo, SmallBtn };

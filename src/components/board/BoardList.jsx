@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Button, Typography, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
-import { Btn, TextF } from '../../components/global/CustomComponents';
+import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
+import { Btn } from '../../components/global/CustomComponents';
 
 function BoardList({ boards = [] }) {
   const userRole = localStorage.getItem('userRole');
@@ -18,13 +18,6 @@ function BoardList({ boards = [] }) {
               to={`/boards/${board.id}`}
               sx={{ borderBottom: '1px solid #ddd' }}
             >
-              <ListItemIcon>
-                <img 
-                  src='/images/Contract.png'
-                  alt="Board Icon" 
-                  style={{ width: 30, height: 30, borderRadius: '50%' }} 
-                />
-              </ListItemIcon>
               <ListItemText primary={board.name} />
             </ListItem>
           ))}
@@ -36,16 +29,15 @@ function BoardList({ boards = [] }) {
       )}
 
       {userRole === 'ADMIN' && (
-        <Box sx = {{display: 'flex', justifyContent: 'center'}}>
         <Btn
+          variant="contained"
+          color="primary"
           component={Link}
           to="/boards/create"
-          sx={{ marginTop: 2, width: '30%', py: 3 }}
-          >
+          sx={{ marginTop: 2, width: '100%' }}
+        >
           새 게시판 만들기
         </Btn>
-        </Box>
-        
       )}
     </Box>
   );

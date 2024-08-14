@@ -1,48 +1,37 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Select, MenuItem } from '@mui/material';
+import { Box, Select, MenuItem } from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
-import { Btntwo, TextF } from '../../components/global/CustomComponents';
+import { Btn, TextF } from '../../components/global/CustomComponents';
 
-const PostSearchBar = ({ onSearch }) => {
+const PostSearchBar = ({ onSearch, boardId }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchType, setSearchType] = useState('title');
 
     const handleSearch = async () => {
+        if (!boardId) {
+            alert("게시판 ID가 설정되지 않았습니다.");
+            return;
+        }
+
         try {
-            const params = { page: 0, size: 6 };
-            let response;
+            const params = {
+                page: 0,
+                size: 6,
+                [searchType]: searchTerm,
+            };
 
-            if (searchTerm) {
-                if (searchType === 'title') {
-                    params.title = searchTerm;
-                    response = await axiosInstance.get('/posts/search', { params });
-                } else {
-                    params.userName = searchTerm;
-                    response = await axiosInstance.get('/posts/searchByUserName', { params });
-                }
-            } else {
+            const endpoint = `/posts/board/${boardId}/search`;
 
-                response = await axiosInstance.get('/posts', { params });
-            }
+            const response = await axiosInstance.get(endpoint, { params });
 
             if (response.data.content.length === 0) {
-                alert("해당 제목을 찾을 수 없습니다.");
+                alert("검색 결과가 없습니다.");
             } else {
                 onSearch(response.data);
             }
         } catch (error) {
-            if (error.response && error.response.data) {
-                const { codeName, message } = error.response.data;
-                if (codeName === "USER_NOT_FOUND") {
-                    alert(`존재하지 않는 아이디 입니다.`);
-                } else {
-                    console.error("Error fetching search results:", error);
-                    alert("An error occurred while fetching search results.");
-                }
-            } else {
-                console.error("Error fetching search results:", error);
-                alert("An unexpected error occurred.");
-            }
+            console.error("Error fetching search results:", error);
+            alert("검색 중 오류가 발생했습니다.");
         }
     };
 
@@ -57,16 +46,15 @@ const PostSearchBar = ({ onSearch }) => {
                 <MenuItem value="userName">이름</MenuItem>
             </Select>
             <TextF
+                label={searchType === 'title' ? '제목으로 검색' : '사용자 이름으로 검색'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                sx={{ mr: 1 }}
                 fullWidth
-                sx={{ marginRight: 2 }}
             />
-            <Btntwo
-                onClick={handleSearch}
-            >
-                Search
-            </Btntwo>
+            <Btn onClick={handleSearch}>
+                검색
+            </Btn>
         </Box>
     );
 };
