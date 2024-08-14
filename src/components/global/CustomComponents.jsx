@@ -1,8 +1,10 @@
 import React from 'react';
+import { Box } from '@mui/material';
 import { TextField, Button } from '@mui/material';
 import { styled } from '@mui/system';
 
-// TextF 컴포넌트
+
+// StyledTextField 컴포넌트
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
     borderRadius: '40px',
@@ -25,10 +27,10 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 
 // TextF 컴포넌트
 const TextF = (props) => {
-    return <StyledTextField {...props} />;
+  return <StyledTextField {...props} />;
 };
 
-// Btn 컴포넌트
+// StyledButton 컴포넌트
 const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#E9E9E9',
   color: '#000',
@@ -43,26 +45,29 @@ const StyledButton = styled(Button)(({ theme }) => ({
   },
 }));
 
+const StyledButtonTwo = styled(Button)(({ theme }) => ({
+    backgroundColor: 'var(--main-common)',
+    color: 'white',
+    width: '130px',
+    height: '50px',
+    px : 3,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '30px',
+    '&:hover': {
+      backgroundColor: 'var(--main-deep)',
+    },
+}));
+
+// Btn 컴포넌트
 const Btn = (props) => {
   return <StyledButton {...props}>{props.children}</StyledButton>;
 };
 
-const SmallBtn = (props) => {
-  return <StyledSmallButton {...props}>{props.children}</StyledSmallButton>;
-};
+const Btntwo = (props) => {
+    return <StyledButtonTwo {...props}>{props.children}</StyledButtonTwo>;
+}
 
-const StyledSmallButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#E9E9E9',
-  color: '#000',
-  width: '90px',
-  height: '30px',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: '30px',
-  '&:hover': {
-    backgroundColor: '#E2E2E2',
-  },
-}));
-
-export { TextF, Btn, SmallBtn };
+// 컴포넌트 export
+export { TextF, Btn, Btntwo };

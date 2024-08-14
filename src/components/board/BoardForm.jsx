@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Box } from '@mui/material';
+import { TextField, Button, Container, Typography, Box, Grid } from '@mui/material';
+import { Btntwo, TextF } from '../../components/global/CustomComponents';
 
 function BoardForm({ initialValues = {}, onSubmit }) {
   const [name, setName] = useState(initialValues.name || '');
@@ -10,31 +11,32 @@ function BoardForm({ initialValues = {}, onSubmit }) {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{
-          mt: 3,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant="h3" gutterBottom>
-          {initialValues.id ? 'Update Board' : 'Create Board'}
-        </Typography>
-        <TextField
-          label="Board Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        <Button variant="contained" color="primary" type="submit" fullWidth>
-          {initialValues.id ? 'Update Board' : 'Create Board'}
-        </Button>
+    <Container sx= {{display: 'flex', alignItems: 'center'}}>
+      <Box sx={{ flexGrow: 1, marginTop: 2 }}>
+        <Grid container spacing={2} sx={{ marginTop : '30%'}}>
+           <Grid item xs={12}>
+              <Box component="form" onSubmit={handleSubmit}
+              sx = {{ display: 'flex', justifyContent: 'center'}}>
+                  <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                    {initialValues.id ? '게시판 수정' : '게시판 생성'}
+                  </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <TextF
+                label="Board Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Btntwo type="submit" sx = {{width: '100%'}}>
+                {initialValues.id ? 'Update Board' : 'Create Board'}
+              </Btntwo>
+            </Grid>
+        </Grid>
       </Box>
     </Container>
   );

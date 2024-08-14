@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { Box, Typography, Container, Pagination } from '@mui/material';
 import { LocationContext } from '../LocationContext';
 import MainContainer from '../components/global/MainContainer';
-import { Btn, TextF } from '../components/global/CustomComponents';;
+import { Btntwo, Btn, TextF } from '../components/global/CustomComponents';;
 
 function OtherLocationPage() {
   const [address, setAddress] = useState('');
@@ -111,17 +111,24 @@ function OtherLocationPage() {
 
   return (
     <MainContainer>
-      <Container sx={{ my: 3 }}>
+      <Container sx={{ marginTop: 1 }}>
         <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>주소를 검색해주세요.</Typography>
         <Typography variant="body2" gutterBottom style={{ whiteSpace: 'pre-line' }}>
           - 도로명 + 건물 번호{'\n'}- 건물명 + 번지{'\n'}- 건물명 혹은 아파트명
         </Typography>
-        <TextF
-          value={address}
-          onChange={setAddress}
-          onKeyDown={handleKeyDown}
-        />
-
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <TextF
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                fullWidth
+                sx={{ marginRight: 2 }}
+            />
+            <Btntwo
+                onClick={() => handleSearch(1)}
+            >
+                Search
+            </Btntwo>
+        </Box>
         <Box sx={{ marginTop: 2 }}>
           {results.map((result, index) => (
             <Box
@@ -144,17 +151,17 @@ function OtherLocationPage() {
           ))}
         </Box>
 
-        <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <Pagination
             count={totalPages}
             page={currentPage}
             size="small"
             onChange={handlePageChange}
           />
-        </Box>
-        <Btn onClick={handleSubmit} sx={{ marginTop: 2 }}>
+          <Btn onClick={handleSubmit} sx={{ marginTop: 2 }}>
           이 위치로 이동
-        </Btn>
+          </Btn>
+        </Box>
       </Container>
     </MainContainer>
   );
