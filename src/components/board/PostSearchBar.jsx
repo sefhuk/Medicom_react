@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Select, MenuItem } from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
+import { Btntwo, TextF } from '../../components/global/CustomComponents';
 
 const PostSearchBar = ({ onSearch }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -55,14 +56,17 @@ const PostSearchBar = ({ onSearch }) => {
                 <MenuItem value="title">Title</MenuItem>
                 <MenuItem value="userName">User Name</MenuItem>
             </Select>
-            <TextField
-                variant="outlined"
-                label={`Search by ${searchType === 'title' ? 'Title' : 'User Name'}`}
+            <TextF
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ mr: 1 }}
+                fullWidth
+                sx={{ marginRight: 2 }}
             />
-            <Button variant="contained" color="primary" onClick={handleSearch}>Search</Button>
+            <Btntwo
+                onClick={handleSearch}
+            >
+                Search
+            </Btntwo>
         </Box>
     );
 };
