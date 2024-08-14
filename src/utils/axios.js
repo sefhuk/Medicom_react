@@ -1,5 +1,8 @@
 import axios, { request } from 'axios';
 import { useNavigate } from 'react-router';
+import { deleteCookie } from '../utils/cookies';
+import { useSetRecoilState } from 'recoil';
+import { userauthState } from '../utils/atom';
 
 export const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -9,7 +12,9 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   response => response,
   async error => {
+    const setAuthState = useSetRecoilState(userauthState);
     const originalRequest = error.config;
+    const navigate = useNavigate();
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
@@ -28,7 +33,6 @@ axiosInstance.interceptors.response.use(
         setAuthState({ isLoggedIn: false });
         localStorage.removeItem('token');
         deleteCookie('refreshToken');
-        navigate = useNavigate();
         navigate('/login')
         return Promise.reject(e);
       }

@@ -20,13 +20,13 @@ const BookmarksPage = () => {
   const [state, setState] = useState({
     bookmarks: [],
     dialogOpen: false,
+    selectedHospital: null,
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookmarks = async () => {
-      setState(prevState => ({ ...prevState }));
       try {
         const token = localStorage.getItem('token');
         const response = await axiosInstance.get('/bookmark', {
@@ -50,9 +50,6 @@ const BookmarksPage = () => {
           bookmarks: bookmarksWithHospitalData,
         }));
       } catch (error) {
-        setState(prevState => ({
-          ...prevState,
-        }));
         console.error(error);
       }
     };
@@ -68,6 +65,7 @@ const BookmarksPage = () => {
       dialogOpen: true,
     }));
   };
+
   const handleCloseDialog = () => {
     setState(prevState => ({
       ...prevState,
@@ -75,8 +73,29 @@ const BookmarksPage = () => {
       dialogOpen: false,
     }));
   };
+
   const handleReservationClick = (hospitalId) => {
     navigate(`/hospitals/maps/${hospitalId}/reservation`);
+  };
+
+  const handleDeleteBookmark = async (hospitalId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axiosInstance.delete(`/bookmark/${hospitalId}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+
+
+      setState(prevState => ({
+        ...prevState,
+        bookmarks: prevState.bookmarks.filter(bookmark => bookmark.hospitalId !== hospitalId),
+        dialogOpen: false,
+      }));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -87,27 +106,42 @@ const BookmarksPage = () => {
             나의 즐겨찾기
           </Typography>
           <Box sx={{ margin: '20px 0', borderBottom: '1px solid grey' }}></Box>
-          <List component="nav" aria-label="bookmarked">
-            {state.bookmarks.map((bookmark) => (
-              <React.Fragment key={bookmark.id}>
-                <ListItem
-                  button
-                  onClick={() => handleHospitalClick(bookmark.hospital.id)}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <ListItemText primary={bookmark.hospital.name} />
-                  <Button variant="contained" color="black">
-                    병원 정보 보기
-                  </Button>
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-            ))}
-          </List>
+          {state.bookmarks.length === 0 ? (
+            <Typography variant="body1" sx={{ textAlign: 'left', marginTop: 3 }}>
+              즐겨찾기한 병원이 없습니다.
+            </Typography>
+          ) : (
+            <List component="nav" aria-label="bookmarked">
+              {state.bookmarks.map((bookmark) => (
+                <React.Fragment key={bookmark.id}>
+                  <ListItem
+                    button
+                    onClick={() => handleHospitalClick(bookmark.hospital.id)}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <ListItemText primary={bookmark.hospital.name} />
+                    <Box>
+                      <Button variant="contained" color="black" sx={{ marginRight: '10px' }}>
+                        병원 정보 보기
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleDeleteBookmark(bookmark.hospital.id)}
+                      >
+                        즐겨찾기 삭제
+                      </Button>
+                    </Box>
+                  </ListItem>
+                  <Divider />
+                </React.Fragment>
+              ))}
+            </List>
+          )}
           <Dialog
             open={state.dialogOpen}
             onClose={handleCloseDialog}
@@ -124,7 +158,6 @@ const BookmarksPage = () => {
                   <Typography variant="body2">전화번호 : {state.selectedHospital.telephoneNumber.length > 4 ? state.selectedHospital.telephoneNumber : '제공되지 않음'}</Typography>
                 </>
               )}
-
             </DialogContent>
             <DialogActions>
               <Button onClick={() => handleReservationClick(state.selectedHospital.id)} color="primary">

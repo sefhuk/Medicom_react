@@ -12,13 +12,18 @@ import { Button, ButtonGroup } from '@mui/material';
 import { Loading } from '../../components/Loading';
 import InsertMessage from '../../components/chatMessage/InsertMessage';
 
-const fetchData = async (id, setMessages, setError) => {
+const fetchData = async (id, setMessages, setError, navigate) => {
   try {
     const response = await axiosInstance.get(`/chat-messages`, {
       params: {
         chatRoomId: id
       }
     });
+
+    if (typeof response.data !== 'object') {
+      throw new Error();
+    }
+
     setMessages(response.data);
 
     if (response.data.length !== 0) {
@@ -30,8 +35,8 @@ const fetchData = async (id, setMessages, setError) => {
     try {
       setError(err.response.data.message);
     } catch (err) {
-      console.log(err);
-      alert('잘못된 접근입니다. 다시 시도해주세요');
+      alert('잘못된 접근입니다');
+      navigate('/');
     }
   }
 };
@@ -72,7 +77,6 @@ function ChatPage() {
       try {
         alert(err.response.data.message);
       } catch (err) {
-        console.log(err);
         alert('잘못된 접근입니다. 다시 시도해주세요');
         navigate('/');
       }
@@ -92,11 +96,7 @@ function ChatPage() {
   };
 
   useEffect(() => {
-    try {
-      fetchData(params.chatRoomId, setMessages, setError);
-    } catch (err) {
-      alert('잘못된 접근입니다');
-    }
+    fetchData(params.chatRoomId, setMessages, setError, navigate);
 
     if (chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '비활성화') {
       setLoading(false);
@@ -204,7 +204,7 @@ function ChatPage() {
         {error && <div>{error}</div>}
         {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' &&
           chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId && <InsertMessage />}
-        {messages &&
+        {messages.length !== 0 &&
           messages.map((e, idx) => {
             return e.user.id === Number(auth.userId) ? (
               <Message
