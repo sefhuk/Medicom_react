@@ -1,36 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { useLocation } from 'react-router-dom';  // useLocation을 import
 import { axiosInstance } from '../../utils/axios';
 import MainContainer from '../../components/global/MainContainer';
+import { LocationContext } from '../../LocationContext';
 
-// 거리 계산 함수 (위도와 경도를 이용해 두 지점 간의 거리를 계산)
+// Haversine formula to calculate distance between two lat/lng points
 const getDistance = (lat1, lon1, lat2, lon2) => {
-  const toRad = (value) => value * Math.PI / 180;
-  const R = 6371; // 지구의 반경 (킬로미터)
-  
+  const toRad = (x) => (x * Math.PI) / 180;
+  const R = 6371; // Radius of the Earth in km
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
             Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+  return R * c; // Distance in km
 };
 
-const HospitalList = () => {
-  const location = useLocation();
-  const departmentsFromState = location.state?.departments || [];
-  
+const HospitalResult = () => {
+  const location = useLocation(); // useLocation 훅 사용
+  const departmentsFromState = location.state?.departments || []; // 전달된 departments를 가져옴
+
+  const { latitude, longitude } = useContext(LocationContext);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [departmentInput, setDepartmentInput] = useState('');
-  const [departments, setDepartments] = useState(departmentsFromState);
+  const [departments, setDepartments] = useState(departmentsFromState); // 초기 상태로 설정
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [searchParams, setSearchParams] = useState({
     departmentNames: departmentsFromState,
     page: 0,
@@ -39,14 +39,17 @@ const HospitalList = () => {
 
   const pageSize = 10;
 
-  // departments 상태가 변경될 때 departmentInput을 업데이트합니다.
+  useEffect(() => {
+    console.log('Received departments from navigate:', departmentsFromState); // 콘솔에 departments 값 출력
+  }, [departmentsFromState]);
+
   useEffect(() => {
     if (departments.length > 0) {
-      const departmentNames = departments.join(', '); // 배열을 문자열로 변환
+      const departmentNames = departments.join(', ');
+      console.log('Initialized departmentNames:', departmentNames); // 콘솔 출력
       setDepartmentInput(departmentNames);
-      console.log('Departments from state:', departments); // 콘솔에 departments 출력
     }
-  }, [departments]);
+  }, [departments]); // departments가 변경될 때만 실행
 
   useEffect(() => {
     const loadMapScript = () => {
@@ -72,66 +75,29 @@ const HospitalList = () => {
   }, []);
 
   useEffect(() => {
-    if (mapLoaded && selectedHospital) {
-      const { latitude, longitude } = selectedHospital;
-      const mapDiv = document.getElementById(`map-${selectedHospital.id}`);
-      if (mapDiv && window.naver && window.naver.maps) {
-        const map = new window.naver.maps.Map(mapDiv, {
-          center: new window.naver.maps.LatLng(latitude, longitude),
-          zoom: 15,
-        });
-
-        new window.naver.maps.Marker({
-          position: new window.naver.maps.LatLng(latitude, longitude),
-          map: map,
-          title: selectedHospital.name,
-        });
-      }
-    }
-  }, [mapLoaded, selectedHospital]);
-
-  // 현재 위치를 가져와서 상태에 저장
-  useEffect(() => {
-    const getCurrentLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            console.log(`현재 위치 - 위도: ${latitude}, 경도: ${longitude}`);
-            setCurrentLocation({ latitude, longitude });
-          },
-          (error) => {
-            console.error('현재 위치를 가져오는 데 실패했습니다:', error);
-          }
-        );
-      } else {
-        console.error('현재 위치를 가져오는 데 실패했습니다.');
-      }
-    };
-
-    getCurrentLocation();
-  }, []);
-
-  useEffect(() => {
     const fetchHospitals = async () => {
-      if (!currentLocation) return;
-      
+      if (!latitude || !longitude) return;
+
       setLoading(true);
       try {
         const departmentNamesString = searchParams.departmentNames.join(', ');
-  
+
         const response = await axiosInstance.get('/api/search', {
           params: {
             ...searchParams,
-            latitude: currentLocation.latitude,
-            longitude: currentLocation.longitude,
-            departmentNames: departmentNamesString, // 문자열로 변환된 부서명 전달
+            latitude,
+            longitude,
+            departmentNames: departmentNamesString,
           },
         });
-      
+
         console.log('API 응답 데이터:', response.data);
-      
-        setHospitals(response.data.content);
+
+        let hospitalsData = response.data.content;
+
+        hospitalsData.sort((a, b) => a.distance - b.distance);
+
+        setHospitals(hospitalsData);
         setTotalPages(response.data.totalPages || 0);
       } catch (error) {
         setError(error);
@@ -140,9 +106,9 @@ const HospitalList = () => {
         setLoading(false);
       }
     };
-  
+
     fetchHospitals();
-  }, [searchParams, currentPage, currentLocation]);
+  }, [searchParams, currentPage, latitude, longitude]);
 
   const handlePageClick = (page) => {
     setCurrentPage(page);
@@ -151,17 +117,17 @@ const HospitalList = () => {
 
   const handleSearch = () => {
     const departmentNames = departmentInput.split(',').map(name => name.trim()).filter(name => name);
-  
+
     setSearchParams(prev => ({
       ...prev,
-      departmentNames, // 배열로 변환된 부서명 전달
+      departmentNames,
       page: 0,
       size: pageSize,
     }));
   };
 
   const handleDepartmentInputChange = (e) => {
-    setDepartmentInput(e.target.value); // 부서 입력 값 업데이트
+    setDepartmentInput(e.target.value);
   };
 
   const handleMapClick = (hospital) => {
@@ -225,8 +191,8 @@ const HospitalList = () => {
             hospitals.map(hospital => (
               <li key={hospital.id}>
                 <strong>{hospital.name}</strong> - {hospital.district} {hospital.subDistrict} - {hospital.telephoneNumber} - 
-                {currentLocation && hospital.latitude !== null && hospital.longitude !== null
-                  ? `${getDistance(currentLocation.latitude, currentLocation.longitude, hospital.latitude, hospital.longitude).toFixed(2)} km`
+                {latitude && longitude && hospital.latitude !== null && hospital.longitude !== null
+                  ? `${getDistance(latitude, longitude, hospital.latitude, hospital.longitude).toFixed(2)} km`
                   : '위치 정보 없음'}
                 <button onClick={() => handleMapClick(hospital)}>
                   {selectedHospital?.id === hospital.id ? '지도 닫기' : '지도 보기'}
@@ -246,4 +212,4 @@ const HospitalList = () => {
   );
 };
 
-export default HospitalList;
+export default HospitalResult;
