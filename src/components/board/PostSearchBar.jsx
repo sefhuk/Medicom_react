@@ -51,7 +51,7 @@ const PostSearchBar = ({ onSearch }) => {
             <Select
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
-                sx={{ mr: 1 }}
+                sx={{ mr: 1, borderRadius: '30px' }}
             >
                 <MenuItem value="title">Title</MenuItem>
                 <MenuItem value="userName">User Name</MenuItem>
