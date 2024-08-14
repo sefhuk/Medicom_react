@@ -6,12 +6,12 @@ import MainContainer from '../../components/global/MainContainer';
 import Pagination from '../../components/board/Pagination';
 import PostSearchBar from '../../components/board/PostSearchBar';
 import { Grid, Container, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography } from '@mui/material';
-import { Btn, TextF, SmallBtn } from '../../components/global/CustomComponents';
+import { Btn, SmallBtn } from '../../components/global/CustomComponents';
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
     return {
-      'Authorization': `${token}`
+        'Authorization': `${token}`
     };
 };
 
@@ -31,7 +31,6 @@ function BoardDetailPage() {
     const userRole = localStorage.getItem('userRole');
     const loggedInUserId = Number(localStorage.getItem('userId'));
 
-    // Fetch posts with search and sort functionality
     const fetchPosts = useCallback((page, query, sort) => {
         setLoading(true);
         let url = `/posts/board/${id}`;
@@ -57,7 +56,6 @@ function BoardDetailPage() {
         .finally(() => setLoading(false));
     }, [id]);
 
-    // Fetch board info and posts initially
     useEffect(() => {
         axiosInstance.get(`/boards/${id}`, { headers: getAuthHeaders() })
             .then(response => setBoard(response.data))
@@ -89,7 +87,7 @@ function BoardDetailPage() {
 
     const handleSortChange = (newSortType) => {
         setSortType(newSortType);
-        setCurrentPage(0); // 정렬 기준이 바뀔 때 페이지를 초기화
+        setCurrentPage(0);
         fetchPosts(0, searchQuery, newSortType);
     };
 
@@ -110,7 +108,8 @@ function BoardDetailPage() {
                             </Box>
                         </Grid>
                         <Grid item xs={12}>
-                            <PostSearchBar onSearch={handleSearch} />
+
+                            <PostSearchBar onSearch={handleSearch} boardId={id} />
                         </Grid>
                         <Grid item xs={12}>
                             <Box sx={{ display: 'flex' }}>
@@ -166,7 +165,7 @@ function BoardDetailPage() {
                                             </>
                                         )}
                                     </Box>
-                                    <Btn component={Link} to={`/posts/create/${id}`} sx={{ ml: 2, width: '15px' }}>
+                                    <Btn component={Link} to={`/posts/create/${id}`} sx={{ ml: 2 }}>
                                         글쓰기
                                     </Btn>
                                 </Box>
