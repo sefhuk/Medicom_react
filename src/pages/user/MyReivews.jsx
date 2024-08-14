@@ -120,11 +120,20 @@ const MyReviews = () => {
 
   return (
     <MainContainer>
-      <Paper elevation={6} sx={{ margin: "10px", padding: 3, borderRadius: "10px" }}>
-        <Typography variant="h5" sx={{ display: "inline", color: "#6E6E6E" }}>
+      <Paper
+        elevation={0}
+        sx={{
+          margin: "10px",
+          padding: 3,
+          borderRadius: "10px",
+          backgroundColor: 'var(--paper-soft)',
+          minHeight: '-webkit-fill-available',
+          height: 'fit-content'
+        }}>
+        <Typography variant="h5" sx={{ display: 'inline', color: 'var(--main-common)' }}>
           나의 리뷰
         </Typography>
-        <Box sx={{ margin: "20px 0", borderBottom: "1px solid grey" }}></Box>
+        <Box sx={{ margin: "20px 0", borderBottom: "1px solid var(--main-common)" }}></Box>
         {reviews.length > 0 ? (
           reviews.map((review) => (
             <MyReviewCard
@@ -143,7 +152,12 @@ const MyReviews = () => {
             />
           ))
         ) : (
-          <Typography variant="body1">작성한 리뷰가 없습니다.</Typography>
+          <Typography
+            variant="body1"
+            sx={{ color: 'var(--main-common)', textAlign: 'center', marginTop: 3 }}
+          >
+            작성한 리뷰가 없습니다.
+          </Typography>
         )}
       </Paper>
     </MainContainer>
