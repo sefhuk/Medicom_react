@@ -11,7 +11,6 @@ const StyledButton = styled(Button)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
   borderRadius: '30px',
-  padding: '10px',
   '&:hover': {
     backgroundColor: '#E2E2E2',
   },
