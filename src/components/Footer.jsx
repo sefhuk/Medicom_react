@@ -36,7 +36,6 @@ function Footer() {
 
 
   return (
-      <Box sx={{ width: '100%' }}>
         <StyledFooterBar value={value} onChange={handleChange}>
           <BottomNavigationAction
           label="Home"
@@ -58,7 +57,6 @@ function Footer() {
             value="my" 
             icon={<PersonOutlineOutlinedIcon />} />
         </StyledFooterBar>
-      </Box>
   );
 };
 

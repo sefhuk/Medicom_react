@@ -5,7 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { axiosInstance } from '../../utils/axios';
 import MainContainer from "../../components/global/MainContainer";
 import { deleteCookie } from '../../utils/cookies';
-import { userauthState } from '../../utils/atom';
+import { chatRoomState, userauthState } from '../../utils/atom';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
@@ -33,6 +33,9 @@ const MyPage = () => {
     postcodeOpen: false,
     addressData: { address: '', addressDetail: '' },
     imageUploadOpen: false,
+    deleteConfirmOpen: false,
+    deleteInput: '',
+    deleteError: ''
   });
   const handleAvatarClick = () => {
     setState((prevState) => ({
@@ -64,6 +67,7 @@ const MyPage = () => {
   const navigate = useNavigate();
   const setAuthState = useSetRecoilState(userauthState);
   const auth = useRecoilValue(userauthState);
+  const setChatRoom = useSetRecoilState(chatRoomState);
 
   useEffect(() => {
     if (!auth.isLoggedIn) {
@@ -187,6 +191,7 @@ const MyPage = () => {
     setAuthState({ isLoggedIn: false });
     localStorage.removeItem('token');
     deleteCookie('refreshToken');
+    setChatRoom(c => ({ rooms: {}, selectedIndex: 0 }))
     navigate('/');
   };
 
@@ -198,8 +203,36 @@ const MyPage = () => {
     navigate('/admin-page');
   }
 
-  const { userInfo, editField, formData, dialogOpen, postcodeOpen, addressData, imageUploadOpen } = state;
+  const handleDeleteAccount = async () => {
+    if (state.deleteInput !== '메디콤탈퇴') {
+      setState((prevState) => ({
+        ...prevState,
+        deleteError: '탈퇴 확인을 위해 "메디콤탈퇴"를 정확히 입력해 주세요.'
+      }));
+      return;
+    }
 
+    try {
+      const token = localStorage.getItem('token');
+      await axiosInstance.delete('/users/my-page/delete', {
+        headers: {
+          Authorization: `${token}`
+        }
+      });
+
+      setAuthState({ isLoggedIn: false });
+      localStorage.removeItem('token');
+      deleteCookie('refreshToken');
+      setChatRoom(c => ({ rooms: {}, selectedIndex: 0 }))
+      window.alert("회원 탈퇴가 완료되었습니다.");
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const { userInfo, editField, formData, dialogOpen, postcodeOpen, addressData, imageUploadOpen, deleteConfirmOpen, deleteInput, deleteError } = state;
+  const userRole = localStorage.getItem('userRole');
 
   return (
     <MainContainer>
@@ -212,18 +245,27 @@ const MyPage = () => {
             나의 활동내역
           </Button>
           <Box sx={{ margin: '20px 0', borderBottom: '1px solid grey' }}></Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: '20px',
+              justifyContent: 'center'
+            }}
+          >
             <Avatar
-              sx={{ width: '40px', height: '40px', marginRight: '10px', cursor: 'pointer' }}
+              sx={{ width: 100, height: 100, cursor: 'pointer', marginBottom: '10px' }}
               onClick={handleAvatarClick}
               src={userInfo?.image}
             >
               {userInfo && !userInfo.img ? userInfo.name[0] : ''}
             </Avatar>
-            <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {userInfo ? userInfo.role : '일반 회원'}
+            <Typography variant="body1" sx={{ textAlign: 'center' }}>
+              {userRole === 'USER' ? '일반 회원' : userRole === 'DOCTOR' ? '의사 회원' : '관리자 회원' }
             </Typography>
           </Box>
+          <Box sx={{ margin: '20px 0', borderBottom: '1px solid grey' }}></Box>
           <form>
             {['name', 'birthday', 'email'].map((field) => (
               <Box key={field} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
@@ -302,11 +344,15 @@ const MyPage = () => {
             <Button variant="contained" color="black" onClick={handleLogoutClick}>
               로그아웃
             </Button>
-            <Button variant="contained" color="error">
+            <Button variant="contained" color="error" onClick={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: true }))}>
               회원 탈퇴
             </Button>
           </Box>
-          <Button variant="contained" color="black" onClick={OnClickAdminPage}>관리자 페이지</Button>
+          {userRole === 'ADMIN' && (
+            <Button variant="contained" color="black" onClick={OnClickAdminPage}>
+              관리자 페이지
+            </Button>
+          )}
         </ThemeProvider>
       </Paper>
       <Dialog open={imageUploadOpen} onClose={handleImageUploadClose}>
@@ -389,6 +435,34 @@ const MyPage = () => {
           </Button>
           <Button onClick={() => handleSaveClick(editField)} color="primary">
             저장
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={deleteConfirmOpen} onClose={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: false }))}>
+        <DialogTitle>정말 탈퇴하시겠습니까?</DialogTitle>
+        <DialogContent>
+          <Typography>
+            계정을 탈퇴하시려면 아래 입력란에 <strong>메디콤탈퇴</strong>를 입력해 주세요.
+          </Typography>
+          <TextField
+            label="메디콤탈퇴 입력"
+            fullWidth
+            value={deleteInput}
+            onChange={(e) => setState((prevState) => ({ ...prevState, deleteInput: e.target.value, deleteError: '' }))}
+            margin="normal"
+          />
+          {deleteError && (
+            <Typography color="error" variant="body2">
+              {deleteError}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: false }))} color="primary">
+            취소
+          </Button>
+          <Button onClick={handleDeleteAccount} color="error">
+            탈퇴
           </Button>
         </DialogActions>
       </Dialog>

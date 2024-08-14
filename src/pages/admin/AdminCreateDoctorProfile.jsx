@@ -37,17 +37,17 @@ export const AdminCreateDoctorProfile = () =>{
   }
 
   const OnClickSearchButton = async (hospitalName) => {
+    setLoading(true);
     try{
       if(hospitalName.length == 0) return;
-      setLoading(true);
       const response = await axiosInstance.get(`/api/hospitals/contained-name`, {params: {name : hospitalName}});
       setHospitals(response.data);
       setHospitalSelectDialogOpen(true);
       OnCloseSearchHospitalDialog();
-      setLoading(false);
     } catch(exception){
       console.log(exception);
     }
+    setLoading(false);
   }
 
   const OnClickCreateProfile = async () => {

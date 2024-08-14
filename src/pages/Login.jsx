@@ -58,7 +58,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       console.log('구글 로그인 시작');
-      window.location.href = 'https://kdt-cloud-3-team05-final.elicecoding.com/oauth2/authorization/google';
+      window.location.href = 'https://kdt-cloud-3-team05-final.elicecoding.com/login/oauth2/authorization/google';
       navigate('/');
     } catch (error) {
       navigate('/');

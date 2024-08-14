@@ -24,6 +24,8 @@ function PostList({ posts = [], boardId }) {
               <TableCell>제목</TableCell>
               <TableCell align="right">작성자</TableCell>
               <TableCell align="right">작성일</TableCell>
+              <TableCell align="right">조회수</TableCell>
+              <TableCell align="right">추천수</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -49,11 +51,13 @@ function PostList({ posts = [], boardId }) {
                         ? new Date(post.createdAt).toLocaleDateString()
                         : 'Unknown Date')}
                   </TableCell>
+                  <TableCell align="right">{post.viewCount || 0}</TableCell> {/* 조회수 표시 */}
+                  <TableCell align="right">{post.likeCount || 0}</TableCell> {/* 좋아요 수 표시 */}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} align="center">게시글이 존재하지 않습니다.</TableCell>
+                <TableCell colSpan={5} align="center">게시글이 존재하지 않습니다.</TableCell>
               </TableRow>
             )}
           </TableBody>

@@ -110,6 +110,13 @@ const router = createBrowserRouter([
           { path: 'hospitals/list', element: <HospitalResult />},
           { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
 
+          { path: 'hospitals', element: <HospitalList /> },
+          { path: 'hospitals/maps', element: <MapComponent /> },
+          { path: 'hospitals/list', element: <HospitalResult />},
+
+
+          { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
+
           {
             path: 'admin-page',
             element: <AdminPage />

@@ -5,7 +5,7 @@ import PostList from '../../components/board/PostList';
 import MainContainer from '../../components/global/MainContainer';
 import Pagination from '../../components/board/Pagination';
 import PostSearchBar from '../../components/board/PostSearchBar';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography } from '@mui/material';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 function BoardDetailPage() {
     const { id } = useParams();
@@ -17,11 +17,23 @@ function BoardDetailPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
+    const [sortType, setSortType] = useState('default');
+    const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
 
-    const fetchPosts = useCallback((page, query) => {
+    const userRole = localStorage.getItem('userRole');
+    const loggedInUserId = Number(localStorage.getItem('userId'));
+
+    const fetchPosts = useCallback((page, query, sort) => {
         setLoading(true);
-        axiosInstance.get(`/posts/board/${id}`, {
+        let url = `/posts/board/${id}`;
+        if (sort === 'views') {
+            url = `/posts/board/${id}/sortedByViewCount`;
+        } else if (sort === 'likes') {
+            url = `/posts/board/${id}/sortedByLikeCount`;
+        }
+
+        axiosInstance.get(url, {
             params: {
                 title: query || '',
                 page: page,
@@ -41,8 +53,8 @@ function BoardDetailPage() {
             .then(response => setBoard(response.data))
             .catch(() => setError('게시판 정보를 가져오는 데 실패했습니다.'));
 
-        fetchPosts(currentPage, searchQuery);
-    }, [id, currentPage, searchQuery, fetchPosts]);
+        fetchPosts(currentPage, searchQuery, sortType);
+    }, [id, currentPage, searchQuery, sortType, fetchPosts]);
 
     const handleDeleteBoard = async () => {
         try {
@@ -55,14 +67,23 @@ function BoardDetailPage() {
         }
     };
 
-    const handleSearch = (data) => {
-        setPosts(data.content);
-        setTotalPages(data.totalPages);
+    const handleSearch = (query) => {
+        setSearchQuery(query);
         setCurrentPage(0);
+        fetchPosts(0, query, sortType);
     };
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
+        fetchPosts(page, searchQuery, sortType);
+    };
+
+    const handleSortChange = (event, newSortType) => {
+        if (newSortType !== null) {
+            setSortType(newSortType);
+            setCurrentPage(0); // 정렬 기준이 바뀔 때 페이지를 초기화
+            fetchPosts(0, searchQuery, newSortType);
+        }
     };
 
     if (loading) return <CircularProgress />;
@@ -71,12 +92,13 @@ function BoardDetailPage() {
 
     return (
         <MainContainer>
-            <Box sx={{ marginTop: 2 }}>
+            <Box sx={{ marginTop: 2, padding: '0 16px'}}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
                     <PostSearchBar onSearch={handleSearch} />
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
                     <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{board.name}</Typography>
+                    {(userRole === 'ADMIN' || loggedInUserId === userId) && (
                     <Box>
                         <Button component={Link} to={`/boards/update/${id}`} variant="contained" color="primary" sx={{ marginRight: 1 }}>
                             UPDATE
@@ -85,6 +107,26 @@ function BoardDetailPage() {
                             DELETE
                         </Button>
                     </Box>
+                    )}
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
+                    <ToggleButtonGroup
+                        value={sortType}
+                        exclusive
+                        onChange={handleSortChange}
+                        aria-label="sort posts"
+                        sx={{ marginBottom: 2 }}
+                    >
+                        <ToggleButton value="default" aria-label="latest">
+                            최신순
+                        </ToggleButton>
+                        <ToggleButton value="views" aria-label="views">
+                            조회수순
+                        </ToggleButton>
+                        <ToggleButton value="likes" aria-label="likes">
+                            추천순
+                        </ToggleButton>
+                    </ToggleButtonGroup>
                 </Box>
                 <PostList posts={posts} boardId={id} />
                 <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>

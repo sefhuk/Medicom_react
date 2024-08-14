@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import MainContainer from '../components/global/MainContainer';
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, Typography, IconButton, Button } from '@mui/material';
 import MyLocationIcon from '@mui/icons-material/MyLocation'; // Add Material UI icon
 import { LocationContext } from '../LocationContext'; 
 import { useNavigate } from 'react-router';
@@ -11,6 +11,7 @@ function LocationPage() {
   const [center, setCenter] = useState(null);
   const [address, setAddress] = useState('');
   const [infoWindowContent, setInfoWindowContent] = useState('현재 위치');
+  const [map, setMap] = useState(null);
   const { latitude, longitude, address: contextAddress, setLatitude, setLongitude, setAddress: setContextAddress } = useContext(LocationContext); 
   const navigate = useNavigate();
 
@@ -21,6 +22,8 @@ function LocationPage() {
   const handleOtherPage = () => {
     navigate('other');
   };
+  
+  //현재 위치 로드
   const fetchCurrentPosition = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -69,7 +72,46 @@ function LocationPage() {
     }
   };
   
+  //사용자 클릭 위치 로드
+  const handleMapClick = (e) => {
+    const lat = e.coord.lat();
+    const lng = e.coord.lng();
+    setCenter({ lat, lng });
+    fetchAddressFromCoordinates(lat, lng);
+  };
+  
+  const fetchAddressFromCoordinates = (lat, lng) => {
+    setAddress('현재 위치 로딩 중...');
+    axiosInstance.get(`/api/geocode/coords-to-address?lat=${lat}&lng=${lng}`)
+      .then(response => {
+        const data = response.data;
+        if (data && data.results && data.results.length > 0) {
+          const result = data.results[0].region;
+          const addressParts = [
+            result.area1?.name || '',
+            result.area2?.name || '',
+            result.area3?.name || '',
+            result.area4?.name || ''
+          ];
+          const address = addressParts.join(' ');
+          setAddress(address.trim());
 
+          // LocationContext에 현재 위치 저장
+          setLatitude(lat);
+          setLongitude(lng);
+          setContextAddress(address.trim());
+        } else {
+          setAddress('주소를 찾을 수 없습니다.');
+        }
+      })
+      .catch(error => {
+        console.error('Geocoding API error:', error);
+        setAddress('주소를 가져오지 못했습니다.');
+      });
+  };
+
+
+  //현위치 표시
   useEffect(() => {
     if (latitude && longitude) {
       setCenter({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
@@ -80,18 +122,20 @@ function LocationPage() {
     }
   }, [latitude, longitude, contextAddress]);
 
+
+  //지도 표시
   useEffect(() => {
     if (window.naver && mapRef.current && center) {
-      const map = new window.naver.maps.Map(mapRef.current, {
+      const newMap = new window.naver.maps.Map(mapRef.current, {
         center: new window.naver.maps.LatLng(center.lat, center.lng),
-        zoom: 15
+        zoom: 30, //지도 확대
       });
-
+  
       const marker = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(center.lat, center.lng),
-        map: map
+        map: newMap,
       });
-
+  
       const infowindow = new window.naver.maps.InfoWindow({
         content: `
           <div style="
@@ -104,27 +148,35 @@ function LocationPage() {
           ">
             <strong style="font-size: 16px; color: #333;">${infoWindowContent}</strong>
             <div style="margin-top: 5px; color: #666;">${address.trim() || '주소를 찾을 수 없습니다.'}</div>
-          </div>`
+          </div>`,
       });
-
-      infowindow.open(map, marker);
+  
+      infowindow.open(newMap, marker);
+      setMap(newMap);  //맵 객체 저장
+  
+      window.naver.maps.Event.addListener(newMap, 'click', handleMapClick);
+  
     }
   }, [center, address, infoWindowContent]);
 
+
+
   return (
     <MainContainer>
-        <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+        <Box sx={{ position: 'relative', width: '100%', height: '100%'}}>
         <Box
             ref={mapRef}
             sx={{
             width: '100%',
             height: '100%',
+            margin: 0,
+            padding: 0,
             }}
         />
         <Box
             sx={{
             position: 'absolute',
-            bottom: '20px',
+            bottom: '10%',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
@@ -168,8 +220,8 @@ function LocationPage() {
             onClick={fetchCurrentPosition}
             sx={{
             position: 'absolute',
-            bottom: '20px', // Position 20px from the bottom
-            right: '20px', // Position 20px from the right
+            bottom: '5dvh',
+            right: '20px',
             bgcolor: '#fff',
             borderRadius: '50%',
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
