@@ -329,7 +329,7 @@ function PostDetailPage() {
                 src={img.link}
                 alt={`image-${index}`}
                 style={{
-                  width: '425px',
+                  width: '386px',
                   height: 'auto',
                   objectFit: 'cover',
                   cursor: 'pointer',
