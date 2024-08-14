@@ -44,6 +44,7 @@ import ShowEmail from './components/ShowEmail';
 
 import ReservationSuccess from './pages/Hospital/ReservationSuccess'
 import ReservationList from './pages/user/ReservationList';
+import { MyPosts } from './pages/user/MyPosts.jsx';
 
 
 const queryClient = new QueryClient();
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
   {
     path: '/reservations',
     element: <ReservationList />
+  },
+  {
+    path: 'my-posts',
+    element: <MyPosts />
   },
   // 로그인 필요없는 페이지 - 끝
   {
@@ -141,12 +146,6 @@ const router = createBrowserRouter([
             path: 'my-page',
             element: <MyPage />
           },
-
-
-
-
-
-
           {
             path: 'my-reviews', // 새로운 경로 추가
             element: <MyReviews />
