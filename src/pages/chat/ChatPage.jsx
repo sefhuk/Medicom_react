@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { axiosInstance } from '../../utils/axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import MainContainer from '../../components/global/MainContainer';
 import Message from '../../components/chatMessage/Message';
 import { Stomp } from '@stomp/stompjs';
@@ -11,35 +11,6 @@ import { chatRoomState, stompState, userauthState } from '../../utils/atom';
 import { Button, ButtonGroup } from '@mui/material';
 import { Loading } from '../../components/Loading';
 import InsertMessage from '../../components/chatMessage/InsertMessage';
-
-const fetchData = async (id, setMessages, setError, navigate) => {
-  try {
-    const response = await axiosInstance.get(`/chat-messages`, {
-      params: {
-        chatRoomId: id
-      }
-    });
-
-    if (typeof response.data !== 'object') {
-      throw new Error();
-    }
-
-    setMessages(response.data);
-
-    if (response.data.length !== 0) {
-      axiosInstance.post('/chat-messages/status', {
-        id: Number(response.data[response.data.length - 1].id)
-      });
-    }
-  } catch (err) {
-    try {
-      setError(err.response.data.message);
-    } catch (err) {
-      alert('잘못된 접근입니다');
-      navigate('/');
-    }
-  }
-};
 
 function ChatPage() {
   const params = useParams();
@@ -95,10 +66,39 @@ function ChatPage() {
     stompClient.publish({ destination: `/app/chat/${Number(params.chatRoomId)}`, body });
   };
 
-  useEffect(() => {
-    fetchData(params.chatRoomId, setMessages, setError, navigate);
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get(`/chat-messages`, {
+        params: {
+          chatRoomId: Number(params.chatRoomId)
+        }
+      });
 
-    if (chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '비활성화') {
+      if (typeof response.data !== 'object') {
+        throw new Error();
+      }
+
+      setMessages(response.data);
+
+      if (response.data.length !== 0) {
+        axiosInstance.post('/chat-messages/status', {
+          id: Number(response.data[response.data.length - 1].id)
+        });
+      }
+    } catch (err) {
+      try {
+        setError(err.response.data.message);
+      } catch (err) {
+        alert('잘못된 접근입니다');
+        navigate('/');
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+
+    if (chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '비활성화') {
       setLoading(false);
       return;
     }
@@ -175,7 +175,7 @@ function ChatPage() {
   }, []);
 
   useEffect(() => {
-    if (tmp != null) tmp.current.scrollIntoView({ behavior: 'smooth' });
+    tmp?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
@@ -183,6 +183,10 @@ function ChatPage() {
       setStomp({ sendMessage: sendMessage });
     }
   }, [stompClient]);
+
+  if (!chatRoom?.rooms[`ch_${params.chatRoomId}`]) {
+    return <Navigate to={'/chatlist'} />;
+  }
 
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
@@ -202,7 +206,7 @@ function ChatPage() {
       <div style={{ height: '1dvh' }} />
       <div style={{ overflowY: 'scroll', height: '72dvh' }}>
         {error && <div>{error}</div>}
-        {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' &&
+        {chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '수락 대기' &&
           chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId && <InsertMessage />}
         {messages.length !== 0 &&
           messages.map((e, idx) => {
@@ -222,7 +226,7 @@ function ChatPage() {
               />
             );
           })}
-        {chatRoom.rooms[`ch_${params.chatRoomId}`].status.status === '수락 대기' &&
+        {chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '수락 대기' &&
           chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id !== auth.userId && (
             <div
               style={{
@@ -246,9 +250,9 @@ function ChatPage() {
         <ChatInput
           sendMessage={sendMessage}
           enable={
-            (chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId ||
+            (chatRoom.rooms[`ch_${params.chatRoomId}`]?.user1.id === auth.userId ||
               chatRoom.rooms[`ch_${params.chatRoomId}`]?.user2?.id === auth.userId) &&
-            chatRoom.rooms[`ch_${params.chatRoomId}`].status.status !== '비활성화'
+            chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status !== '비활성화'
           }
         />
       </div>

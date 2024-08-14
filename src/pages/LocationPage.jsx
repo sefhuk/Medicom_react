@@ -5,6 +5,7 @@ import MyLocationIcon from '@mui/icons-material/MyLocation'; // Add Material UI 
 import { LocationContext } from '../LocationContext'; 
 import { useNavigate } from 'react-router';
 import { axiosInstance } from '../utils/axios';
+import Btn from '../components/global/Btn';
 
 function LocationPage() {
   const mapRef = useRef(null);
@@ -183,52 +184,23 @@ function LocationPage() {
             gap: '10px',
             }}
         >
-            <Box
-            onClick={handleHomepage}
-            sx={{
-                bgcolor: '#F3F4F0',
-                height: '5%',
-                borderRadius: '30px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
-                padding: '10px',
-                cursor: 'pointer',
-            }}
-            >
-            <Typography>현재 위치 설정</Typography>
-            </Box>
-            <Box
-            onClick={handleOtherPage}
-            sx={{
-                bgcolor: '#F3F4F0',
-                height: '5%',
-                borderRadius: '30px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
-                padding: '10px',
-                cursor: 'pointer',
-            }}
-            >
-            <Typography>다른 위치 찾기</Typography>
-            </Box>
-        </Box>
-        <IconButton
+            <Btn onClick={handleHomepage}>이 위치로 설정</Btn>
+            <Btn onClick={handleOtherPage}>다른 위치 찾기</Btn>
+            <IconButton
             onClick={fetchCurrentPosition}
             sx={{
-            position: 'absolute',
-            bottom: '5dvh',
-            right: '20px',
+            width: 35,
+            height: 35,
+            display: 'flex',
             bgcolor: '#fff',
             borderRadius: '50%',
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
             }}
         >
-            <MyLocationIcon sx={{ color: '#A2CA71' }} />
+            <MyLocationIcon sx={{ color: '#4A885D' }} />
         </IconButton>
+        </Box>
+        
         </Box>
     </MainContainer>
   );
