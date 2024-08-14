@@ -204,7 +204,7 @@ const MapComponent = () => {
             </Grid>
             <Grid item xs={12} sx={{ marginTop: 2 }}>
               <Box sx={{ bgcolor: '#F3F4F0', padding: 2, borderRadius: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
+                <Box sx={{ marginLeft: 2 }}>
                   <Typography variant='body1'>
                     현재 위치 5km 이내
                   </Typography>
@@ -215,7 +215,7 @@ const MapComponent = () => {
               </Box>
             </Grid>
             <Grid item xs={12} sx={{ marginTop: 2}}>
-              <Box sx = {{ bgcolor: '#F3F4F0', padding: 2, display: 'flex', borderRadius: '30px', justifyContent: 'space-between' }}>
+              <Box sx = {{ bgcolor: '#F3F4F0', padding: 2, display: 'flex', borderRadius: '30px', justifyContent: 'space-between',paddingLeft: 3, }}>
                 <Typography variant='body1'>
                   검색 결과 : {filteredHospitals.length}건
                 </Typography>
