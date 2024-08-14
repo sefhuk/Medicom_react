@@ -100,14 +100,24 @@ const BookmarksPage = () => {
 
   return (
     <MainContainer>
-      <Paper elevation={6} sx={{ margin: '10px', padding: 3, borderRadius: '10px' }}>
+      <Paper
+        elevation={0}
+        sx={{
+          margin: '10px',
+          padding: 3,
+          borderRadius: '10px',
+          backgroundColor: 'var(--paper-soft)',
+          minHeight: '-webkit-fill-available',
+          height: 'fit-content'
+        }}
+      >
         <ThemeProvider theme={theme}>
-          <Typography variant='h5' sx={{ display: 'inline', color: '#6E6E6E' }}>
+          <Typography variant='h5' sx={{ color: 'var(--main-common)' }}>
             나의 즐겨찾기
           </Typography>
-          <Box sx={{ margin: '20px 0', borderBottom: '1px solid grey' }}></Box>
+          <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
           {state.bookmarks.length === 0 ? (
-            <Typography variant="body1" sx={{ textAlign: 'left', marginTop: 3 }}>
+            <Typography variant="body1" sx={{ textAlign: 'left', marginTop: 3, color: 'var(--main-common)' }}>
               즐겨찾기한 병원이 없습니다.
             </Typography>
           ) : (
@@ -121,16 +131,37 @@ const BookmarksPage = () => {
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
+                      padding: '10px 0',
                     }}
                   >
                     <ListItemText primary={bookmark.hospital.name} />
                     <Box>
-                      <Button variant="contained" color="black" sx={{ marginRight: '10px' }}>
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          borderColor: 'var(--main-common)',
+                          color: 'var(--main-common)',
+                          marginRight: 2,
+                          borderRadius: '20px',
+                          '&:hover': {
+                            backgroundColor: 'var(--paper-deep)',
+                            borderColor: 'var(--main-common)',
+                          }
+                        }}
+                        onClick={() => handleHospitalClick(bookmark.hospital.id)}
+                      >
                         병원 정보 보기
                       </Button>
                       <Button
                         variant="contained"
-                        color="error"
+                        sx={{
+                          backgroundColor: 'red',
+                          color: 'white',
+                          borderRadius: '20px',
+                          '&:hover': {
+                            backgroundColor: 'darkred',
+                          },
+                        }}
                         onClick={() => handleDeleteBookmark(bookmark.hospital.id)}
                       >
                         즐겨찾기 삭제
@@ -145,7 +176,6 @@ const BookmarksPage = () => {
           <Dialog
             open={state.dialogOpen}
             onClose={handleCloseDialog}
-            fullWidth
             maxWidth="md"
           >
             <DialogTitle>병원 정보</DialogTitle>
@@ -160,10 +190,30 @@ const BookmarksPage = () => {
               )}
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => handleReservationClick(state.selectedHospital.id)} color="primary">
+              <Button
+                sx={{
+                  backgroundColor: 'var(--main-deep)',
+                  color: 'white',
+                  borderRadius: '20px',
+                  '&:hover': {
+                    backgroundColor: 'var(--main-common)',
+                  },
+                }}
+                onClick={() => handleReservationClick(state.selectedHospital.id)}
+              >
                 예약하기
               </Button>
-              <Button onClick={handleCloseDialog} color="primary">
+              <Button
+                sx={{
+                  backgroundColor: '#E9E9E9',
+                  color: 'black',
+                  borderRadius: '20px',
+                  '&:hover': {
+                    backgroundColor: '#E2E2E2',
+                  },
+                }}
+                onClick={handleCloseDialog}
+              >
                 닫기
               </Button>
             </DialogActions>

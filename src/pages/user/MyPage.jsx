@@ -12,13 +12,13 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PostCodeModal from '../../components/PostCodeModal';
 import ProfileImageUpload from './ProfileImageUpload';
-
+import { TextF, Btn, Btntwo, SmallBtn } from '../../components/global/CustomComponents';
 const theme = createTheme({
   palette: {
     black: {
-      main: '#2E2F2F',
-      light: '#6E6E6E',
-      drak: '#151515',
+      main: 'var(--main-common)',
+      light: 'var(--paper-common)',
+      drak: 'var(--main-deep)',
       contrastText: '#E7E7E6',
     },
   },
@@ -236,15 +236,22 @@ const MyPage = () => {
 
   return (
     <MainContainer>
-      <Paper elevation={6} sx={{ margin: '10px', padding: 3, borderRadius: '10px' }}>
+      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)' }}>
         <ThemeProvider theme={theme}>
-          <Typography variant='h5' sx={{ display: 'inline', color: '#6E6E6E' }}>
+          <Typography variant='h5' sx={{ display: 'inline', color: 'var(--main-common)' }}>
             마이페이지
           </Typography>
-          <Button variant="contained" color="black" sx={{ float: 'right' }} onClick={handleMyActivity}>
+          <Btn sx={{
+            backgroundColor: 'var(--main-deep)',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: 'var(--main-common)',
+            },
+            float: 'right'
+          }} onClick={handleMyActivity}>
             나의 활동내역
-          </Button>
-          <Box sx={{ margin: '20px 0', borderBottom: '1px solid grey' }}></Box>
+          </Btn>
+          <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
           <Box
             sx={{
               display: 'flex',
@@ -255,21 +262,21 @@ const MyPage = () => {
             }}
           >
             <Avatar
-              sx={{ width: 100, height: 100, cursor: 'pointer', marginBottom: '10px' }}
+              sx={{ width: 100, height: 100, cursor: 'pointer', marginBottom: '10px', backgroundColor: 'var(--main-soft)' }}
               onClick={handleAvatarClick}
               src={userInfo?.image}
             >
               {userInfo && !userInfo.img ? userInfo.name[0] : ''}
             </Avatar>
-            <Typography variant="body1" sx={{ textAlign: 'center' }}>
-              {userRole === 'USER' ? '일반 회원' : userRole === 'DOCTOR' ? '의사 회원' : '관리자 회원' }
+            <Typography variant="body1" sx={{ textAlign: 'center', color: 'var(--main-common)' }}>
+              {userRole === 'USER' ? '일반 회원' : userRole === 'DOCTOR' ? '의사 회원' : '관리자 회원'}
             </Typography>
           </Box>
-          <Box sx={{ margin: '20px 0', borderBottom: '1px solid grey' }}></Box>
+          <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
           <form>
             {['name', 'birthday', 'email'].map((field) => (
               <Box key={field} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <TextField
+                <TextF
                   label={getFieldLabel(field)}
                   name={field}
                   type='text'
@@ -284,7 +291,7 @@ const MyPage = () => {
             ))}
             {['address', 'phoneNumber'].map((field) => (
               <Box key={field} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <TextField
+                <TextF
                   label={getFieldLabel(field)}
                   name={field}
                   type='text'
@@ -299,22 +306,22 @@ const MyPage = () => {
                 {editField === field ? (
                   <>
                     <IconButton onClick={() => handleSaveClick(field)}>
-                      <SaveIcon />
+                      <SaveIcon sx={{ color: 'var(--main-common)' }} />
                     </IconButton>
                     <IconButton onClick={handleCancelClick}>
-                      <CancelIcon />
+                      <CancelIcon sx={{ color: 'var(--main-common)' }} />
                     </IconButton>
                   </>
                 ) : (
                   <IconButton onClick={() => handleEditClick(field)}>
-                    <EditIcon />
+                    <EditIcon sx={{ color: 'var(--main-common)' }} />
                   </IconButton>
                 )}
               </Box>
             ))}
             {!userInfo?.provider && (
               <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <TextField
+                <TextF
                   label="비밀번호"
                   name="password"
                   type="password"
@@ -329,29 +336,47 @@ const MyPage = () => {
                 {editField === 'password' ? (
                   <>
                     <IconButton onClick={() => handleEditClick('password')}>
-                      <EditIcon />
+                      <EditIcon sx={{ color: 'var(--main-common)' }} />
                     </IconButton>
                   </>
                 ) : (
                   <IconButton onClick={() => handleEditClick('password')}>
-                    <EditIcon />
+                    <EditIcon sx={{ color: 'var(--main-common)' }} />
                   </IconButton>
                 )}
               </Box>
             )}
           </form>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginBottom: '10px' }}>
-            <Button variant="contained" color="black" onClick={handleLogoutClick}>
+            <SmallBtn
+              onClick={handleLogoutClick}
+              sx={{
+                backgroundColor: 'var(--main-soft)',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: 'var(--main-common)',
+                },
+              }}
+            >
               로그아웃
-            </Button>
-            <Button variant="contained" color="error" onClick={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: true }))}>
+            </SmallBtn>
+            <SmallBtn
+              onClick={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: true }))}
+              sx={{
+                backgroundColor: 'red',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: 'darkred',
+                },
+              }}
+            >
               회원 탈퇴
-            </Button>
+            </SmallBtn>
           </Box>
           {userRole === 'ADMIN' && (
-            <Button variant="contained" color="black" onClick={OnClickAdminPage}>
+            <Btntwo onClick={OnClickAdminPage}>
               관리자 페이지
-            </Button>
+            </Btntwo>
           )}
         </ThemeProvider>
       </Paper>
@@ -384,7 +409,7 @@ const MyPage = () => {
                   }}
                 />
                 <Button variant="contained" onClick={() => setState((prevState) => ({ ...prevState, postcodeOpen: true }))} sx={{ height: '40px', marginLeft: '10px' }}>
-                  주소 검색
+                  검색
                 </Button>
               </Box>
               <TextField
