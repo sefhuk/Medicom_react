@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
-import { Btn, TextF } from '../../components/global/CustomComponents';
+import { Btntwo, TextF } from '../../components/global/CustomComponents';
 
 const BoardSearchBar = ({ onSearch }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -25,21 +25,18 @@ const BoardSearchBar = ({ onSearch }) => {
     };
 
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, mx: 'auto', maxWidth: 600 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <TextF
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 fullWidth
                 sx={{ marginRight: 2 }}
             />
-            <Button
-                variant="contained"
-                color="primary"
+            <Btntwo
                 onClick={handleSearch}
-                sx={{ paddingX: 3 }}
             >
                 Search
-            </Button>
+            </Btntwo>
         </Box>
     );
 };
