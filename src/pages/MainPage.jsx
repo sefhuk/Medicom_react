@@ -120,7 +120,7 @@ function MainPage() {
               <CustomMiniBox>
                 <img src='/images/doctortwo.svg' alt="Doctor" style={{ marginTop: '1vh', width: '100%', height: '100%'}} />
               </CustomMiniBox>
-              <Typography variant="h6" sx={{ marginTop: 2, color: 'white', fontWeight: 'bold' }}>의사 실시간 상담</Typography>
+              <Typography variant="h6" sx={{ marginTop: 2, color: 'white' }}>의사 실시간 상담</Typography>
               <Typography variant="h8" sx={{ marginBottom: 2, mx: 3, color: 'white' }}>전문의와 상담할 수 있어요.</Typography>
             </CustomBox>
 
@@ -130,7 +130,7 @@ function MainPage() {
                 <CustomMiniBox>
                   <img src='/images/AItwo.svg' alt="Doctor" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
                 </CustomMiniBox>
-                <Typography variant="h6" sx={{ marginTop: 2, color: 'white', fontWeight: 'bold' }}>AI로 증상 진단</Typography>
+                <Typography variant="h6" sx={{ marginTop: 2, color: 'white'}}>AI로 증상 진단</Typography>
                 <Typography variant="h9" sx={{ marginBottom: 2, mx: 3, color: 'white' }}>AI가 바로 답변해줄거에요.</Typography>
               </CustomBox>
             </Grid>
@@ -151,16 +151,6 @@ function MainPage() {
                   <Typography sx={{ color: 'gray' }}>진료과 별로 찾을 수 있어요.</Typography>
                 </Box>
                 <LocalHospitalIcon fontSize="large" sx={{ marginLeft: 'auto', height: '100%' }} />
-              </CustomBox>
-            </Grid>
-
-            <Grid item xs={12}>
-              <CustomBox sx={{ height: '10vh', px: 2, textAlign: 'left', bgcolor:'#F3F4F0' }}>
-                <Box>
-                  <Typography variant='h6'>일반 검색</Typography>
-                  <Typography sx={{ color: 'gray' }}>모든 병원을 찾을 수 있어요.</Typography>
-                </Box>
-                <SearchIcon fontSize="large" sx={{ marginLeft: 'auto', height: '100%' }} />
               </CustomBox>
             </Grid>
           </Grid>
