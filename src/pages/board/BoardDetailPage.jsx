@@ -120,6 +120,9 @@ function BoardDetailPage() {
                                         color: sortType === 'default' ? 'black' : 'text.primary',
                                         fontWeight: sortType === 'default' ? 'bold' : 'normal',
                                         textTransform: 'none',
+                                        ':hover': {
+                                        backgroundColor: 'transparent'
+                                    }
                                     }}
                                 >
                                     최신순
@@ -130,6 +133,9 @@ function BoardDetailPage() {
                                         color: sortType === 'views' ? 'black' : 'text.primary',
                                         fontWeight: sortType === 'views' ? 'bold' : 'normal',
                                         textTransform: 'none',
+                                        ':hover': {
+                                        backgroundColor: 'transparent'
+                                    }
                                     }}
                                 >
                                     조회수순
@@ -139,7 +145,10 @@ function BoardDetailPage() {
                                     sx={{
                                         color: sortType === 'likes' ? 'black' : 'text.primary',
                                         fontWeight: sortType === 'likes' ? 'bold' : 'normal',
-                                        textTransform: 'none'
+                                        textTransform: 'none',
+                                        ':hover': {
+                                        backgroundColor: 'transparent'
+                                    }   
                                     }}
                                 >
                                     추천순
@@ -149,10 +158,10 @@ function BoardDetailPage() {
                                         {(userRole === 'ADMIN' || loggedInUserId === board.userId) && (
                                             <>
                                                 <Btn component={Link} to={`/boards/update/${id}`} sx={{ marginRight: 1, width: '15px' }}>
-                                                    UPDATE
+                                                    수정
                                                 </Btn>
                                                 <Btn onClick={() => setOpenDialog(true)} sx={{ bgcolor: 'red', width: '15px' }}>
-                                                    DELETE
+                                                    삭제
                                                 </Btn>
                                             </>
                                         )}
