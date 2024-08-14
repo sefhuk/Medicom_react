@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
-import { Btn, TextF } from '../../components/global/CustomComponents';
+import { Btntwo, TextF } from '../../components/global/CustomComponents';
 
 const BoardSearchBar = ({ onSearch }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -32,12 +32,12 @@ const BoardSearchBar = ({ onSearch }) => {
                 fullWidth
                 sx={{ marginRight: 2 }}
             />
-            <Btn
+            <Btntwo
                 onClick={handleSearch}
                 sx={{ paddingX: 3 }}
             >
                 Search
-            </Btn>
+            </Btntwo>
         </Box>
     );
 };

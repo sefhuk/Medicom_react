@@ -27,16 +27,13 @@ function BoardList({ boards = [] }) {
           게시판이 없습니다.
         </Typography>
       )}
-
-      {userRole === 'ADMIN' && (
+            {userRole === 'ADMIN' && (
         <Btn
-          variant="contained"
-          color="primary"
           component={Link}
           to="/boards/create"
-          sx={{ marginTop: 2, width: '100%' }}
+          sx={{ marginTop: 2, marginLeft: 'auto' }}
         >
-          새 게시판 만들기
+          게시판 생성
         </Btn>
       )}
     </Box>

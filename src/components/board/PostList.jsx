@@ -1,66 +1,46 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Box, Button, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link } from '@mui/material';
+import { Box, Button, Typography, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
 import { Btn, TextF } from '../../components/global/CustomComponents';
 
 function PostList({ posts = [], boardId }) {
+  const userRole = localStorage.getItem('userRole');
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">Posts</Typography>
-        <Btn
-          component={RouterLink}
-          to={`/posts/create/${boardId}`}
-        >
-          Create Post
-        </Btn>
-      </Box>
-      <TableContainer component={Paper} sx={{ borderRadius: '15px', boxShadow: 3 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>제목</TableCell>
-              <TableCell align="right">작성자</TableCell>
-              <TableCell align="right">작성일</TableCell>
-              <TableCell align="right">조회수</TableCell>
-              <TableCell align="right">추천수</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {posts.length > 0 ? (
-              posts.map((post) => (
-                <TableRow key={post.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell component="th" scope="row">
-                    <Link
-                      component={RouterLink}
-                      to={`/posts/${post.id}`}
-                      variant="body1"
-                      color="primary"
-                      sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-                    >
-                      {post.title || 'No Title'}
-                    </Link>
-                  </TableCell>
-                  <TableCell align="right">{post.userName || 'Unknown User'}</TableCell>
-                  <TableCell align="right">
-                    {post.updatedAt
-                      ? new Date(post.updatedAt).toLocaleDateString()
-                      : (post.createdAt
-                        ? new Date(post.createdAt).toLocaleDateString()
-                        : 'Unknown Date')}
-                  </TableCell>
-                  <TableCell align="right">{post.viewCount || 0}</TableCell> {/* 조회수 표시 */}
-                  <TableCell align="right">{post.likeCount || 0}</TableCell> {/* 좋아요 수 표시 */}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} align="center">게시글이 존재하지 않습니다.</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      
+    <Box sx={{ width: '100%' }}>
+      {posts.length > 0 ? (
+        <List>
+          {posts.map((post) => (
+            <ListItem
+              key={post.id}
+              button
+              component={RouterLink}
+              to={`/posts/${post.id}`}
+              sx={{ borderBottom: '1px solid #ddd', padding: 2 }}
+            >
+              <ListItemIcon>
+                <img 
+                  src='/images/Document.png' 
+                  alt="Post Icon" 
+                  style={{ width: 30, height: 30, borderRadius: '50%' }} 
+                />
+              </ListItemIcon>
+              <ListItemText
+                primary={post.title || 'No Title'}
+                secondary={`작성자: ${post.userName || 'Unknown User'} | 작성일: ${post.updatedAt
+                  ? new Date(post.updatedAt).toLocaleDateString()
+                  : (post.createdAt
+                    ? new Date(post.createdAt).toLocaleDateString()
+                    : 'Unknown Date')} | 조회수: ${post.viewCount || 0} | 추천수: ${post.likeCount || 0}`}
+              />
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <Typography variant="body1" color="textSecondary" align="center">
+          게시글이 존재하지 않습니다.
+        </Typography>
+      )}
     </Box>
   );
 }

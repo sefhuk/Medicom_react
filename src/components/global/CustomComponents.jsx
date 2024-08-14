@@ -61,11 +61,11 @@ const StyledButtonTwo = styled(Button)(({ theme }) => ({
 }));
 
 // Btn 컴포넌트
-const Btn = (props) => {
-  return <StyledButton {...props}>{props.children}</StyledButton>;
+const Btn = ({ ...props }) => {
+  return <StyledButton  {...props}>{props.children}</StyledButton>;
 };
 
-const Btntwo = (props) => {
+const Btntwo = ({ ...props }) => {
     return <StyledButtonTwo {...props}>{props.children}</StyledButtonTwo>;
 }
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, ListItemButton, ListItemIcon, Box, ListItemText, Divider, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Box, IconButton } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { chatRoomState, userauthState } from '../utils/atom';
@@ -9,6 +9,8 @@ import HttpsIcon from '@mui/icons-material/Https';
 import { axiosInstance } from '../utils/axios';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import Menu from '@mui/icons-material/Menu';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Nav = () => {
   const navigate = useNavigate();
@@ -21,7 +23,6 @@ const Nav = () => {
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
-
 
   const handleLoginClick = () => {
     navigate('/login');
@@ -36,33 +37,14 @@ const Nav = () => {
   };
 
   const handleLogoutClick = async () => {
-    const originAlert = window.alert;
-    window.alert = () => {}
     setAuthState({ isLoggedIn: false });
     setChatRoomState({ rooms: [], selectedIndex: 0 });
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     await axiosInstance.post('/user-logout');
     deleteCookie('refreshToken');
-    window.alert = originAlert;
     navigate('/');
   };
-
-  const LoginIcon = () => {
-    return (
-      <>
-        {auth.role === 'ADMIN' ? (
-          <IconButton>
-            <HttpsIcon fontSize='large' onClick={OnClickAdminPage}></HttpsIcon>
-          </IconButton>
-        ) : (<></>)}
-        <IconButton onClick={OnClickMyPage}>
-          <AccountCircleIcon fontSize='large'/>
-        </IconButton>
-        <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
-      </>
-    );
-  }
 
   const OnClickMyPage = () => {
     navigate('/my-page');
@@ -77,7 +59,7 @@ const Nav = () => {
   return (
     <AppBar position="static" sx={{ bgcolor: 'white', textAlign: 'center', boxShadow: 'none' }}>
       <Toolbar>
-      <IconButton
+        <IconButton
           size="large"
           edge="start"
           color="black"
@@ -87,16 +69,21 @@ const Nav = () => {
           {isHomePage ? <Menu /> : <ArrowBack />}
         </IconButton>
 
-        
-        <Box sx = {{my: 2, cursor: 'pointer'}} onClick={handleHomePage}>
-          <img src='/images/Group_Logo.svg'/>
+        <Box sx={{ my: 2, cursor: 'pointer' }} onClick={handleHomePage}>
+          <img src='/images/Group_Logo.svg' alt="Logo" />
         </Box>
-  
-        {auth.isLoggedIn ? (
-          <Button color="inherit" onClick={handleLogoutClick}>Logout</Button>
-        ) : (
-          <Button color="inherit" onClick={handleLoginClick}>Login</Button>
-        )}
+
+        <Box sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+          {auth.isLoggedIn ? (
+            <IconButton color="black" onClick={handleLogoutClick} sx={{ bgcolor: 'var(--paper-soft)' }}>
+              <LogoutIcon />
+            </IconButton>
+          ) : (
+            <IconButton color="black" onClick={handleLoginClick} sx={{ bgcolor: 'var(--paper-soft)' }}>
+              <LoginIcon />
+            </IconButton>
+          )}
+        </Box>
       </Toolbar>
     </AppBar>
   );

@@ -5,13 +5,13 @@ import PostList from '../../components/board/PostList';
 import MainContainer from '../../components/global/MainContainer';
 import Pagination from '../../components/board/Pagination';
 import PostSearchBar from '../../components/board/PostSearchBar';
-import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { Btn, SmallBtn } from '../../components/global/CustomComponents'; // Btn과 SmallBtn 컴포넌트를 import합니다.
+import { Grid, Container, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Alert, Box, Typography } from '@mui/material';
+import { Btn, SmallBtn } from '../../components/global/CustomComponents';
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
     return {
-      'Authorization': `${token}`
+        'Authorization': `${token}`
     };
 };
 
@@ -31,7 +31,6 @@ function BoardDetailPage() {
     const userRole = localStorage.getItem('userRole');
     const loggedInUserId = Number(localStorage.getItem('userId'));
 
-    // Fetch posts with search and sort functionality
     const fetchPosts = useCallback((page, query, sort) => {
         setLoading(true);
         let url = `/posts/board/${id}`;
@@ -57,7 +56,6 @@ function BoardDetailPage() {
         .finally(() => setLoading(false));
     }, [id]);
 
-    // Fetch board info and posts initially
     useEffect(() => {
         axiosInstance.get(`/boards/${id}`, { headers: getAuthHeaders() })
             .then(response => setBoard(response.data))
@@ -87,12 +85,10 @@ function BoardDetailPage() {
         fetchPosts(page, searchQuery, sortType);
     };
 
-    const handleSortChange = (event, newSortType) => {
-        if (newSortType !== null) {
-            setSortType(newSortType);
-            setCurrentPage(0); // 정렬 기준이 바뀔 때 페이지를 초기화
-            fetchPosts(0, searchQuery, newSortType);
-        }
+    const handleSortChange = (newSortType) => {
+        setSortType(newSortType);
+        setCurrentPage(0);
+        fetchPosts(0, searchQuery, newSortType);
     };
 
     if (loading) return <CircularProgress />;
@@ -101,56 +97,91 @@ function BoardDetailPage() {
 
     return (
         <MainContainer>
-            <Box sx={{ marginTop: 2, padding: '0 16px' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
-                    <PostSearchBar onSearch={handleSearch} boardId={id} />
+            <Container>
+                <Box sx={{ flexGrow: 1, marginTop: 2 }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                                    {board.name}
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+
+                            <PostSearchBar onSearch={handleSearch} boardId={id} />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Box sx={{ display: 'flex' }}>
+                                <Button
+                                    onClick={() => handleSortChange('default')}
+                                    sx={{
+                                        color: sortType === 'default' ? 'black' : 'text.primary',
+                                        fontWeight: sortType === 'default' ? 'bold' : 'normal',
+                                        textTransform: 'none',
+                                        ':hover': {
+                                        backgroundColor: 'transparent'
+                                    }
+                                    }}
+                                >
+                                    최신순
+                                </Button>
+                                <Button
+                                    onClick={() => handleSortChange('views')}
+                                    sx={{
+                                        color: sortType === 'views' ? 'black' : 'text.primary',
+                                        fontWeight: sortType === 'views' ? 'bold' : 'normal',
+                                        textTransform: 'none',
+                                        ':hover': {
+                                        backgroundColor: 'transparent'
+                                    }
+                                    }}
+                                >
+                                    조회수순
+                                </Button>
+                                <Button
+                                    onClick={() => handleSortChange('likes')}
+                                    sx={{
+                                        color: sortType === 'likes' ? 'black' : 'text.primary',
+                                        fontWeight: sortType === 'likes' ? 'bold' : 'normal',
+                                        textTransform: 'none',
+                                        ':hover': {
+                                        backgroundColor: 'transparent'
+                                    }   
+                                    }}
+                                >
+                                    추천순
+                                </Button>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', ml: 'auto' }}>
+                                    <Box sx={{ display: 'flex', gap: 1 }}>
+                                        {(userRole === 'ADMIN' || loggedInUserId === board.userId) && (
+                                            <>
+                                                <Btn component={Link} to={`/boards/update/${id}`} sx={{ marginRight: 1, width: '15px' }}>
+                                                    수정
+                                                </Btn>
+                                                <Btn onClick={() => setOpenDialog(true)} sx={{ bgcolor: 'red', width: '15px' }}>
+                                                    삭제
+                                                </Btn>
+                                            </>
+                                        )}
+                                    </Box>
+                                    <Btn component={Link} to={`/posts/create/${id}`} sx={{ ml: 2 }}>
+                                        글쓰기
+                                    </Btn>
+                                </Box>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <PostList posts={posts} boardId={id} />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+                                <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
+                            </Box>
+                        </Grid>  
+                    </Grid>
                 </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{board.name}</Typography>
-                    {(userRole === 'ADMIN' || loggedInUserId === board.userId) && (
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        <SmallBtn
-                          component={Link}
-                          to={`/boards/update/${id}`}
-                          variant="contained"
-                          color="primary"
-                        >
-                            UPDATE
-                        </SmallBtn>
-                        <SmallBtn
-                          variant="contained"
-                          color="error"
-                          onClick={() => setOpenDialog(true)}
-                        >
-                            DELETE
-                        </SmallBtn>
-                    </Box>
-                    )}
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
-                    <ToggleButtonGroup
-                        value={sortType}
-                        exclusive
-                        onChange={handleSortChange}
-                        aria-label="sort posts"
-                        sx={{ marginBottom: 2 }}
-                    >
-                        <ToggleButton value="default" aria-label="latest">
-                            최신순
-                        </ToggleButton>
-                        <ToggleButton value="views" aria-label="views">
-                            조회수순
-                        </ToggleButton>
-                        <ToggleButton value="likes" aria-label="likes">
-                            추천순
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                </Box>
-                <PostList posts={posts} boardId={id} />
-                <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-                    <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
-                </Box>
-            </Box>
+            </Container>
 
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <DialogTitle>게시판 삭제</DialogTitle>

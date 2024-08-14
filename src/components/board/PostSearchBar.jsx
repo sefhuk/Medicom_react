@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Select, MenuItem } from '@mui/material';
 import { axiosInstance } from '../../utils/axios';
-import { Btn, TextF } from '../../components/global/CustomComponents';
+import { Btntwo, TextF } from '../../components/global/CustomComponents';
 
 const PostSearchBar = ({ onSearch, boardId }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -40,10 +40,10 @@ const PostSearchBar = ({ onSearch, boardId }) => {
             <Select
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
-                sx={{ mr: 1 }}
+                sx={{ mr: 1, borderRadius: '30px' }}
             >
                 <MenuItem value="title">제목</MenuItem>
-                <MenuItem value="userName">사용자 이름</MenuItem>
+                <MenuItem value="userName">이름</MenuItem>
             </Select>
             <TextF
                 label={searchType === 'title' ? '제목으로 검색' : '사용자 이름으로 검색'}
@@ -52,9 +52,9 @@ const PostSearchBar = ({ onSearch, boardId }) => {
                 sx={{ mr: 1 }}
                 fullWidth
             />
-            <Btn onClick={handleSearch}>
-                검색
-            </Btn>
+            <Btntwo onClick={handleSearch}>
+                search
+            </Btntwo>
         </Box>
     );
 };
