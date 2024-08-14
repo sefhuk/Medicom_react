@@ -20,7 +20,6 @@ const PostSearchBar = ({ onSearch, boardId }) => {
                 [searchType]: searchTerm,
             };
 
-            // Construct the endpoint with boardId and search parameters
             const endpoint = `/posts/board/${boardId}/search`;
 
             const response = await axiosInstance.get(endpoint, { params });

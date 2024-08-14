@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
-import { Btn } from '../../components/global/CustomComponents'; // 경로를 수정하여 Btn 컴포넌트를 가져옵니다.
+import { Btn } from '../../components/global/CustomComponents';
 
 function BoardList({ boards = [] }) {
   const userRole = localStorage.getItem('userRole');
 
   return (
-    <Box sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: '15px', padding: 2 }}>
+    <Box sx={{ width: '100%' }}>
       {boards.length > 0 ? (
         <List>
           {boards.map((board) => (
