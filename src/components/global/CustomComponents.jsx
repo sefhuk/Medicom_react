@@ -1,6 +1,8 @@
 import React from 'react';
-import { TextField } from '@mui/material';
+import { TextField, Button } from '@mui/material';
+import { styled } from '@mui/system';
 
+// TextF 컴포넌트
 function TextF({ value, onChange, onKeyDown }) {
   return (
     <TextField
@@ -32,4 +34,24 @@ function TextF({ value, onChange, onKeyDown }) {
   );
 }
 
-export default TextF;
+// Btn 컴포넌트
+const StyledButton = styled(Button)(({ theme }) => ({
+  backgroundColor: '#E9E9E9',
+  color: '#000',
+  width: '130px',
+  height: '30px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '30px',
+  '&:hover': {
+    backgroundColor: '#E2E2E2',
+  },
+}));
+
+const Btn = (props) => {
+  return <StyledButton {...props}>{props.children}</StyledButton>;
+};
+
+
+export { TextF, Btn };
