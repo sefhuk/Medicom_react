@@ -109,8 +109,11 @@ const router = createBrowserRouter([
           { path: 'chat/new', element: <NewChatPage /> },
           { path: 'chatlist', element: <ChatListPage /> },
 
-
           //hospitalpage
+          { path: 'hospitals', element: <HospitalList /> },
+          { path: 'hospitals/maps', element: <MapComponent /> },
+          { path: 'hospitals/list', element: <HospitalResult />},
+          { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
 
           { path: 'hospitals', element: <HospitalList /> },
           { path: 'hospitals/maps', element: <MapComponent /> },

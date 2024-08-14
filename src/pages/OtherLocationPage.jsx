@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { axiosInstance } from '../utils/axios';
 import { useNavigate } from 'react-router';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Typography, Container, Pagination } from '@mui/material';
 import { LocationContext } from '../LocationContext';
 import MainContainer from '../components/global/MainContainer';
-import { CustomScrollBox } from '../components/CustomScrollBox';
+import TextF from '../components/global/TextF';
+import Btn from '../components/global/Btn';
 
 function OtherLocationPage() {
   const [address, setAddress] = useState('');
@@ -42,9 +43,9 @@ function OtherLocationPage() {
   };
 
   // 페이지 변경 함수
-  const goToPage = (pageNum) => {
-    setCurrentPage(pageNum);
-    handleSearch(pageNum);
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+    handleSearch(page);
   };
 
   const handleSearch = async (page = 1) => {
@@ -74,6 +75,13 @@ function OtherLocationPage() {
     setSelectedAddress(address);
   };
 
+  // 엔터로 검색
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch(1);
+    }
+  };
+
   const handleSubmit = async () => {
     if (selectedAddress) {
       try {
@@ -100,52 +108,55 @@ function OtherLocationPage() {
     }
   };
 
-
-  const renderPagination = () => {
-    const totalPages = Math.ceil(totalCount / 10); // 10개씩 페이지네이션
-    const pages = [];
-
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(
-        <Button key={i} onClick={() => goToPage(i)} variant={currentPage === i ? 'contained' : 'outlined'}>
-          {i}
-        </Button>
-      );
-    }
-
-    return pages;
-  };
+  const totalPages = Math.ceil(totalCount / 10); // 10개씩 페이지네이션
 
   return (
     <MainContainer>
-      <CustomScrollBox>
-        <Box sx={{ padding: 2 }}>
-          <Typography variant="h5" gutterBottom>도로명 주소로 검색하세요.</Typography>
-          <Typography variant="h7" gutterBottom>예시 : 위례성대로 2</Typography>
-          <TextField
-            variant="standard"
-            fullWidth
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-          <Button onClick={() => handleSearch(1)} variant="contained" color="primary" sx={{ marginTop: 2 }}>
-            검색
-          </Button>
-          <Box sx={{ marginTop: 2 }}>
-            {results.map((result, index) => (
-              <Box key={index} onClick={() => handleSelect(result)} sx={{ padding: 1, cursor: 'pointer', border: '1px solid #ccc', marginBottom: 1 }}>
-                <Typography>{result.roadAddr}</Typography>
-              </Box>
-            ))}
-          </Box>
-          <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'center' }}>
-            {renderPagination()}
-          </Box>
-          <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ marginTop: 2 }}>
-            이 위치로 이동
-          </Button>
+      <Container sx={{ my: 3 }}>
+        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>주소를 검색해주세요.</Typography>
+        <Typography variant="body2" gutterBottom style={{ whiteSpace: 'pre-line' }}>
+          - 도로명 + 건물 번호{'\n'}- 건물명 + 번지{'\n'}- 건물명 혹은 아파트명
+        </Typography>
+        <TextF
+          value={address}
+          onChange={setAddress}
+          onKeyDown={handleKeyDown}
+        />
+
+        <Box sx={{ marginTop: 2 }}>
+          {results.map((result, index) => (
+            <Box
+              key={index}
+              onClick={() => handleSelect(result)}
+              sx={{
+                padding: 1,
+                cursor: 'pointer',
+                border: '1px solid #ccc',
+                borderRadius: '40px',
+                marginBottom: 1,
+                backgroundColor: selectedAddress === result ? '#E9E9E9' : 'transparent',
+                '&:hover': {
+                  backgroundColor: '#E9E9E9',
+                },
+              }}
+            >
+              <Typography>{result.roadAddr}</Typography>
+            </Box>
+          ))}
         </Box>
-      </CustomScrollBox>
+
+        <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'center' }}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            size="small"
+            onChange={handlePageChange}
+          />
+        </Box>
+        <Btn onClick={handleSubmit} sx={{ marginTop: 2 }}>
+          이 위치로 이동
+        </Btn>
+      </Container>
     </MainContainer>
   );
 }
