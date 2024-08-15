@@ -23,6 +23,12 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   '& input': {
     color: 'black', // 텍스트 색상 설정
   },
+  '& .MuiInputLabel-root': {
+    color: '#000', // 기본 라벨 색상
+  },
+  '& .Mui-focused .MuiInputLabel-root': {
+    color: '#4A885D', // 포커스 상태에서 라벨 색상
+  },
 }));
 
 // TextF 컴포넌트

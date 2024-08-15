@@ -48,39 +48,53 @@ const Nav = () => {
 
   const OnClickMyPage = () => {
     navigate('/my-page');
-  }
+  };
 
   const OnClickAdminPage = () => {
     navigate('/admin-page');
-  }
+  };
 
   const isHomePage = location.pathname === '/';
 
   return (
-    <AppBar position="static" sx={{ bgcolor: 'white', textAlign: 'center', boxShadow: 'none' }}>
-      <Toolbar>
+    <AppBar
+      position="static"
+      sx={{
+        bgcolor: 'white',
+        textAlign: 'center',
+        boxShadow: 'none',
+        borderBottom: '1px solid #e9e9e9',
+        height: '60px',
+      }}
+    >
+      <Toolbar
+        sx={{
+          minHeight: '60px',
+          padding: '0 10px',
+        }}
+      >
         <IconButton
-          size="large"
+          size="small"
           edge="start"
           color="black"
           onClick={isHomePage ? handleHomePage : handlePreviousPage}
-          sx={{ mr: 2 }}
+          sx={{ mr: 1 }}
         >
-          {isHomePage ? <Menu /> : <ArrowBack />}
+          {isHomePage ? <Menu sx = {{ height:'20px', width:'20px' }}/> : <ArrowBack sx = {{ height:'20px', width:'20px' }}/>}
         </IconButton>
 
-        <Box sx={{ my: 2, cursor: 'pointer' }} onClick={handleHomePage}>
-          <img src='/images/Group_Logo.svg' alt="Logo" />
+        <Box sx={{ my: 1, cursor: 'pointer' }} onClick={handleHomePage}>
+          <img src='/images/Group_Logo.svg' alt="Logo" style={{ height: '40px' }} />
         </Box>
 
         <Box sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
           {auth.isLoggedIn ? (
-            <IconButton color="black" onClick={handleLogoutClick} sx={{ bgcolor: 'var(--paper-soft)' }}>
-              <LogoutIcon />
+            <IconButton color="black" size="small" onClick={handleLogoutClick} sx={{ bgcolor: 'var(--paper-soft)', height:'30px', width:'30px' }}>
+              <LogoutIcon sx = {{ height:'20px', width:'20px' }} />
             </IconButton>
           ) : (
-            <IconButton color="black" onClick={handleLoginClick} sx={{ bgcolor: 'var(--paper-soft)' }}>
-              <LoginIcon />
+            <IconButton color="black" size="small" onClick={handleLoginClick} sx={{ bgcolor: 'var(--paper-soft)', height:'30px', width:'30px' }}>
+              <LoginIcon sx = {{ height:'20px', width:'20px' }}/>
             </IconButton>
           )}
         </Box>

@@ -20,7 +20,7 @@ function PostList({ posts = [], boardId }) {
             >
               <ListItemIcon>
                 <img 
-                  src='/images/Document.png' 
+                  src='/images/Contrast.png' 
                   alt="Post Icon" 
                   style={{ width: 30, height: 30, borderRadius: '50%' }} 
                 />

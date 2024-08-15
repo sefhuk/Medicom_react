@@ -40,30 +40,31 @@ function Footer() {
           <BottomNavigationAction
           label="Home"
           value="home"
-          icon={<HomeIcon />}
+          icon={<HomeIcon sx = {{ height:'20px', width:'20px' }}/>}
           />
           <BottomNavigationAction
             label="Community"
             value="community"
-            icon={<TextSnippetOutlinedIcon />}
+            icon={<TextSnippetOutlinedIcon sx = {{ height:'20px', width:'20px' }}/>}
           />
           <BottomNavigationAction
             label="Chat"
             value="chat"
-            icon={<SmsOutlinedIcon />}
+            icon={<SmsOutlinedIcon sx = {{ height:'20px', width:'20px' }}/>}
           />
           <BottomNavigationAction 
             label="My" 
             value="my" 
-            icon={<PersonOutlineOutlinedIcon />} />
+            icon={<PersonOutlineOutlinedIcon sx = {{ height:'20px', width:'20px' }}/>} />
         </StyledFooterBar>
   );
 };
 
 const StyledFooterBar = styled(BottomNavigation)`
-  height: 8vh;
+  height: 8dvh;
   text-align: center;
   background-color: skyblue;
+  border-top: 1px solid #e9e9e9;
 `;
 
 export default Footer;
