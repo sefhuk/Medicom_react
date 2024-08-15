@@ -25,7 +25,7 @@ const BoardSearchBar = ({ onSearch }) => {
     };
 
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, mx: 'auto', maxWidth: 600 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, mx: 'auto'}}>
             <TextF
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
