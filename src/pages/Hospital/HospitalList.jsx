@@ -418,7 +418,9 @@ const HospitalList = () => {
   const handleReservation = (hospital) => {
     if (hospital) {
       console.log(hospital.id);
-      navigate(`/hospitals/maps/${hospital.id}/reservation`);
+      navigate(`/hospitals/maps/${hospital.id}/reservation`, {
+      state: { hospital }
+    });
     } else {
       setError('예약할 병원을 선택해주세요.');
     }

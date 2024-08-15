@@ -139,13 +139,18 @@ const MapComponent = () => {
     };
   }, []);
 
+
   const handleReservation = () => {
     if (selectedHospital) {
-      navigate(`${selectedHospital.id}/reservation`);
+      console.log(selectedHospital.id);
+      navigate(`${selectedHospital.id}/reservation`, {
+      state: { selectedHospital }
+    });
     } else {
       setError('예약할 병원을 선택해주세요.');
     }
   };
+  
 
   const handleViewAll = () => {
     navigate('/hospitals/list', { state: { departments } });
