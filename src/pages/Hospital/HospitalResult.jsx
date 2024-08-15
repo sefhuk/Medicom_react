@@ -1,47 +1,73 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useLocation } from 'react-router-dom';  // useLocation을 import
-import { axiosInstance } from '../../utils/axios';
 import MainContainer from '../../components/global/MainContainer';
+import HospitalReviewCard from '../../components/HospitalReviewCard';
+import { axiosInstance } from '../../utils/axios';
+import { Box, Typography, Button, TextField, Select, MenuItem, List, ListItem, FormControl, InputLabel, Grid, IconButton } from '@mui/material';
 import { LocationContext } from '../../LocationContext';
-
-// Haversine formula to calculate distance between two lat/lng points
-const getDistance = (lat1, lon1, lat2, lon2) => {
-  const toRad = (x) => (x * Math.PI) / 180;
-  const R = 6371; // Radius of the Earth in km
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in km
-};
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { useNavigate} from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
+import { Loading } from "../../components/Loading";
+import { useLocation } from 'react-router-dom';
+import { Btn, Btntwo, SmallBtn, TextF } from '../../components/global/CustomComponents';
 
 const HospitalResult = () => {
-  const location = useLocation(); // useLocation 훅 사용
-  const departmentsFromState = location.state?.departments || []; // 전달된 departments를 가져옴
-
+  const location = useLocation();
+  const departmentsFromState = location.state?.departments || [];
   const { latitude, longitude } = useContext(LocationContext);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [searchInput, setSearchInput] = useState('');
   const [departmentInput, setDepartmentInput] = useState('');
-  const [departments, setDepartments] = useState(departmentsFromState); // 초기 상태로 설정
+  const [departments, setDepartments] = useState(departmentsFromState);
+  const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const navigate = useNavigate();
+  const [showReviews, setShowReviews] = useState(false);
   const [searchParams, setSearchParams] = useState({
     departmentNames: departmentsFromState,
     page: 0,
-    size: 10,
+    size: 5,
   });
 
-  const pageSize = 10;
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+    setSearchParams(prev => ({
+      ...prev,
+      page,
+      departmentNames: prev.departmentNames.length > 0 ? prev.departmentNames : departments,
+    }));
+  };
+
+  //검색이 실행되었는지 확인
+  const [hasSearched, setHasSearched] = useState(false); 
+
+
+  // 리뷰 관련 상태 추가
+  const [hospitalReviews, setHospitalReviews] = useState({});
+  const [reviewsLoading, setReviewsLoading] = useState({});
+  const [reviewsPage, setReviewsPage] = useState({});
+  const [reviewsLoaded, setReviewsLoaded] = useState({});
+  const [hasMoreReviews, setHasMoreReviews] = useState({});
+
+  // 북마크 상태
+  const [bookmarks, setBookmarks] = useState([]);
+  const [bookmarksLoading, setBookmarksLoading] = useState(false);
+
+  const pageSize = 5;
+  const reviewPageSize = 4;
 
   useEffect(() => {
     console.log('Received departments from navigate:', departmentsFromState); // 콘솔에 departments 값 출력
   }, [departmentsFromState]);
+
+
 
   useEffect(() => {
     if (departments.length > 0) {
@@ -50,6 +76,7 @@ const HospitalResult = () => {
       setDepartmentInput(departmentNames);
     }
   }, [departments]); // departments가 변경될 때만 실행
+
 
   useEffect(() => {
     const loadMapScript = () => {
@@ -75,13 +102,34 @@ const HospitalResult = () => {
   }, []);
 
   useEffect(() => {
+    if (mapLoaded && selectedHospital) {
+      const { latitude, longitude } = selectedHospital;
+      const mapDiv = document.getElementById(`map-${selectedHospital.id}`);
+      if (mapDiv && window.naver && window.naver.maps) {
+        const map = new window.naver.maps.Map(mapDiv, {
+          center: new window.naver.maps.LatLng(latitude, longitude),
+          zoom: 15,
+        });
+
+        new window.naver.maps.Marker({
+          position: new window.naver.maps.LatLng(latitude, longitude),
+          map: map,
+          title: selectedHospital.name,
+        });
+      }
+    }
+  }, [mapLoaded, selectedHospital]);
+
+
+  
+
+  useEffect(() => {
     const fetchHospitals = async () => {
       if (!latitude || !longitude) return;
-
+  
       setLoading(true);
       try {
         const departmentNamesString = searchParams.departmentNames.join(', ');
-
         const response = await axiosInstance.get('/api/search', {
           params: {
             ...searchParams,
@@ -90,15 +138,34 @@ const HospitalResult = () => {
             departmentNames: departmentNamesString,
           },
         });
-
+  
         console.log('API 응답 데이터:', response.data);
-
+  
+        // 서버에서 가져온 데이터
         let hospitalsData = response.data.content;
-
+  
+        // 거리 기준으로 오름차순 정렬
         hospitalsData.sort((a, b) => a.distance - b.distance);
-
-        setHospitals(hospitalsData);
+  
+        // 병원 정보에 평균 평점과 리뷰 수를 추가
+        const hospitalsWithAvgRating = await Promise.all(
+          hospitalsData.map(async (hospital) => {
+            const avgRatingAndReviewCount = await fetchAvgRatingAndReviewCount(hospital.id);
+            return {
+              ...hospital,
+              avgRating: avgRatingAndReviewCount ? avgRatingAndReviewCount.avgRating : 0.0,
+              reviewCount: avgRatingAndReviewCount ? avgRatingAndReviewCount.reviewCount : 0,
+            };
+          })
+        );
+  
+        // 평점과 리뷰 수를 추가한 병원 정보를 다시 거리 기준으로 오름차순 정렬
+        hospitalsWithAvgRating.sort((a, b) => a.distance - b.distance);
+  
+        // 상태 업데이트
+        setHospitals(hospitalsWithAvgRating);
         setTotalPages(response.data.totalPages || 0);
+  
       } catch (error) {
         setError(error);
         console.error('fetching hospitals 에러:', error);
@@ -106,18 +173,207 @@ const HospitalResult = () => {
         setLoading(false);
       }
     };
-
+  
     fetchHospitals();
   }, [searchParams, currentPage, latitude, longitude]);
+  
 
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-    setSearchParams(prev => ({ ...prev, page }));
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      setBookmarksLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axiosInstance.get('/bookmark', {
+          headers: {
+            Authorization: `${token}`
+          }
+        });
+        setBookmarks(response.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setBookmarksLoading(false);
+      }
+    };
+
+    fetchBookmarks(); // 컴포넌트가 마운트될 때 북마크 데이터를 로드함
+  }, []);
+
+  const fetchReviews = async (hospitalId, page = 0) => {
+    setReviewsLoading(prev => ({ ...prev, [hospitalId]: true }));
+    try {
+      const response = await axiosInstance.get(`/review/${hospitalId}/Page`, {
+        params: { page, size: reviewPageSize },
+      });
+
+      const totalPages = response.data.totalPages;
+      const currentPage = response.data.number;
+
+      const reviewsWithUsernames = await Promise.all(
+        response.data.content.map(async review => {
+          try {
+            const userResponse = await axiosInstance.get(`/review/findUser/${review.userId}`);
+            return {
+              ...review,
+              userName: userResponse.data,
+            };
+          } catch (error) {
+            console.error(error);
+            return {
+              ...review,
+              userName: '탈퇴한 유저'
+            };
+          }
+        })
+      );
+
+      setHospitalReviews(prev => ({
+        ...prev,
+        [hospitalId]: (prev[hospitalId] || []).concat(reviewsWithUsernames),
+      }));
+      setReviewsPage(prev => ({ ...prev, [hospitalId]: page }));
+      setReviewsLoaded((prev) => ({ ...prev, [hospitalId]: true }));
+      setHasMoreReviews((prev) => ({
+        ...prev,
+        [hospitalId]: currentPage < totalPages - 1,
+      }));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setReviewsLoading(prev => ({ ...prev, [hospitalId]: false }));
+    }
+  };
+
+  const handleLoadMoreReviews = (hospitalId) => {
+    const nextPage = reviewsPage[hospitalId] !== undefined ? reviewsPage[hospitalId] + 1 : 0;
+    fetchReviews(hospitalId, nextPage);
+  };
+
+  const handleCloseReviews = (hospitalId) => {
+    setHospitalReviews(prev => ({
+      ...prev,
+      [hospitalId]: [],
+    }));
+    setReviewsPage(prev => ({
+      ...prev,
+      [hospitalId]: -1,
+    }));
+    setReviewsLoaded(prev => ({
+      ...prev,
+      [hospitalId]: false,
+    }));
+  };
+
+  const handleAddBookmark = async (hospitalId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      const bookmarkDTO = {
+        userId: userId,
+        hospitalId: hospitalId,
+      };
+      await axiosInstance.post('/bookmark', bookmarkDTO, {
+        headers: {
+          Authorization: `${token}`
+        }
+      });
+      setBookmarks([...bookmarks, { hospitalId }]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleRemoveBookmark = async (hospitalId) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      await axiosInstance.delete(`/bookmark/${hospitalId}`, {
+        headers: {
+          Authorization: `${token}`
+        }
+      });
+      setBookmarks(bookmarks.filter(bookmark => bookmark.hospitalId !== hospitalId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const isBookmarked = (hospitalId) => {
+    return bookmarks.some(bookmark => bookmark.hospitalId === hospitalId);
+  };
+
+  const commonButtonStyles = (loading, color) => ({
+    borderColor: loading ? 'grey.500' : `${color}.main`,
+    color: loading ? 'grey.500' : `${color}.main`,
+    '&:hover': {
+      borderColor: loading ? 'grey.500' : `${color}.dark`,
+      color: loading ? 'grey.500' : 'black',
+      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+    },
+    padding: '6px 14px',
+    fontSize: '14px',
+    borderRadius: '6px',
+    margin: '3px',
+    transition: 'all 0.3s ease', // 부드러운 전환
+  });
+  
+  const renderReviews = (hospitalId) => {
+    const reviews = hospitalReviews[hospitalId] || [];
+    const loading = reviewsLoading[hospitalId];
+    const loaded = reviewsLoaded[hospitalId]; // 리뷰 로드 여부
+    const moreReviews = hasMoreReviews[hospitalId];
+  
+    if (!loaded) {
+      return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+          <Btn
+            onClick={() => handleLoadMoreReviews(hospitalId)}
+            disabled={loading}
+          >
+            {loading ? '로딩 중...' : '리뷰 더보기'}
+          </Btn>
+        </Box>
+      );
+    }
+  
+    return (
+      <>
+        {reviews.length > 0 ? (
+          <ul>
+            {reviews.map((review, index) => (
+              <li key={index}>
+                <HospitalReviewCard review={review} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>리뷰가 없습니다.</p>
+        )}
+        {moreReviews && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+            <Btn
+              onClick={() => handleLoadMoreReviews(hospitalId)}
+              disabled={loading}
+              sx={commonButtonStyles(loading, 'primary')}
+            >
+              {loading ? '로딩 중...' : '리뷰 더보기'}
+            </Btn>
+          </Box>
+        )}
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+          <Btn
+            onClick={() => handleCloseReviews(hospitalId)}
+          >
+            리뷰 닫기
+          </Btn>
+        </Box>
+      </>
+    );
   };
 
   const handleSearch = () => {
     const departmentNames = departmentInput.split(',').map(name => name.trim()).filter(name => name);
-
     setSearchParams(prev => ({
       ...prev,
       departmentNames,
@@ -130,8 +386,13 @@ const HospitalResult = () => {
     setDepartmentInput(e.target.value);
   };
 
+  const handleFilter = (departmentName) => {
+    setSelectedDepartment(departmentName);
+  };
+
   const handleMapClick = (hospital) => {
     setSelectedHospital(hospital.id === selectedHospital?.id ? null : hospital);
+    setShowReviews(true); // 지도를 보여주고 리뷰도 보이게 설정
   };
 
   const renderMap = () => {
@@ -145,70 +406,192 @@ const HospitalResult = () => {
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const maxPagesToShow = 10;
+    const maxPagesToShow = 5;
     let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow);
 
-    if (endPage - startPage + 1 < maxPagesToShow) {
-      startPage = Math.max(0, endPage - maxPagesToShow + 1);
+    if (endPage - startPage < maxPagesToShow) {
+      startPage = Math.max(0, endPage - maxPagesToShow);
     }
 
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
+    for (let i = startPage; i < endPage; i++) {
+      pageNumbers.push(
+        <Button
+          key={i}
+          onClick={() => handlePageClick(i)}
+          disabled={i === currentPage}
+           sx={{
+            color: i === currentPage ? 'black' : '#0a7729', // 글자색 설정
+            borderRadius: '20px',
+            border: '1px solid gray',
+            margin: '0 4px',
+            padding: '6px 12px',
+            '&:hover': {
+              backgroundColor: '#f3f4f0',
+            },
+          }}
+        >
+          {i + 1}
+        </Button>
+      );
     }
-
-    return (
-      <div>
-        {pageNumbers.map(number => (
-          <button
-            key={number}
-            onClick={() => handlePageClick(number)}
-            disabled={number === currentPage}
-          >
-            {number + 1}
-          </button>
-        ))}
-      </div>
-    );
+    return pageNumbers;
   };
+
+
+
+  //예약 관련 코드
+  const handleReservation = (hospital) => {
+    if (hospital) {
+      console.log(hospital.id);
+      navigate(`/hospitals/maps/${hospital.id}/reservation`);
+    } else {
+      setError('예약할 병원을 선택해주세요.');
+    }
+  };
+
+  
+
+  const fetchAvgRatingAndReviewCount = async (hospitalId) => {
+    try {
+      const response = await axiosInstance.get(`/review/avg/${hospitalId}`);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    if (!hasSearched) {
+      console.log('Triggering handleSearch');
+      handleSearch();
+      setHasSearched(true);
+    }
+  }, [hasSearched]);
+
+  if (loading) return <Loading open={true} />;
+  if (error) return <p>Error fetching data: {error.message}</p>;
 
   return (
     <MainContainer>
-      <div className="container">
-        <h1>병원 검색하기</h1>
-        <h2>검색</h2>
-        <input
-          type="text"
-          value={departmentInput}
-          onChange={handleDepartmentInputChange}
-          placeholder="부서 입력"
-        />
-        <button onClick={handleSearch}>검색</button>
+      <Box className="container" sx={{ padding: '20px', marginLeft: 2, marginRight: 2 }}>
+        <Typography variant="h5" sx={ {fontWeight:'bold'}}>병원 리스트</Typography>
 
-        {/* 병원 목록 렌더링 */}
-        <ul>
+        <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
+          <Grid item xs={12} sm={6} md={5}>
+            <TextField
+              fullWidth
+              type="text"
+              value={departmentInput}
+              onChange={handleDepartmentInputChange}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={2} md={2}>
+            <Button fullWidth variant="contained" color="primary" onClick={handleSearch} sx={{ height: '100%', display: 'none' }}>검색</Button>
+          </Grid>
+        </Grid>
+
+        <List sx={{ border: '1px solid #ddd', borderRadius: '20px', padding: '0', marginTop: '20px' }}>
           {hospitals.length > 0 ? (
-            hospitals.map(hospital => (
-              <li key={hospital.id}>
-                <strong>{hospital.name}</strong> - {hospital.district} {hospital.subDistrict} - {hospital.telephoneNumber} - 
-                {latitude && longitude && hospital.latitude !== null && hospital.longitude !== null
-                  ? `${getDistance(latitude, longitude, hospital.latitude, hospital.longitude).toFixed(2)} km`
-                  : '위치 정보 없음'}
-                <button onClick={() => handleMapClick(hospital)}>
-                  {selectedHospital?.id === hospital.id ? '지도 닫기' : '지도 보기'}
-                </button>
-                {renderMap()}
-              </li>
+            hospitals.map((hospital, index) => (
+              <ListItem
+                key={hospital.id}
+                sx={{
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  borderBottom: index === hospitals.length - 1 ? 'none' : '1px solid #ddd',
+                  padding: '20px'
+                }}
+              >
+                <Box sx={{ width: '100%', marginBottom: '10px' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <IconButton
+                      onClick={() => isBookmarked(hospital.id) ? handleRemoveBookmark(hospital.id) : handleAddBookmark(hospital.id)}
+                      sx={{color: '#4a885d', marginLeft:'-7px' }}
+                    >
+                      {isBookmarked(hospital.id) ? <StarIcon /> : <StarBorderIcon />}
+                    </IconButton>
+                    <Typography variant="h6" component="strong">
+                      {hospital.name}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginBottom: '10px' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+                      <LocationOnIcon sx={{ marginRight: '8px', color: '#4a885d' }} />
+                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
+                        {hospital.address}
+                      </Typography>
+                      <Typography variant="body2" sx={{ marginLeft: 'auto' }}>
+                        {latitude && longitude && hospital.distance !== null
+                          ? `${Math.abs(hospital.distance).toFixed(2)} km`
+                          : '거리 정보를 가져올 수 없습니다.'}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <StarIcon sx={{ color: 'gold', marginRight: '6px', marginLeft:'1px' }} />
+                    <Typography variant="body2">
+                      평균 평점: {hospital.avgRating !== undefined ? hospital.avgRating.toFixed(1) : "평점 없음"} ({hospital.reviewCount || 0} 리뷰)
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                    <Typography variant="body2">진료과목:</Typography>
+                    {hospital.departments && hospital.departments.length > 0 ? (
+                      hospital.departments.map(department => (
+                        <Box key={department.id} sx={{ padding: '5px', border: '1px solid #ccc', borderRadius: '5px', whiteSpace: 'nowrap' }}>
+                          <Typography variant="body2">{department.name}</Typography>
+                        </Box>
+                      ))
+                    ) : (
+                      <Typography variant="body2">부서 정보가 없습니다.</Typography>
+                    )}
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
+                  <Typography variant="body2">
+                    전화번호 :
+                    <a href={`tel:${hospital.telephoneNumber}`} style={{ textDecoration: 'none', color: 'inherit', marginLeft: '8px' }}>
+                      {hospital.telephoneNumber}
+                    </a>
+                  </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <SmallBtn
+
+                        onClick={() => handleReservation(hospital)}
+                      >
+                        예약
+                      </SmallBtn>
+                      <IconButton
+                        onClick={() => handleMapClick(hospital)}
+                        sx={{ color: '#4a885d' }}
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </Box>
+                {selectedHospital?.id === hospital.id && (
+                  <Box sx={{ width: '100%' }}>
+                    {renderMap()}
+                    {renderReviews(hospital.id)}
+                  </Box>
+                )}
+              </ListItem>
             ))
           ) : (
-            <p>No hospitals found</p>
+            <Typography variant="body2" sx={{ padding: '10px' }}>병원이 없습니다</Typography>
           )}
-        </ul>
-        <div className="page-buttons">
-          {totalPages > 1 && renderPageNumbers()}
-        </div>
-      </div>
+        </List>
+        
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+          {renderPageNumbers()}
+        </Box>
+      
+      </Box>
     </MainContainer>
+
   );
 };
 
