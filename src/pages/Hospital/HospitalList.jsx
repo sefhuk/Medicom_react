@@ -10,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import { Loading } from "../../components/Loading";
+import Pagination from '../../components/board/Pagination';
 import { Btn, Btntwo, SmallBtn, TextF } from '../../components/global/CustomComponents';
 
 const HospitalList = () => {
@@ -484,31 +485,25 @@ const HospitalList = () => {
 
   return (
     <MainContainer>
-      <Box className="container" sx={{ padding: '20px', marginLeft: 2, marginRight: 2 }}>
+      <Box className="container" sx={{ padding: 2, marginLeft: 2, marginRight: 2 }}>
         <Typography variant="h5" sx={ {fontWeight:'bold'}}>병원 검색하기</Typography>
 
-        <Grid container spacing={2}  sx={{ marginRight: 2,marginTop: 2, marginBottom: 2  }}>
-          <Grid item xs={12} sm={7} md={6}>
-            <TextF
-              fullWidth
-              type="text"
-              value={searchInput}
-              onChange={handleInputChange}
-              placeholder="병원 이름 또는 주소를 입력"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={12} sm={4} md={3}>
+        <Grid container spacing={2} sx={{ marginTop: 2, flexWrap: 'nowrap' }}>
+          <Grid item xs={2} sm={2} md={2}>
             <FormControl fullWidth variant="outlined">
-              <InputLabel id="department-select-label">모든 부서</InputLabel>
+              <InputLabel id="department-select-label" sx={{ textAlign: 'center' }}>부서</InputLabel>
               <Select
                 labelId="department-select-label"
                 value={selectedDepartment}
                 onChange={e => handleFilter(e.target.value)}
-                label="모든 부서"
+                sx={{
+                  borderRadius: '30px',
+                  textAlign: 'center',
+                }}
+                label="부서"
               >
                 <MenuItem value="">
-                  <em>모든 부서</em>
+                  <em>부서</em>
                 </MenuItem>
                 {departments.map(department => (
                   <MenuItem key={department.id} value={department.name}>
@@ -518,10 +513,29 @@ const HospitalList = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={1} md={1}>
-            <Btntwo onClick={handleSearch}>SEARCH</Btntwo>
+
+          <Grid item xs={7} sm={7} md={7}>
+            <TextF
+              fullWidth
+              type="text"
+              value={searchInput}
+              onChange={handleInputChange}
+              placeholder="병원 이름 또는 주소를 입력"
+              variant="outlined"
+              sx={{ marginBottom: { xs: '10px', sm: 0 } }} // 작은 화면에서 margin 조정
+            />
+          </Grid>
+
+          <Grid item xs={3} sm={3} md={3}>
+            <Btntwo
+              onClick={handleSearch}
+              sx={{ width: '100%' }} // 버튼을 전체 너비로 설정
+            >
+              SEARCH
+            </Btntwo>
           </Grid>
         </Grid>
+
 
         <List sx={{ border: '1px solid #ddd', borderRadius: '20px', padding: '0', marginTop: '20px' }}>
           {hospitals.length > 0 ? (
@@ -615,8 +629,8 @@ const HospitalList = () => {
           )}
         </List>
         
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          {renderPageNumbers()}
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageClick} />
         </Box>
       
       </Box>
