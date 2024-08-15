@@ -33,8 +33,17 @@ const HospitalList = () => {
   const [searchParams, setSearchParams] = useState({
     departmentNames: departmentsFromState,
     page: 0,
-    size: 10,
+    size: 5,
   });
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+    setSearchParams(prev => ({
+      ...prev,
+      page,
+      departmentNames: prev.departmentNames.length > 0 ? prev.departmentNames : departments,
+    }));
+  };
 
   //검색이 실행되었는지 확인
   const [hasSearched, setHasSearched] = useState(false); 
@@ -53,6 +62,12 @@ const HospitalList = () => {
 
   const pageSize = 5;
   const reviewPageSize = 4;
+
+  useEffect(() => {
+    console.log('Received departments from navigate:', departmentsFromState); // 콘솔에 departments 값 출력
+  }, [departmentsFromState]);
+
+
 
   useEffect(() => {
     if (departments.length > 0) {
@@ -104,6 +119,8 @@ const HospitalList = () => {
       }
     }
   }, [mapLoaded, selectedHospital]);
+
+
   
 
   useEffect(() => {
@@ -123,7 +140,6 @@ const HospitalList = () => {
         });
   
         console.log('API 응답 데이터:', response.data);
-        
   
         // 서버에서 가져온 데이터
         let hospitalsData = response.data.content;
@@ -131,9 +147,25 @@ const HospitalList = () => {
         // 거리 기준으로 오름차순 정렬
         hospitalsData.sort((a, b) => a.distance - b.distance);
   
-        setHospitals(hospitalsData);
+        // 병원 정보에 평균 평점과 리뷰 수를 추가
+        const hospitalsWithAvgRating = await Promise.all(
+          hospitalsData.map(async (hospital) => {
+            const avgRatingAndReviewCount = await fetchAvgRatingAndReviewCount(hospital.id);
+            return {
+              ...hospital,
+              avgRating: avgRatingAndReviewCount ? avgRatingAndReviewCount.avgRating : 0.0,
+              reviewCount: avgRatingAndReviewCount ? avgRatingAndReviewCount.reviewCount : 0,
+            };
+          })
+        );
+  
+        // 평점과 리뷰 수를 추가한 병원 정보를 다시 거리 기준으로 오름차순 정렬
+        hospitalsWithAvgRating.sort((a, b) => a.distance - b.distance);
+  
+        // 상태 업데이트
+        setHospitals(hospitalsWithAvgRating);
         setTotalPages(response.data.totalPages || 0);
-
+  
       } catch (error) {
         setError(error);
         console.error('fetching hospitals 에러:', error);
@@ -144,6 +176,7 @@ const HospitalList = () => {
   
     fetchHospitals();
   }, [searchParams, currentPage, latitude, longitude]);
+  
 
   useEffect(() => {
     const fetchBookmarks = async () => {
@@ -349,11 +382,6 @@ const HospitalList = () => {
   
   
 
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-    setSearchParams(prev => ({ ...prev, page }));
-  };
-
   const handleSearch = () => {
     const departmentNames = departmentInput.split(',').map(name => name.trim()).filter(name => name);
 
@@ -364,6 +392,7 @@ const HospitalList = () => {
       size: pageSize,
     }));
   };
+
   
 
   const handleDepartmentInputChange = (e) => {
@@ -371,9 +400,10 @@ const HospitalList = () => {
   };
 
 
-  const handleDepartmentChange = (e) => {
-    setDepartmentInput(e.target.value);
-  };
+
+  // const handleDepartmentChange = (e) => {
+  //   setDepartmentInput(e.target.value);
+  // };
 
 
   const handleFilter = (departmentName) => {
@@ -398,25 +428,31 @@ const HospitalList = () => {
     const pageNumbers = [];
     const maxPagesToShow = 10;
     let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages, startPage + maxPagesToShow);
+    let endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
 
-    if (endPage - startPage < maxPagesToShow) {
-      startPage = Math.max(0, endPage - maxPagesToShow);
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      startPage = Math.max(0, endPage - maxPagesToShow + 1);
     }
 
-    for (let i = startPage; i < endPage; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          onClick={() => handlePageClick(i)}
-          disabled={i === currentPage}
-        >
-          {i + 1}
-        </button>
-      );
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
     }
-    return pageNumbers;
+
+    return (
+      <div>
+        {pageNumbers.map(number => (
+          <button
+            key={number}
+            onClick={() => handlePageClick(number)}
+            disabled={number === currentPage}
+          >
+            {number + 1}
+          </button>
+        ))}
+      </div>
+    );
   };
+
 
 
 
@@ -430,51 +466,7 @@ const HospitalList = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchHospitals = async () => {
-      if (!latitude || !longitude) return;
-      
-
-      setLoading(true);
-      try {
-        const departmentNamesString = searchParams.departmentNames.join(', ');
-        const response = await axiosInstance.get('/api/search', {
-          params: {
-            ...searchParams,
-            latitude,
-            longitude,
-            departmentNames: departmentNamesString,
-          },
-        });
-
-        let hospitalsData = response.data.content;
-
-        const hospitalsWithAvgRating = await Promise.all(
-          hospitalsData.map(async (hospital) => {
-            const avgRatingAndReviewCount = await fetchAvgRatingAndReviewCount(hospital.id);
-            return {
-              ...hospital,
-              avgRating: avgRatingAndReviewCount ? avgRatingAndReviewCount.avgRating : 0.0,
-              reviewCount: avgRatingAndReviewCount ? avgRatingAndReviewCount.reviewCount : 0,
-            };
-          })
-        );
-
-        hospitalsWithAvgRating.sort((a, b) => a.distance - b.distance);
-
-        setHospitals(hospitalsWithAvgRating);
-        setTotalPages(response.data.totalPages || 0);
-        
-      } catch (error) {
-        setError(error);
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHospitals();
-  }, [searchParams, currentPage, latitude, longitude]);
+  
 
   const fetchAvgRatingAndReviewCount = async (hospitalId) => {
     try {
@@ -509,8 +501,6 @@ const HospitalList = () => {
               type="text"
               value={departmentInput}
               onChange={handleDepartmentInputChange}
-              placeholder="부서입력"
-              variant="outlined"
               disabled
             />
           </Grid>
@@ -609,36 +599,10 @@ const HospitalList = () => {
         </List>
 
         
-      <Box
-        sx={{
-          display: 'flex', // 플렉스 박스를 사용하여 버튼을 배치
-          justifyContent: 'center', // 버튼을 수평 중앙에 배치
-          marginTop: '20px', // 상단 여백 추가
-          marginBottom: '20px', // 하단 여백 추가
-          padding: '10px', // 패딩 추가
-        }}
-      >
-        {renderPageNumbers().map((button, index) => (
-          <Box
-            key={index}
-            sx={{
-              margin: '0 8px', // 각 버튼 사이의 좌우 여백을 설정 (간격 조정)
-            }}
-          >
-            {React.cloneElement(button, {
-              sx: {
-                borderColor: 'primary.main',
-                color: 'primary.main',
-                '&:hover': {
-                  borderColor: 'secondary.main',
-                  color: 'secondary.main',
-                  backgroundColor: 'transparent',
-                },
-              },
-            })}
-          </Box>
-        ))}
-      </Box>
+        <div className="page-buttons">
+          {totalPages > 1 && renderPageNumbers()}
+        </div>
+
       </Box>
     </MainContainer>
 
