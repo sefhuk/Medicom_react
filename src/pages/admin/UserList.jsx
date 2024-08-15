@@ -68,7 +68,7 @@ const UserList = () =>{
   const UserListComponent = (list) =>{
     return list.map(user => (
       <Box fullWidth sx={{height: '45px', padding: '10px', margin: '15px 0 auto', border: '2px solid var(--paper-deep)', }}>
-        <Avatar sx={{float: 'left'}}></Avatar>
+        <Avatar src={user.image} sx={{float: 'left', cursor: 'pointer', marginBottom: '10px', backgroundColor: 'var(--main-soft)' }}></Avatar>
         <Typography variant="body1" sx={{display: 'inline-block', margin: '10px 0px 0px 15px'}}>{user.name}</Typography>
         <IconButton sx={{float: 'right', padding: '4px'}} onClick={(e) => OnClickUserDetail(e, user.id)}>
           <ArrowRightIcon fontSize="large"></ArrowRightIcon>
