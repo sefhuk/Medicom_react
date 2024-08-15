@@ -74,9 +74,9 @@ const BookmarksPage = () => {
     }));
   };
 
-  const handleReservationClick = (hospitalId, hospitalName) => {
+  const handleReservationClick = (hospitalId, hospital) => {
     navigate(`/hospitals/maps/${hospitalId}/reservation`,{
-      state: { hospitalName }
+      state: { hospital }
     });
   };
 
@@ -166,7 +166,7 @@ const BookmarksPage = () => {
                         }}
                         onClick={() => handleDeleteBookmark(bookmark.hospital.id)}
                       >
-                        즐겨찾기 삭제
+                        삭제
                       </Button>
                     </Box>
                   </ListItem>
@@ -201,7 +201,7 @@ const BookmarksPage = () => {
                     backgroundColor: 'var(--main-common)',
                   },
                 }}
-                onClick={() => handleReservationClick(state.selectedHospital.id, state.selectedHospital.name)}
+                onClick={() => handleReservationClick(state.selectedHospital.id, state.selectedHospital)}
               >
                 예약하기
               </Button>
