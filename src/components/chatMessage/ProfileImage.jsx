@@ -77,7 +77,7 @@ const Image = styled.div`
         : `url(${profileDefaultImage})`};
   &:hover {
     cursor: ${({ user }) => (user ? 'pointer' : null)};
-    border: ${({ user }) => (user ? '3px solid red' : null)};
+    border: ${({ user }) => (user ? '3px solid var(--main-soft)' : null)};
   }
 `;
 

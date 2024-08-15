@@ -88,7 +88,15 @@ function ChatInput({ sendMessage, enable }) {
       </Modal>
       <Button
         variant='contained'
-        sx={{ width: '5%', backgroundColor: '#cac9c9', fontSize: '2rem', color: 'black' }}
+        sx={{
+          width: '10%',
+          backgroundColor: 'var(--paper-common)',
+          fontSize: '2rem',
+          color: 'black',
+          '&:hover': {
+            backgroundColor: 'var(--paper-deep)'
+          }
+        }}
         onClick={handleOpen}
       >
         +
@@ -99,7 +107,19 @@ function ChatInput({ sendMessage, enable }) {
         onKeyDown={handleInput}
         readOnly={!enable}
       />
-      <Button variant='contained' ref={button} onClick={handleClick} sx={{ width: '3%' }}>
+      <Button
+        variant='contained'
+        ref={button}
+        onClick={handleClick}
+        sx={{
+          width: '10%',
+          color: 'black',
+          backgroundColor: 'var(--main-common)',
+          '&:hover': {
+            backgroundColor: 'var(--main-deep)'
+          }
+        }}
+      >
         전송
       </Button>
     </Container>
@@ -115,23 +135,23 @@ const Container = styled.div`
   padding: 4px;
   max-width: 60dvh;
   width: 100%;
-  height: 8dvh;
+  height: 7dvh;
   padding: 5px;
   background-color: #cac9c9;
 `;
 
 const Input = styled.textarea`
   outline: 1px solid;
-  width: 80%;
+  width: 65%;
   border-radius: 10px;
-  background-color: #e8e0e0;
-  padding: 1rem 15px;
-  font-size: 1.8rem;
+  background-color: var(--paper-common);
+  padding: 1.8dvh 15px 0;
+  font-size: 1.2rem;
   resize: none;
   white-space: pre-line;
-  @media (max-width: 481px) {
-    font-size: 1.5rem;
-    line-height: 3dvh;
+  @media (max-width: 500px) {
+    font-size: 1rem;
+    width: 55%;
   }
 `;
 

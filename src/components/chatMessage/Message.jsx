@@ -68,9 +68,14 @@ function Message({ data, repeat, self }) {
         <Box sx={style}>
           <h2 id='parent-modal-title'>메시지 옵션</h2>
           <p style={{ color: '#22a1d3', fontWeight: 'bold', fontStyle: 'italic' }}>
-            {data.content}
+            {data.content.replace(/\\n/g, ' ').replace('dpt: ', '제공 진료과: ')}
           </p>
-          <EditModal msgId={data.id} msg={data.content} setOpens={setOpen} />
+          <EditModal
+            msgId={data.id}
+            msg={data.content}
+            setOpens={setOpen}
+            isDpt={data.content.startsWith('dpt: ') ? true : undefined}
+          />
         </Box>
       </Modal>
       <Container self={self}>
@@ -96,7 +101,7 @@ function Message({ data, repeat, self }) {
                 <Button
                   variant='contained'
                   onClick={requestHospital}
-                  sx={{ width: '80%', backgroundColor: '#272424' }}
+                  sx={{ width: '80%', color: 'black', backgroundColor: '#c5e7aa' }}
                 >
                   {data.content.split(' ')[1]}
                 </Button>
@@ -137,7 +142,7 @@ const BottomContainer = styled.div`
   justify-content: ${({ self }) => (self ? 'flex-end' : 'flex-start')};
   align-items: flex-end;
   height: 100%;
-  margin-right: ${({ self }) => (self ? '0px' : '3rem')};
+  margin-right: ${({ self }) => (self ? '5px' : '3rem')};
   margin-left: ${({ self }) => (self ? '0px' : '3rem')};
   @media (min-width: 481px) {
     font-size: 2rem;
@@ -157,7 +162,7 @@ const Author = styled.p`
 `;
 
 const Content = styled.div`
-  background-color: ${({ self }) => (self ? '#3399ff' : '#99ddff')};
+  background-color: ${({ self }) => (self ? 'var(--main-soft)' : 'var(--paper-deep)')};
   padding: 10px;
   border-radius: 10px;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
@@ -174,7 +179,10 @@ const Content = styled.div`
 const Suggestion = styled.p`
   display: flex;
   flex-direction: column;
-  @media (min-width: 481px) {
+  align-items: center;
+  font-size: 1rem;
+  @media (max-width: 500px) {
+    font-size: 0.9rem;
   }
 `;
 

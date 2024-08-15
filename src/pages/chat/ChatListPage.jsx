@@ -117,9 +117,13 @@ function ChatListPage() {
             onClick={() => navigate('/chat/new')}
             sx={{
               width: '100%',
+              backgroundColor: 'var(--main-common)',
               fontSize: '1.2rem',
               '@media (max-width: 600px)': {
                 fontSize: '0.8rem'
+              },
+              '&:hover': {
+                backgroundColor: 'var(--main-deep)'
               }
             }}
           >
@@ -127,24 +131,42 @@ function ChatListPage() {
           </Button>
         </ButtonGroup>
         <ButtonGroup
-          sx={{ width: '70%' }}
+          sx={{
+            width: '70%',
+            display: 'flex',
+            '& .MuiButtonGroup-firstButton': {
+              borderColor: 'var(--main-soft)'
+            }
+          }}
           variant='contained'
           ref={anchorRef}
-          aria-label='Button group with a nested menu'
         >
           <Button
             sx={{
               width: '100%',
+              backgroundColor: '#4A885D',
+              borderColor: '#dd2dff',
+              borderRightWidth: '20px',
               fontSize: '1.2rem',
+              padding: '0px',
               '@media (max-width: 600px)': {
                 fontSize: '0.8rem'
+              },
+              '&:hover': {
+                backgroundColor: '#0a7729'
               }
             }}
           >
             {options[selectedIndex]}
           </Button>
           <Button
-            sx={{ width: '5%' }}
+            sx={{
+              width: '5%',
+              backgroundColor: 'var(--main-common)',
+              '&:hover': {
+                backgroundColor: 'var(--main-deep)'
+              }
+            }}
             size='large'
             aria-controls={open ? 'split-button-menu' : undefined}
             aria-expanded={open ? 'true' : undefined}
