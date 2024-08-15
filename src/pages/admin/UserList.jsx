@@ -67,7 +67,7 @@ const UserList = () =>{
 
   const UserListComponent = (list) =>{
     return list.map(user => (
-      <Box fullWidth sx={{height: '45px', padding: '10px', margin: '15px 0 auto', border: '1px solid #BCBDBC', }}>
+      <Box fullWidth sx={{height: '45px', padding: '10px', margin: '15px 0 auto', border: '2px solid var(--paper-deep)', }}>
         <Avatar sx={{float: 'left'}}></Avatar>
         <Typography variant="body1" sx={{display: 'inline-block', margin: '10px 0px 0px 15px'}}>{user.name}</Typography>
         <IconButton sx={{float: 'right', padding: '4px'}} onClick={(e) => OnClickUserDetail(e, user.id)}>
@@ -95,18 +95,18 @@ const UserList = () =>{
 
   return(
     <MainContainer>
-      <Paper elevation={6} sx={{margin: '10px', padding: 3, borderRadius: '10px' }}>
-        <Typography variant='h5' sx={{display: 'inline', color: '#6E6E6E'}}>
+      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)' }}> 
+        <Typography variant='h5' sx={{display: 'inline', color: 'var(--main-common)'}}>
           회원 목록
         </Typography>
         <TabContext value={tabValue}>
-          <TabList onChange={handleChange} sx={{margin: '20px 0 auto'}}>
-            <Tab label='전체' value='0' sx={{minWidth: '40px'}}/>
-            <Tab label='일반 회원' value='1' sx={{minWidth: '40px'}}/>
-            <Tab label='의사' value='2' sx={{minWidth: '40px'}}/>
-            <Tab label='관리자' value='3' sx={{minWidth: '40px'}}/>
+          <TabList onChange={handleChange} TabIndicatorProps={{style: {background: 'var(--main-common)'}}} sx={{margin: '20px 0 auto', ".Mui-selected": {color: 'var(--main-deep)'}}}>
+            <Tab label='전체' value='0' sx={{minWidth: '40px', color: 'var(--main-soft)'}}/>
+            <Tab label='일반 회원' value='1' sx={{minWidth: '40px', color: 'var(--main-soft)'}}/>
+            <Tab label='의사' value='2' sx={{minWidth: '40px', color: 'var(--main-soft)'}}/>
+            <Tab label='관리자' value='3' sx={{minWidth: '40px', color: 'var(--main-soft)'}}/>
           </TabList>
-          <Box sx={{border: '1px solid grey' }}></Box>
+          <Box sx={{border: '1px solid var(--paper-deep)' }}></Box>
             <TabPanel value='0' sx={{padding: '0'}}>
             {userList ? <AllUserList /> : <Loading open={loading} />}
             </TabPanel>

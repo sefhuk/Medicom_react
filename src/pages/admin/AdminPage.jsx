@@ -3,7 +3,7 @@ import MainContainer from '../../components/global/MainContainer';
 import { Paper, Button, Box, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router";
-import { TextF, Btn, Btntwo } from "../../components/global/CustomComponents";
+import { Btntwo } from "../../components/global/CustomComponents";
 
 
 const theme = createTheme({
