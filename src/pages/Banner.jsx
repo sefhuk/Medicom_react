@@ -70,7 +70,7 @@ const Banner = () => {
                   alt="Top"
                   style={{ width: '30px', height: '30px' }}/>
                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  TOP {disease.rank}
+                  TOP{disease.rank}
                 </Typography>
                 <Typography variant="h8">
                   {disease.diseaseName}
