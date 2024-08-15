@@ -124,8 +124,8 @@ const Container = styled.div`
   align-items: center;
   max-width: 60dvh;
   width: 80%;
-  height: 18dvh;
-  border: 1px solid var(--main-soft);
+  height: 15dvh;
+  border: 2px solid var(--paper-deep);
   border-radius: 10px;
   margin: 20px auto 0px;
   padding: 5px 30px;
@@ -192,6 +192,7 @@ const Preview = styled.div`
 const PreviewText = styled.p`
   overflow: hidden;
   white-space: nowrap;
+  color: grey;
   width: 100%;
 `;
 

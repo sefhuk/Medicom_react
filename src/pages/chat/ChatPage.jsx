@@ -11,6 +11,8 @@ import { chatRoomState, stompState, userauthState } from '../../utils/atom';
 import { Button, ButtonGroup } from '@mui/material';
 import { Loading } from '../../components/Loading';
 import InsertMessage from '../../components/chatMessage/InsertMessage';
+import { Btn } from '../../components/global/CustomComponents';
+import { CustomScrollBox } from '../../components/CustomScrollBox';
 
 function ChatPage() {
   const params = useParams();
@@ -191,29 +193,23 @@ function ChatPage() {
   return (
     <MainContainer isChat={true} sendMessage={sendMessage}>
       <Loading open={loading} />
-      <ButtonGroup
-        sx={{ width: '100%', marginTop: '10px', boxShadow: 'none' }}
+
+      {/* <ButtonGroup
+        sx={{ width: '100%', `marginTop:` '10px', boxShadow: 'none' }}
         variant='contained'
         aria-label='Button group with a nested menu'
       >
-        <Button
+        <Btntwo
           onClick={() => navigate('/chatlist')}
           sx={{
-            width: '95%',
-            fontSize: '1.2rem',
-            backgroundColor: 'var(--main-common)',
-            margin: 'auto',
-            color: 'white',
-            '&:hover': {
-              backgroundColor: 'var(--main-deep)'
-            }
+            width: '100%',
           }}
         >
           목록으로 돌아가기
-        </Button>
-      </ButtonGroup>
+        </Btntwo>
+      </ButtonGroup> */}
       <div style={{ height: '1dvh' }} />
-      <div style={{ overflowY: 'scroll', height: '72dvh' }}>
+      <CustomScrollBox style={{ height: '76dvh' }}>
         {error && <div>{error}</div>}
         {chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '수락 대기' &&
           chatRoom.rooms[`ch_${params.chatRoomId}`].user1.id === auth.userId && <InsertMessage />}
@@ -242,27 +238,21 @@ function ChatPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                height: '20dvh',
-                margin: 'auto'
               }}
             >
-              <Button
-                variant='contained'
+              <Btn
                 style={{
                   width: '50%',
-                  color: 'black',
                   fontWeight: 'bold',
-                  marginBottom: '4px',
-                  border: '2px solid var(--main-soft)',
                   backgroundColor: 'var(--paper-common)'
                 }}
                 onClick={acceptChatRoom}
               >
                 채팅 수락
-              </Button>
+              </Btn>
             </div>
           )}
-        <div ref={tmp} style={{ height: '5dvh' }} />
+
         <ChatInput
           sendMessage={sendMessage}
           enable={
@@ -271,7 +261,7 @@ function ChatPage() {
             chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status !== '비활성화'
           }
         />
-      </div>
+       </CustomScrollBox> 
     </MainContainer>
   );
 }

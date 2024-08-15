@@ -7,6 +7,7 @@ import { useRecoilState } from 'recoil';
 import { userauthState } from '../../utils/atom';
 import EditModal from './modal/EditModal';
 import { useNavigate } from 'react-router';
+import { Btn } from '../global/CustomComponents';
 
 const style = {
   position: 'absolute',
@@ -98,13 +99,12 @@ function Message({ data, repeat, self }) {
             {data.content.startsWith('dpt: ') && data.user.role === 'DOCTOR' ? (
               <Suggestion>
                 <p>진료과 추천 정보가 제공되었습니다</p>
-                <Button
-                  variant='contained'
+                <Btn
                   onClick={requestHospital}
-                  sx={{ width: '80%', color: 'black', backgroundColor: '#c5e7aa' }}
+                  sx={{ width: '80%'}}
                 >
                   {data.content.split(' ')[1]}
-                </Button>
+                </Btn>
               </Suggestion>
             ) : (
               data.content.split('\\n').map(e => (
@@ -162,7 +162,7 @@ const Author = styled.p`
 `;
 
 const Content = styled.div`
-  background-color: ${({ self }) => (self ? 'var(--main-soft)' : 'var(--paper-deep)')};
+  background-color: ${({ self }) => (self ? 'var(--main-soft)' : 'var(--paper-soft)')};
   padding: 10px;
   border-radius: 10px;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};
