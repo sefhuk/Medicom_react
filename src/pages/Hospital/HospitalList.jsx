@@ -9,11 +9,12 @@ import { useNavigate} from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { Loading } from "../../components/Loading";
 import Pagination from '../../components/board/Pagination';
 import { Btn, Btntwo, SmallBtn, TextF } from '../../components/global/CustomComponents';
 
-const HospitalList = () => {
+const HospitalList = (hospital) => {
   const { latitude, longitude } = useContext(LocationContext);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -366,9 +367,15 @@ const HospitalList = () => {
   };
 
   const handleMapClick = (hospital) => {
-    setSelectedHospital(hospital.id === selectedHospital?.id ? null : hospital);
+    // 선택된 병원이 현재 선택된 병원과 같은지 비교하여 상태를 업데이트
+    const newSelectedHospital = hospital.id === selectedHospital?.id ? null : hospital;
+    setSelectedHospital(newSelectedHospital);
     setShowReviews(true); // 지도를 보여주고 리뷰도 보이게 설정
   };
+
+  // 현재 선택된 병원과 동일한 병원인지 체크하여 아이콘 결정
+  const isHospitalSelected = selectedHospital?.id === hospital.id;
+
 
   const renderMap = () => {
     if (selectedHospital) {
@@ -611,8 +618,9 @@ const HospitalList = () => {
                         onClick={() => handleMapClick(hospital)}
                         sx={{ color: '#4a885d' }}
                       >
-                        <AddIcon />
+                        {isHospitalSelected ? <AddIcon /> : <RemoveIcon />}
                       </IconButton>
+
                     </Box>
                   </Box>
                 </Box>
