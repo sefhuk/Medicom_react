@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box} from '@mui/material';
 
 const NaverLoginButton = () => {
   const navigate = useNavigate();
@@ -14,13 +15,13 @@ const NaverLoginButton = () => {
   };
 
   return (
-    <div onClick={handleNaverLogin} style={{ cursor: 'pointer', display: 'inline-block' }}>
+    <Box onClick={handleNaverLogin} sx={{ mx:2, cursor: 'pointer' }}>
       <img
-        src="../../public/images/btnG.jpg"
+        src="/images/naverlogin.png"
         alt="네이버 로그인"
-        style={{ width: '100%', height: 'auto' }}
+        style={{ width: '175px', height: '45px' }}
       />
-    </div>
+    </Box>
   );
 };
 

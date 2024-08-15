@@ -1,12 +1,33 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userLogin, axiosInstance } from '../utils/axios';
-import { TextField, Button, Typography, Paper, Container, Box } from '@mui/material';
+import { TextField, Button, Typography, Paper, Container, Box, Grid } from '@mui/material';
 import MainContainer from '../components/global/MainContainer';
 import { useSetRecoilState } from 'recoil';
 import { userauthState } from '../utils/atom';
 import NaverLoginButton from '../components/NaverLogin';
-import { Btntwo } from '../components/global/CustomComponents';
+import { Btntwo, TextF, Btn } from '../components/global/CustomComponents';
+
+const CustomButton = ({ text, onClick }) => {
+  return (
+    <Button
+      type="button"
+      sx={{
+        flex: '1 1 auto',
+        color: 'black',
+        '&:hover': {
+          backgroundColor: 'transparent',
+        },
+        '&:focus': {
+          backgroundColor: 'transparent',
+        },
+      }}
+      onClick={onClick}
+    >
+      {text}
+    </Button>
+  );
+};
 
 const Login = () => {
   const [loginState, setLoginState] = useState({
@@ -69,12 +90,30 @@ const Login = () => {
 
   return (
     <MainContainer>
-      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)' }}> 
-        <Typography variant="h4" align="center" gutterBottom>
-          로그인
+      <Container
+      sx={{
+        display: 'flex',
+        justifyContent: 'center', 
+        alignItems: 'center',
+        height: '80dvh',
+      }}
+    >
+      <Box
+        sx={{
+          width: '100%',
+          maxWidth: 600,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 2, 
+        }}
+      >
+        <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 5 }}>
+          Login
         </Typography>
         <form onSubmit={handleSubmit}>
-          <TextField
+          <TextF
             label="이메일"
             name="email"
             type="email"
@@ -84,7 +123,7 @@ const Login = () => {
             required
             margin="normal"
           />
-          <TextField
+          <TextF
             label="비밀번호"
             name="password"
             type="password"
@@ -94,27 +133,29 @@ const Login = () => {
             required
             margin="normal"
           />
-          <Btntwo type="submit" sx={{width: '100%', height: '50px',borderRadius: '10px', padding: '10px 0' }}>
-            로그인
+          <Btntwo type="submit" sx={{ width: '100%', marginTop: 2 }}>
+            Login
           </Btntwo>
         </form>
         {loginState.message && <Typography color="error" align="center">{loginState.message}</Typography>}
-
-        <Container fixed fullWidth sx={{ margin: '15px 0', display: 'flex', flexDirection: 'row' }}>
-        <Button type="button" sx={{ flex: '1 1 auto' }} onClick={handelFindEmail}>
-          아이디 찾기
-        </Button>
-        <Button type="button" sx={{ flex: '1 1 auto' }} onClick={navigateVerified}>
-          비밀번호 찾기
-        </Button>
-        <Button type="button" sx={{ flex: '1 1 auto' }} onClick={navigateRegister}>
-          회원 가입
-        </Button>
+          <Grid sx = {{ marginTop: 2 }}>
+            <CustomButton text="아이디 찾기" onClick={handelFindEmail} />
+            <CustomButton text="비밀번호 찾기" onClick={navigateVerified} />
+            <CustomButton text="회원 가입" onClick={navigateRegister} />
+          </Grid>
+          <Grid sx = {{ display: 'flex', marginTop: 2 }}>
+          <Box sx={{ mx: 2, cursor: 'pointer' }} onClick={handleGoogleLogin}>
+            <img src='/images/googlelogin.png' alt="구글 로그인" style={{width: '175px', height: '45px'}} />
+          </Box>
+            <NaverLoginButton />
+          </Grid>
+        </Box>
       </Container>
-      <Button onClick={handleGoogleLogin}>구글 로그인</Button>
-      <NaverLoginButton />
-      </Paper>
     </MainContainer>
+
+
+
+
   );
 };
 
