@@ -5,7 +5,7 @@ import CreatePostForm from '../../components/board/CreatePostForm';
 import MainContainer from '../../components/global/MainContainer';
 import { CircularProgress, Box, Alert, Typography, Button } from '@mui/material';
 
-
+// Auth 헤더를 반환하는 함수
 function getAuthHeaders() {
   const token = localStorage.getItem('token');
   return {
@@ -31,7 +31,7 @@ function CreatePostPage() {
     }
 
     setLoading(true);
-    setError(null);
+    setError(null); // Clear previous errors
     try {
       await axiosInstance.post(`/posts`, { ...data, boardId }, {
         headers: getAuthHeaders()
@@ -59,9 +59,15 @@ function CreatePostPage() {
           <>
             {error && <Alert severity="error">{error}</Alert>}
             <CreatePostForm onSubmit={handleSubmit} />
-            <Box sx={{ mt: 4 }}>
-
-            </Box>
+            {/* <Box sx={{ mt: 4 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => navigate(`/boards/${boardId}`)}
+              >
+                Back to prev
+              </Button>
+            </Box> */}
           </>
         )}
       </Box>

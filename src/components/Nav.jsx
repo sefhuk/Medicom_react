@@ -37,6 +37,8 @@ const Nav = () => {
   };
 
   const handleLogoutClick = async () => {
+    const originAlert = window.alert;
+    window.alert = function() {};
     setAuthState({ isLoggedIn: false });
     setChatRoomState({ rooms: [], selectedIndex: 0 });
     localStorage.removeItem('token');
@@ -44,6 +46,7 @@ const Nav = () => {
     await axiosInstance.post('/user-logout');
     deleteCookie('refreshToken');
     navigate('/');
+    window.alert = originAlert;
   };
 
   const OnClickMyPage = () => {
@@ -77,7 +80,7 @@ const Nav = () => {
           size="small"
           edge="start"
           color="black"
-          onClick={isHomePage ? handleHomePage : handlePreviousPage}
+          onClick={isHomePage ? 'none' : handlePreviousPage}
           sx={{ mr: 1 }}
         >
           {isHomePage ? <Menu sx = {{ height:'20px', width:'20px' }}/> : <ArrowBack sx = {{ height:'20px', width:'20px' }}/>}
