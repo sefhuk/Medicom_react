@@ -21,14 +21,12 @@ const MapComponent = () => {
   const { state } = routeLocation;
   const { departments = [] } = state || {};
 
-  // Fetch hospitals data
   useEffect(() => {
     const fetchHospitalsData = async () => {
       try {
         const response = await axiosInstance.get('/api/hospitals/all');
         setHospitals(response.data);
         console.log('병원 데이터를 가져왔습니다:', response.data);
-        handleDepartmentSearch(); // 초기 데이터 로드 시 검색
       } catch (error) {
         setError(error.message);
         console.error('병원 데이터 가져오기 오류:', error);
@@ -38,9 +36,23 @@ const MapComponent = () => {
     fetchHospitalsData();
   }, []);
 
-  // Filter hospitals based on location
   useEffect(() => {
-    if (latitude && longitude && hospitals.length > 0) {
+    const handleDepartmentSearch = (hospitalsData) => {
+      if (departments.length === 0) {
+        setError('부서명이 입력되지 않았습니다.');
+        return;
+      }
+
+      const departmentsArray = departments.map(dep => dep.trim());
+
+      const filteredByDepartment = hospitalsData.filter(hospital =>
+        hospital.departments.some(department => departmentsArray.includes(department.name))
+      );
+
+      setFilteredHospitals(filteredByDepartment);
+    };
+
+    if (hospitals.length > 0) {
       const distance = (lat1, lng1, lat2, lng2) => {
         const R = 6371;
         const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -52,17 +64,16 @@ const MapComponent = () => {
         return R * c;
       };
 
-      const filtered = hospitals.filter(hospital => {
+      const filteredByLocation = hospitals.filter(hospital => {
         const hospitalLat = hospital.latitude;
         const hospitalLng = hospital.longitude;
         return distance(latitude, longitude, hospitalLat, hospitalLng) <= 5;
       });
 
-      setFilteredHospitals(filtered);
+      handleDepartmentSearch(filteredByLocation);
     }
-  }, [latitude, longitude, hospitals]);
+  }, [hospitals, latitude, longitude, departments]);
 
-  // Initialize the map
   useEffect(() => {
     if (mapLoaded && latitude && longitude) {
       const mapDiv = document.getElementById('map');
@@ -77,7 +88,6 @@ const MapComponent = () => {
     }
   }, [mapLoaded, latitude, longitude]);
 
-  // Update markers on the map
   useEffect(() => {
     if (map && filteredHospitals.length > 0) {
       markers.forEach(marker => marker.setMap(null));
@@ -106,7 +116,6 @@ const MapComponent = () => {
     }
   }, [map, filteredHospitals, selectedHospital]);
 
-  // Load Naver Maps script
   useEffect(() => {
     const loadMapScript = () => {
       if (!window.naver || !window.naver.maps) {
@@ -129,55 +138,6 @@ const MapComponent = () => {
       }
     };
   }, []);
-
-  // Handle department search
-  const handleDepartmentSearch = () => {
-    if (departments.length === 0) {
-      setError('부서명이 입력되지 않았습니다.');
-      return;
-    }
-
-    const departmentsArray = departments.map(dep => dep.trim());
-
-    const filteredByDepartment = filteredHospitals.filter(hospital =>
-      hospital.departments.some(department => departmentsArray.includes(department.name))
-    );
-
-    setFilteredHospitals(filteredByDepartment);
-
-    if (map) {
-      markers.forEach(marker => marker.setMap(null));
-
-      const newMarkers = filteredByDepartment.map(item => {
-        const marker = new window.naver.maps.Marker({
-          position: new window.naver.maps.LatLng(item.latitude, item.longitude),
-          map: map,
-          title: item.name
-        });
-
-        window.naver.maps.Event.addListener(marker, 'click', () => {
-          if (selectedHospital && selectedHospital.id === item.id) {
-            setSelectedHospital(null);
-            setShowDetails(false);
-          } else {
-            setSelectedHospital(item);
-            setShowDetails(true);
-          }
-        });
-
-        return marker;
-      });
-
-      setMarkers(newMarkers);
-    }
-  };
-
-  // Automatically invoke handleDepartmentSearch when filteredHospitals is updated
-  useEffect(() => {
-    if (filteredHospitals.length > 0) {
-      handleDepartmentSearch();
-    }
-  }, [filteredHospitals]);
 
   const handleReservation = () => {
     if (selectedHospital) {
