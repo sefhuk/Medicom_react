@@ -37,6 +37,8 @@ const Nav = () => {
   };
 
   const handleLogoutClick = async () => {
+    const originAlert = window.alert;
+    window.alert = function() {};
     setAuthState({ isLoggedIn: false });
     setChatRoomState({ rooms: [], selectedIndex: 0 });
     localStorage.removeItem('token');
@@ -44,6 +46,7 @@ const Nav = () => {
     await axiosInstance.post('/user-logout');
     deleteCookie('refreshToken');
     navigate('/');
+    window.alert = originAlert;
   };
 
   const OnClickMyPage = () => {
