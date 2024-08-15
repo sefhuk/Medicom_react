@@ -11,11 +11,11 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import { Loading } from "../../components/Loading";
 import { useLocation } from 'react-router-dom';
+import { Btn, Btntwo, SmallBtn, TextF } from '../../components/global/CustomComponents';
 
-const HospitalList = () => {
+const HospitalResult = () => {
   const location = useLocation();
   const departmentsFromState = location.state?.departments || [];
-
   const { latitude, longitude } = useContext(LocationContext);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -327,15 +327,12 @@ const HospitalList = () => {
     if (!loaded) {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-          <Button
+          <Btn
             onClick={() => handleLoadMoreReviews(hospitalId)}
             disabled={loading}
-            variant="outlined"
-            color="primary"
-            sx={commonButtonStyles(loading, 'primary')}
           >
             {loading ? '로딩 중...' : '리뷰 더보기'}
-          </Button>
+          </Btn>
         </Box>
       );
     }
@@ -355,36 +352,28 @@ const HospitalList = () => {
         )}
         {moreReviews && (
           <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-            <Button
+            <Btn
               onClick={() => handleLoadMoreReviews(hospitalId)}
               disabled={loading}
-              variant="outlined"
-              color="primary"
               sx={commonButtonStyles(loading, 'primary')}
             >
               {loading ? '로딩 중...' : '리뷰 더보기'}
-            </Button>
+            </Btn>
           </Box>
         )}
         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-          <Button
+          <Btn
             onClick={() => handleCloseReviews(hospitalId)}
-            variant="outlined"
-            color="primary"
-            sx={commonButtonStyles(loading, 'primary')}
           >
             리뷰 닫기
-          </Button>
+          </Btn>
         </Box>
       </>
     );
   };
-  
-  
 
   const handleSearch = () => {
     const departmentNames = departmentInput.split(',').map(name => name.trim()).filter(name => name);
-
     setSearchParams(prev => ({
       ...prev,
       departmentNames,
@@ -393,18 +382,9 @@ const HospitalList = () => {
     }));
   };
 
-  
-
   const handleDepartmentInputChange = (e) => {
     setDepartmentInput(e.target.value);
   };
-
-
-
-  // const handleDepartmentChange = (e) => {
-  //   setDepartmentInput(e.target.value);
-  // };
-
 
   const handleFilter = (departmentName) => {
     setSelectedDepartment(departmentName);
@@ -426,33 +406,37 @@ const HospitalList = () => {
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const maxPagesToShow = 10;
+    const maxPagesToShow = 5;
     let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow);
 
-    if (endPage - startPage + 1 < maxPagesToShow) {
-      startPage = Math.max(0, endPage - maxPagesToShow + 1);
+    if (endPage - startPage < maxPagesToShow) {
+      startPage = Math.max(0, endPage - maxPagesToShow);
     }
 
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
+    for (let i = startPage; i < endPage; i++) {
+      pageNumbers.push(
+        <Button
+          key={i}
+          onClick={() => handlePageClick(i)}
+          disabled={i === currentPage}
+           sx={{
+            color: i === currentPage ? 'black' : '#0a7729', // 글자색 설정
+            borderRadius: '20px',
+            border: '1px solid gray',
+            margin: '0 4px',
+            padding: '6px 12px',
+            '&:hover': {
+              backgroundColor: '#f3f4f0',
+            },
+          }}
+        >
+          {i + 1}
+        </Button>
+      );
     }
-
-    return (
-      <div>
-        {pageNumbers.map(number => (
-          <button
-            key={number}
-            onClick={() => handlePageClick(number)}
-            disabled={number === currentPage}
-          >
-            {number + 1}
-          </button>
-        ))}
-      </div>
-    );
+    return pageNumbers;
   };
-
 
 
 
@@ -460,8 +444,9 @@ const HospitalList = () => {
   const handleReservation = (hospital) => {
     if (hospital) {
       console.log(hospital.id);
-      navigate(`/hospitals/maps/${hospital.id}/reservation`);
-    } else {
+      navigate(`/hospitals/maps/${hospital.id}/reservation`, {
+      state: { hospital }
+      })} else {
       setError('예약할 병원을 선택해주세요.');
     }
   };
@@ -491,8 +476,8 @@ const HospitalList = () => {
 
   return (
     <MainContainer>
-      <Box className="container" sx={{ padding: '20px', marginLeft: '20px', marginRight: '20px' }}>
-        <Typography variant="h5" component="h5">병원 검색하기</Typography>
+      <Box className="container" sx={{ padding: '20px', marginLeft: 2, marginRight: 2 }}>
+        <Typography variant="h5" sx={ {fontWeight:'bold'}}>병원 리스트</Typography>
 
         <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
           <Grid item xs={12} sm={6} md={5}>
@@ -509,7 +494,7 @@ const HospitalList = () => {
           </Grid>
         </Grid>
 
-        <List sx={{ border: '1px solid #ddd', borderRadius: '4px', padding: '0', marginTop: '20px' }}>
+        <List sx={{ border: '1px solid #ddd', borderRadius: '20px', padding: '0', marginTop: '20px' }}>
           {hospitals.length > 0 ? (
             hospitals.map((hospital, index) => (
               <ListItem
@@ -525,7 +510,7 @@ const HospitalList = () => {
                   <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                     <IconButton
                       onClick={() => isBookmarked(hospital.id) ? handleRemoveBookmark(hospital.id) : handleAddBookmark(hospital.id)}
-                      sx={{ marginRight: '7px', color: 'primary.main' }}
+                      sx={{color: '#4a885d', marginLeft:'-7px' }}
                     >
                       {isBookmarked(hospital.id) ? <StarIcon /> : <StarBorderIcon />}
                     </IconButton>
@@ -536,7 +521,7 @@ const HospitalList = () => {
 
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginBottom: '10px' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-                      <LocationOnIcon sx={{ marginRight: '8px', color: 'primary.main' }} />
+                      <LocationOnIcon sx={{ marginRight: '8px', color: '#4a885d' }} />
                       <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
                         {hospital.address}
                       </Typography>
@@ -548,7 +533,7 @@ const HospitalList = () => {
                     </Box>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <StarIcon sx={{ color: 'gold', marginRight: '5px' }} />
+                    <StarIcon sx={{ color: 'gold', marginRight: '6px', marginLeft:'1px' }} />
                     <Typography variant="body2">
                       평균 평점: {hospital.avgRating !== undefined ? hospital.avgRating.toFixed(1) : "평점 없음"} ({hospital.reviewCount || 0} 리뷰)
                     </Typography>
@@ -566,19 +551,22 @@ const HospitalList = () => {
                     )}
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
-                    <Typography variant="body2">전화번호: {hospital.telephoneNumber}</Typography>
+                  <Typography variant="body2">
+                    전화번호 :
+                    <a href={`tel:${hospital.telephoneNumber}`} style={{ textDecoration: 'none', color: 'inherit', marginLeft: '8px' }}>
+                      {hospital.telephoneNumber}
+                    </a>
+                  </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        sx={{ marginRight: '10px' }}
+                      <SmallBtn
+
                         onClick={() => handleReservation(hospital)}
                       >
                         예약
-                      </Button>
+                      </SmallBtn>
                       <IconButton
                         onClick={() => handleMapClick(hospital)}
-                        sx={{ color: 'primary.main' }}
+                        sx={{ color: '#4a885d' }}
                       >
                         <AddIcon />
                       </IconButton>
@@ -597,16 +585,15 @@ const HospitalList = () => {
             <Typography variant="body2" sx={{ padding: '10px' }}>병원이 없습니다</Typography>
           )}
         </List>
-
         
-        <div className="page-buttons">
-          {totalPages > 1 && renderPageNumbers()}
-        </div>
-
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+          {renderPageNumbers()}
+        </Box>
+      
       </Box>
     </MainContainer>
 
   );
 };
 
-export default HospitalList;
+export default HospitalResult;

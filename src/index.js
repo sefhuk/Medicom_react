@@ -122,6 +122,7 @@ const router = createBrowserRouter([
 
 
           { path: 'hospitals/maps/:hospitalid/reservation', element: <HospitalReservation /> },
+          { path: 'hospitals/maps/:hospitalid/reservation/success', element: <ReservationSuccess /> },
 
           {
             path: 'admin-page',
