@@ -45,6 +45,7 @@ import ShowEmail from './components/ShowEmail';
 import ReservationSuccess from './pages/Hospital/ReservationSuccess'
 import ReservationList from './pages/user/ReservationList';
 import { MyPosts } from './pages/user/MyPosts.jsx';
+import UserInfoPage from './pages/user/UserInfoPage';
 
 
 const queryClient = new QueryClient();
@@ -157,6 +158,10 @@ const router = createBrowserRouter([
           {
             path: 'my-activity',
             element: <MyActivity />
+          },
+          {
+            path: '/user-info',
+            element: <UserInfoPage />
           },
 
 
