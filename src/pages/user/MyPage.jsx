@@ -138,12 +138,13 @@ const MyPage = () => {
 
   return (
     <MainContainer>
+
       <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)', minHeight: '-webkit-fill-available', height: 'fit-content'}}>
 
           <Typography variant='h5' sx={{fontWeight: 'bold', display: 'inline', color: 'var(--main-common)' }}>
             마이페이지
           </Typography>
-          <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
+          <Box sx={{ margin: '20px 0', borderBottom: '1px solid black' }}></Box>
           <Box
             sx={{
               display: 'flex',
@@ -159,13 +160,13 @@ const MyPage = () => {
               <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'var(--main-common)' }}>
                 {userInfo?.name} 님
               </Typography>
-              <Typography variant="body1" sx={{ color: 'var(--main-common)' }}>
+              <Typography variant="body1">
                 {userRole === 'USER' ? '일반 회원' : userRole === 'DOCTOR' ? '의사 회원' : '관리자 회원'}
               </Typography>
             </Box>
             <Box sx={{ position: 'relative' }}>
               <Avatar
-                sx={{ width: 100, height: 100, cursor: 'pointer', backgroundColor: 'var(--main-soft)' }}
+                sx={{ width: 100, height: 100, cursor: 'pointer', bgcolor: 'white', border: '2px solid #e2e2e2' }}
                 onClick={handleAvatarClick}
                 src={userInfo?.image}
               >
@@ -192,14 +193,11 @@ const MyPage = () => {
 
 
           <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', margin: '20px 0', gap: 2 }}>
-            <Box sx={{ textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', marginLeft: 4 }}>
               <IconButton
                 sx={{
-                  backgroundColor: 'var(--main-common)',
-                  color: 'white',
-                  '&:hover': {
-                    backgroundColor: 'var(--main-deep)',
-                  },
+                  backgroundColor: 'var(--paper-soft)',
+                  color: 'black',
                   width: 80,
                   height: 80,
                 }}
@@ -207,19 +205,16 @@ const MyPage = () => {
               >
                 <ChatIcon sx={{ fontSize: 40 }} />
               </IconButton>
-              <Typography variant="caption" sx={{ display: 'block', color: 'var(--main-common)', marginTop: 1 }}>
+              <Typography variant="caption" sx={{ display: 'block', marginTop: 1 }}>
                 새로운 상담
               </Typography>
             </Box>
             <Divider orientation="vertical" flexItem />
-            <Box sx={{ textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', marginRight: 4 }}>
               <IconButton
                 sx={{
-                  backgroundColor: 'var(--main-common)',
-                  color: 'white',
-                  '&:hover': {
-                    backgroundColor: 'var(--main-deep)',
-                  },
+                  backgroundColor: 'var(--paper-soft)',
+                  color: 'black',
                   width: 80,
                   height: 80,
                 }}
@@ -227,7 +222,7 @@ const MyPage = () => {
               >
                 <ArticleIcon sx={{ fontSize: 40 }} />
               </IconButton>
-              <Typography variant="caption" sx={{ display: 'block', color: 'var(--main-common)', marginTop: 1 }}>
+              <Typography variant="caption" sx={{ display: 'block', color: 'black', marginTop: 1 }}>
                 공지사항
               </Typography>
             </Box>
@@ -258,7 +253,7 @@ const MyPage = () => {
                     {item.icon}
                   </ListItemIcon>
                   <ListItemText primary={item.label} />
-                  <ChevronRightIcon sx={{ color: 'var(--main-common)' }} />
+                  <ChevronRightIcon sx={{ color: 'black' }} />
                 </ListItem>
                 <Divider />
               </React.Fragment>
@@ -267,9 +262,9 @@ const MyPage = () => {
 
 
         {userRole === 'ADMIN' && (
-          <Btntwo onClick={OnClickAdminPage}>
+          <Btn onClick={OnClickAdminPage} sx = {{marginTop: 13, marginLeft: 'auto'}}>
             관리자 페이지
-          </Btntwo>
+          </Btn>
         )}
       </Paper>
       <Dialog open={imageUploadOpen} onClose={handleImageUploadClose}>
