@@ -36,10 +36,10 @@ const AdminPage = () => {
         </Typography>
         <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
         <Box>
-          <Btntwo variant="contained" sx={{width: '100%' ,height: '50px',fontSize: '16px'}}
+          <Btntwo variant="contained" sx={{width: '100%', height: '50px', fontSize: '16px', borderRadius: '10px'}}
             onClick={(e) => {OnClickUserList(chatListLink)}}>채팅 관리</Btntwo>
           <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
-          <Btntwo variant="contained" sx={{width: '100%' ,height: '50px',fontSize: '16px'}}
+          <Btntwo variant="contained" sx={{width: '100%', height: '50px', fontSize: '16px', borderRadius: '10px'}}
             onClick={(e) => {OnClickUserList(userListLink)}}>회원 목록
           </Btntwo>
           <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
