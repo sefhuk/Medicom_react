@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
 import MainContainer from '../../components/global/MainContainer';
 import HospitalReviewCard from '../../components/HospitalReviewCard';
 import { axiosInstance } from '../../utils/axios';
@@ -11,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import { Loading } from "../../components/Loading";
+import { Btn, Btntwo, SmallBtn, TextF } from '../../components/global/CustomComponents';
 
 const HospitalList = () => {
   const { latitude, longitude } = useContext(LocationContext);
@@ -288,15 +288,12 @@ const HospitalList = () => {
     if (!loaded) {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-          <Button
+          <Btn
             onClick={() => handleLoadMoreReviews(hospitalId)}
             disabled={loading}
-            variant="outlined"
-            color="primary"
-            sx={commonButtonStyles(loading, 'primary')}
           >
             {loading ? '로딩 중...' : '리뷰 더보기'}
-          </Button>
+          </Btn>
         </Box>
       );
     }
@@ -316,26 +313,21 @@ const HospitalList = () => {
         )}
         {moreReviews && (
           <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-            <Button
+            <Btn
               onClick={() => handleLoadMoreReviews(hospitalId)}
               disabled={loading}
-              variant="outlined"
-              color="primary"
               sx={commonButtonStyles(loading, 'primary')}
             >
               {loading ? '로딩 중...' : '리뷰 더보기'}
-            </Button>
+            </Btn>
           </Box>
         )}
         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-          <Button
+          <Btn
             onClick={() => handleCloseReviews(hospitalId)}
-            variant="outlined"
-            color="primary"
-            sx={commonButtonStyles(loading, 'primary')}
           >
             리뷰 닫기
-          </Button>
+          </Btn>
         </Box>
       </>
     );
@@ -388,7 +380,7 @@ const HospitalList = () => {
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const maxPagesToShow = 10;
+    const maxPagesToShow = 5;
     let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
     let endPage = Math.min(totalPages, startPage + maxPagesToShow);
 
@@ -398,13 +390,23 @@ const HospitalList = () => {
 
     for (let i = startPage; i < endPage; i++) {
       pageNumbers.push(
-        <button
+        <Button
           key={i}
           onClick={() => handlePageClick(i)}
           disabled={i === currentPage}
+           sx={{
+            color: i === currentPage ? 'black' : '#0a7729', // 글자색 설정
+            borderRadius: '20px',
+            border: '1px solid gray',
+            margin: '0 4px',
+            padding: '6px 12px',
+            '&:hover': {
+              backgroundColor: '#f3f4f0',
+            },
+          }}
         >
           {i + 1}
-        </button>
+        </Button>
       );
     }
     return pageNumbers;
@@ -480,12 +482,12 @@ const HospitalList = () => {
 
   return (
     <MainContainer>
-      <Box className="container" sx={{ padding: '20px', marginLeft: '20px', marginRight: '20px' }}>
-        <Typography variant="h5" component="h5">병원 검색하기</Typography>
+      <Box className="container" sx={{ padding: '20px', marginLeft: 2, marginRight: 2 }}>
+        <Typography variant="h5" sx={ {fontWeight:'bold'}}>병원 검색하기</Typography>
 
-        <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
-          <Grid item xs={12} sm={6} md={5}>
-            <TextField
+        <Grid container spacing={2}  sx={{ marginRight: 2,marginTop: 2, marginBottom: 2  }}>
+          <Grid item xs={12} sm={7} md={6}>
+            <TextF
               fullWidth
               type="text"
               value={searchInput}
@@ -514,12 +516,12 @@ const HospitalList = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={2} md={2}>
-            <Button fullWidth variant="contained" color="primary" onClick={handleSearch} sx={{ height: '100%' }}>검색</Button>
+          <Grid item xs={12} sm={1} md={1}>
+            <Btntwo onClick={handleSearch}>SEARCH</Btntwo>
           </Grid>
         </Grid>
 
-        <List sx={{ border: '1px solid #ddd', borderRadius: '4px', padding: '0', marginTop: '20px' }}>
+        <List sx={{ border: '1px solid #ddd', borderRadius: '20px', padding: '0', marginTop: '20px' }}>
           {hospitals.length > 0 ? (
             hospitals.map((hospital, index) => (
               <ListItem
@@ -535,7 +537,7 @@ const HospitalList = () => {
                   <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                     <IconButton
                       onClick={() => isBookmarked(hospital.id) ? handleRemoveBookmark(hospital.id) : handleAddBookmark(hospital.id)}
-                      sx={{ marginRight: '7px', color: 'primary.main' }}
+                      sx={{color: '#4a885d', marginLeft:'-7px' }}
                     >
                       {isBookmarked(hospital.id) ? <StarIcon /> : <StarBorderIcon />}
                     </IconButton>
@@ -546,7 +548,7 @@ const HospitalList = () => {
 
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginBottom: '10px' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-                      <LocationOnIcon sx={{ marginRight: '8px', color: 'primary.main' }} />
+                      <LocationOnIcon sx={{ marginRight: '8px', color: '#4a885d' }} />
                       <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
                         {hospital.address}
                       </Typography>
@@ -558,7 +560,7 @@ const HospitalList = () => {
                     </Box>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <StarIcon sx={{ color: 'gold', marginRight: '5px' }} />
+                    <StarIcon sx={{ color: 'gold', marginRight: '6px', marginLeft:'1px' }} />
                     <Typography variant="body2">
                       평균 평점: {hospital.avgRating !== undefined ? hospital.avgRating.toFixed(1) : "평점 없음"} ({hospital.reviewCount || 0} 리뷰)
                     </Typography>
@@ -576,19 +578,22 @@ const HospitalList = () => {
                     )}
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
-                    <Typography variant="body2">전화번호: {hospital.telephoneNumber}</Typography>
+                  <Typography variant="body2">
+                    전화번호 :
+                    <a href={`tel:${hospital.telephoneNumber}`} style={{ textDecoration: 'none', color: 'inherit', marginLeft: '8px' }}>
+                      {hospital.telephoneNumber}
+                    </a>
+                  </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        sx={{ marginRight: '10px' }}
+                      <SmallBtn
+
                         onClick={() => handleReservation(hospital)}
                       >
                         예약
-                      </Button>
+                      </SmallBtn>
                       <IconButton
                         onClick={() => handleMapClick(hospital)}
-                        sx={{ color: 'primary.main' }}
+                        sx={{ color: '#4a885d' }}
                       >
                         <AddIcon />
                       </IconButton>
@@ -607,38 +612,11 @@ const HospitalList = () => {
             <Typography variant="body2" sx={{ padding: '10px' }}>병원이 없습니다</Typography>
           )}
         </List>
-
         
-      <Box
-        sx={{
-          display: 'flex', // 플렉스 박스를 사용하여 버튼을 배치
-          justifyContent: 'center', // 버튼을 수평 중앙에 배치
-          marginTop: '20px', // 상단 여백 추가
-          marginBottom: '20px', // 하단 여백 추가
-          padding: '10px', // 패딩 추가
-        }}
-      >
-        {renderPageNumbers().map((button, index) => (
-          <Box
-            key={index}
-            sx={{
-              margin: '0 8px', // 각 버튼 사이의 좌우 여백을 설정 (간격 조정)
-            }}
-          >
-            {React.cloneElement(button, {
-              sx: {
-                borderColor: 'primary.main',
-                color: 'primary.main',
-                '&:hover': {
-                  borderColor: 'secondary.main',
-                  color: 'secondary.main',
-                  backgroundColor: 'transparent',
-                },
-              },
-            })}
-          </Box>
-        ))}
-      </Box>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+          {renderPageNumbers()}
+        </Box>
+      
       </Box>
     </MainContainer>
 
