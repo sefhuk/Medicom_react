@@ -198,7 +198,16 @@ function ChatPage() {
       >
         <Button
           onClick={() => navigate('/chatlist')}
-          sx={{ width: '95%', fontSize: '1.2rem', backgroundColor: '#4f90de', margin: 'auto' }}
+          sx={{
+            width: '95%',
+            fontSize: '1.2rem',
+            backgroundColor: 'var(--main-common)',
+            margin: 'auto',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: 'var(--main-deep)'
+            }
+          }}
         >
           목록으로 돌아가기
         </Button>
@@ -239,7 +248,14 @@ function ChatPage() {
             >
               <Button
                 variant='contained'
-                style={{ width: '50%', marginBottom: '4px' }}
+                style={{
+                  width: '50%',
+                  color: 'black',
+                  fontWeight: 'bold',
+                  marginBottom: '4px',
+                  border: '2px solid var(--main-soft)',
+                  backgroundColor: 'var(--paper-common)'
+                }}
                 onClick={acceptChatRoom}
               >
                 채팅 수락
