@@ -130,7 +130,7 @@ const MyReviews = () => {
           minHeight: '-webkit-fill-available',
           height: 'fit-content'
         }}>
-        <Typography variant="h5" sx={{ display: 'inline', color: 'var(--main-common)' }}>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', display: 'inline', color: 'var(--main-common)' }}>
           나의 리뷰
         </Typography>
         <Box sx={{ margin: "20px 0", borderBottom: "1px solid var(--main-common)" }}></Box>

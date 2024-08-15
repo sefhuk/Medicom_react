@@ -76,11 +76,21 @@ export const MyPosts = () => {
           height: 'fit-content'
         }}
       >
-        <Typography variant="h5" sx={{ color: 'var(--main-common)' }}>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', display: 'inline', color: 'var(--main-common)' }}>
           내가 쓴 글
         </Typography>
         <Box sx={{ margin: "20px 0", borderBottom: "1px solid var(--main-common)" }}></Box>
-        {postList ? <PostComponent /> : <Loading />}
+        {postList ? (
+          postList.length > 0 ? (
+            <PostComponent />
+          ) : (
+            <Typography variant="body1" sx={{ color: 'var(--main-common)', textAlign: 'center', marginTop: 3 }}>
+              작성한 게시글이 없습니다.
+            </Typography>
+          )
+        ) : (
+          <Loading />
+        )}
       </Paper>
     </MainContainer>
   );
