@@ -6,6 +6,7 @@ import MainContainer from '../components/global/MainContainer';
 import { useSetRecoilState } from 'recoil';
 import { userauthState } from '../utils/atom';
 import NaverLoginButton from '../components/NaverLogin';
+import { Btntwo } from '../components/global/CustomComponents';
 
 const Login = () => {
   const [loginState, setLoginState] = useState({
@@ -67,7 +68,7 @@ const Login = () => {
 
   return (
     <MainContainer>
-      <Paper elevation={6} sx={{ padding: 3, borderRadius: '10px' }}>
+      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)' }}> 
         <Typography variant="h4" align="center" gutterBottom>
           로그인
         </Typography>
@@ -92,14 +93,13 @@ const Login = () => {
             required
             margin="normal"
           />
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ borderRadius: '10px', padding: '10px 0' }}>
+          <Btntwo type="submit" sx={{width: '100%', height: '50px',borderRadius: '10px', padding: '10px 0' }}>
             로그인
-          </Button>
+          </Btntwo>
         </form>
         {loginState.message && <Typography color="error" align="center">{loginState.message}</Typography>}
-      </Paper>
 
-      <Container fixed fullWidth sx={{ margin: '15px 0', display: 'flex', flexDirection: 'row' }}>
+        <Container fixed fullWidth sx={{ margin: '15px 0', display: 'flex', flexDirection: 'row' }}>
         <Button type="button" sx={{ flex: '1 1 auto' }} onClick={handelFindEmail}>
           아이디 찾기
         </Button>
@@ -112,6 +112,7 @@ const Login = () => {
       </Container>
       <Button onClick={handleGoogleLogin}>구글 로그인</Button>
       <NaverLoginButton />
+      </Paper>
     </MainContainer>
   );
 };
