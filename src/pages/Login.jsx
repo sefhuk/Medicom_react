@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userLogin, axiosInstance } from '../utils/axios';
-import { TextField, Button, Typography, Paper, Container, Box, Grid } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Container,
+  Box,
+  Grid,
+  Divider
+} from '@mui/material';
 import MainContainer from '../components/global/MainContainer';
 import { useSetRecoilState } from 'recoil';
 import { userauthState } from '../utils/atom';
@@ -138,11 +147,27 @@ const Login = () => {
           </Btntwo>
         </form>
         {loginState.message && <Typography color="error" align="center">{loginState.message}</Typography>}
-          <Grid sx = {{ marginTop: 2 }}>
-            <CustomButton text="아이디 찾기" onClick={handelFindEmail} />
-            <CustomButton text="비밀번호 찾기" onClick={navigateVerified} />
-            <CustomButton text="회원 가입" onClick={navigateRegister} />
+          <Grid container
+                alignItems="center"
+                justifyContent="center"
+                sx={{ marginTop: 2 }}>
+            <Grid item>
+              <CustomButton text="아이디 찾기" onClick={handelFindEmail} />
+            </Grid>
+            <Divider orientation="vertical" flexItem sx={{ marginX: 1 }} />
+            <Grid item>
+              <CustomButton text="비밀번호 찾기" onClick={navigateVerified} />
+            </Grid>
+            <Divider orientation="vertical" flexItem sx={{ marginX: 1 }} />
+            <Grid item>
+              <CustomButton text="회원 가입" onClick={navigateRegister} />
+            </Grid>
           </Grid>
+        <Divider sx={{ width: '100%', marginY: 3 }}>
+          <Typography variant="body2" color="textSecondary">
+            or
+          </Typography>
+        </Divider>
           <Grid sx = {{ display: 'flex', marginTop: 2 }}>
           <Box sx={{ mx: 2, cursor: 'pointer' }} onClick={handleGoogleLogin}>
             <img src='/images/googlelogin.png' alt="구글 로그인" style={{width: '175px', height: '45px'}} />

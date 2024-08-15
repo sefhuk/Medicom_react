@@ -173,7 +173,7 @@ const ReservationList = () => {
           height: 'fit-content'
         }}
       >
-        <Typography variant='h5' sx={{ display: 'inline', color: 'var(--main-common)' }}>
+        <Typography variant='h5' sx={{fontWeight: 'bold', display: 'inline', color: 'var(--main-common)' }}>
           예약 내역
         </Typography>
         <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
@@ -182,9 +182,9 @@ const ReservationList = () => {
             <CircularProgress />
           </Box>
         ) : (
-          <List component="nav">
+          <List component="nav" sx={{paddingTop: '0px',}}>
             {reservations.length === 0 ? (
-              <Typography variant="body1">예약 내역이 없습니다.</Typography>
+              <Typography variant="body1" sx={{ color: 'var(--main-common)', textAlign: 'center', marginTop: 3 }}>예약 내역이 없습니다.</Typography>
             ) : (
               reservations.map((reservation) => (
                 <React.Fragment key={reservation.id}>

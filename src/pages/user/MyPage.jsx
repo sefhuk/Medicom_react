@@ -12,7 +12,7 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  IconButton, Button
+  IconButton, Button, ListItemIcon
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -26,7 +26,14 @@ import { useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import ChatIcon from '@mui/icons-material/Chat';
 import ArticleIcon from '@mui/icons-material/Article';
-import { Btn } from '../../components/global/CustomComponents';
+import { Btn, Btntwo } from '../../components/global/CustomComponents';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import NoteIcon from '@mui/icons-material/Note';
+import StarIcon from '@mui/icons-material/Star';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
 const theme = createTheme({
   palette: {
@@ -131,9 +138,10 @@ const MyPage = () => {
 
   return (
     <MainContainer>
-      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', minHeight: '-webkit-fill-available', height: 'fit-content'}}>
-        <ThemeProvider theme={theme}>
-          <Typography variant='h5' sx={{ display: 'inline', fontWeight: 'bold', color: 'black' }}>
+
+      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)', minHeight: '-webkit-fill-available', height: 'fit-content'}}>
+
+          <Typography variant='h5' sx={{fontWeight: 'bold', display: 'inline', color: 'var(--main-common)' }}>
             마이페이지
           </Typography>
           <Box sx={{ margin: '20px 0', borderBottom: '1px solid black' }}></Box>
@@ -149,8 +157,8 @@ const MyPage = () => {
             }}
           >
             <Box sx={{ textAlign: 'left' }}>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                {userInfo?.name}님
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'var(--main-common)' }}>
+                {userInfo?.name} 님
               </Typography>
               <Typography variant="body1">
                 {userRole === 'USER' ? '일반 회원' : userRole === 'DOCTOR' ? '의사 회원' : '관리자 회원'}
@@ -223,12 +231,12 @@ const MyPage = () => {
 
           <List component="nav" aria-label="activity history">
             {[
-              { label: '내 정보 수정', path: '/user-info' },
-              { label: '내 채팅 내역', path: '/chatlist' },
-              { label: '예약 내역', path: '/reservations' },
-              { label: '내가 쓴 글', path: '/my-posts' },
-              { label: '나의 리뷰', path: '/my-reviews' },
-              { label: '즐겨찾기', path: '/bookmarks' },
+              { label: '내 정보 수정', path: '/user-info', icon: <AccountCircleIcon /> },
+              { label: '내 채팅 내역', path: '/chatlist', icon: <ChatBubbleIcon /> },
+              { label: '예약 내역', path: '/reservations', icon: <ScheduleIcon /> },
+              { label: '내가 쓴 글', path: '/my-posts', icon: <NoteIcon /> },
+              { label: '나의 리뷰', path: '/my-reviews', icon: <ThumbUpIcon /> },
+              { label: '즐겨찾기', path: '/bookmarks', icon: <StarIcon /> },
             ].map((item) => (
               <React.Fragment key={item.label}>
                 <ListItem
@@ -241,6 +249,9 @@ const MyPage = () => {
                     marginBottom: '0px',
                   }}
                 >
+                  <ListItemIcon>
+                    {item.icon}
+                  </ListItemIcon>
                   <ListItemText primary={item.label} />
                   <ChevronRightIcon sx={{ color: 'black' }} />
                 </ListItem>
@@ -249,7 +260,7 @@ const MyPage = () => {
             ))}
           </List>
 
-        </ThemeProvider>
+
         {userRole === 'ADMIN' && (
           <Btn onClick={OnClickAdminPage} sx = {{marginTop: 13, marginLeft: 'auto'}}>
             관리자 페이지
@@ -262,9 +273,9 @@ const MyPage = () => {
           <ProfileImageUpload userId={userInfo?.id} onImageUpload={handleImageUpload} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleImageUploadClose} color="primary">
+          <Btn onClick={handleImageUploadClose} color="primary">
             취소
-          </Button>
+          </Btn>
         </DialogActions>
       </Dialog>
     </MainContainer>
