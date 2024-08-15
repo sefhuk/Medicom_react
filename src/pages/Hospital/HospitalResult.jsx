@@ -480,8 +480,8 @@ const HospitalResult = (hospital) => {
         <Grid item xs={12} sx={{ marginTop: 2 }}>
               <Box sx={{ bgcolor: '#F3F4F0', padding: 2, borderRadius: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ marginLeft: 2 }}>
-                  <Typography variant='body1'  sx={{ fontWeight: 'bold' }}>
-                    현재 위치 기준 가까운 {departments.join(', ')}
+                  <Typography variant='body1'>
+                    현재 위치 기준 가까운&nbsp;&nbsp;<span style={{ fontWeight: 'bold' }}>{departments.join(', ')}</span>
                   </Typography>
                 </Box>
               </Box>
