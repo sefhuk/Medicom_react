@@ -34,6 +34,7 @@ const Login = () => {
         message: '로그인 성공'
       }));
       setAuthState({ isLoggedIn: true, userId, role });
+      localStorage.setItem('userRole', role);
       navigate('/');
     } catch (error) {
       let errorMessage = '비밀번호가 일치하지 않습니다';
