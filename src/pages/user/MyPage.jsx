@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import ChatIcon from '@mui/icons-material/Chat';
 import ArticleIcon from '@mui/icons-material/Article';
+import { Btntwo } from '../../components/global/CustomComponents';
 
 const theme = createTheme({
   palette: {
@@ -121,6 +122,9 @@ const MyPage = () => {
   const handleBoardClick = () => {
     navigate('/boards/4');
   };
+  const OnClickAdminPage = () => {
+    navigate('/admin-page');
+  }
 
   const { userInfo, imageUploadOpen } = state;
   const userRole = localStorage.getItem('userRole');
@@ -252,6 +256,11 @@ const MyPage = () => {
           </List>
 
         </ThemeProvider>
+        {userRole === 'ADMIN' && (
+          <Btntwo onClick={OnClickAdminPage}>
+            관리자 페이지
+          </Btntwo>
+        )}
       </Paper>
       <Dialog open={imageUploadOpen} onClose={handleImageUploadClose}>
         <DialogTitle>프로필 이미지 업로드</DialogTitle>
