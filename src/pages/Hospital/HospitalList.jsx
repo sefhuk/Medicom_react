@@ -495,7 +495,7 @@ const HospitalList = (hospital) => {
       <Box className="container" sx={{ padding: 2, marginLeft: 2, marginRight: 2 }}>
         <Typography variant="h5" sx={ {fontWeight:'bold'}}>병원 검색하기</Typography>
 
-        <Grid container spacing={2} sx={{ marginTop: 2, flexWrap: 'nowrap' }}>
+        <Grid container spacing={2} sx={{ marginTop: 1, flexWrap: 'nowrap' }}>
           <Grid item xs={2} sm={2} md={2}>
             <FormControl fullWidth variant="outlined">
               <InputLabel id="department-select-label" sx={{ textAlign: 'center' }}>부서</InputLabel>
