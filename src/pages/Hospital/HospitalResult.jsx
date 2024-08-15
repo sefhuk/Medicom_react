@@ -9,11 +9,13 @@ import { useNavigate} from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { Loading } from "../../components/Loading";
 import { useLocation } from 'react-router-dom';
+import Pagination from '../../components/board/Pagination';
 import { Btn, Btntwo, SmallBtn, TextF } from '../../components/global/CustomComponents';
 
-const HospitalResult = () => {
+const HospitalResult = (hospital) => {
   const location = useLocation();
   const departmentsFromState = location.state?.departments || [];
   const { latitude, longitude } = useContext(LocationContext);
@@ -391,9 +393,15 @@ const HospitalResult = () => {
   };
 
   const handleMapClick = (hospital) => {
-    setSelectedHospital(hospital.id === selectedHospital?.id ? null : hospital);
+    // 선택된 병원이 현재 선택된 병원과 같은지 비교하여 상태를 업데이트
+    const newSelectedHospital = hospital.id === selectedHospital?.id ? null : hospital;
+    setSelectedHospital(newSelectedHospital);
     setShowReviews(true); // 지도를 보여주고 리뷰도 보이게 설정
   };
+
+  // 현재 선택된 병원과 동일한 병원인지 체크하여 아이콘 결정
+  const isHospitalSelected = selectedHospital?.id === hospital.id;
+
 
   const renderMap = () => {
     if (selectedHospital) {
@@ -420,16 +428,6 @@ const HospitalResult = () => {
           key={i}
           onClick={() => handlePageClick(i)}
           disabled={i === currentPage}
-           sx={{
-            color: i === currentPage ? 'black' : '#0a7729', // 글자색 설정
-            borderRadius: '20px',
-            border: '1px solid gray',
-            margin: '0 4px',
-            padding: '6px 12px',
-            '&:hover': {
-              backgroundColor: '#f3f4f0',
-            },
-          }}
         >
           {i + 1}
         </Button>
@@ -479,20 +477,20 @@ const HospitalResult = () => {
       <Box className="container" sx={{ padding: '20px', marginLeft: 2, marginRight: 2 }}>
         <Typography variant="h5" sx={ {fontWeight:'bold'}}>병원 리스트</Typography>
 
-        <Grid container spacing={2} sx={{ marginTop: '20px', marginBottom: '20px' }}>
-          <Grid item xs={12} sm={6} md={5}>
-            <TextField
-              fullWidth
-              type="text"
-              value={departmentInput}
-              onChange={handleDepartmentInputChange}
-              disabled
-            />
-          </Grid>
+        <Grid item xs={12} sx={{ marginTop: 2 }}>
+              <Box sx={{ bgcolor: '#F3F4F0', padding: 2, borderRadius: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ marginLeft: 2 }}>
+                  <Typography variant='body1'  sx={{ fontWeight: 'bold' }}>
+                    현재 위치 기준 가까운 {departments.join(', ')}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+
           <Grid item xs={12} sm={2} md={2}>
             <Button fullWidth variant="contained" color="primary" onClick={handleSearch} sx={{ height: '100%', display: 'none' }}>검색</Button>
           </Grid>
-        </Grid>
+
 
         <List sx={{ border: '1px solid #ddd', borderRadius: '20px', padding: '0', marginTop: '20px' }}>
           {hospitals.length > 0 ? (
@@ -568,8 +566,9 @@ const HospitalResult = () => {
                         onClick={() => handleMapClick(hospital)}
                         sx={{ color: '#4a885d' }}
                       >
-                        <AddIcon />
+                        {isHospitalSelected ? <AddIcon /> : <RemoveIcon />}
                       </IconButton>
+
                     </Box>
                   </Box>
                 </Box>
@@ -586,8 +585,8 @@ const HospitalResult = () => {
           )}
         </List>
         
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          {renderPageNumbers()}
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageClick} />
         </Box>
       
       </Box>
