@@ -77,7 +77,7 @@ const Nav = () => {
           size="small"
           edge="start"
           color="black"
-          onClick={isHomePage ? handleHomePage : handlePreviousPage}
+          onClick={isHomePage ? 'none' : handlePreviousPage}
           sx={{ mr: 1 }}
         >
           {isHomePage ? <Menu sx = {{ height:'20px', width:'20px' }}/> : <ArrowBack sx = {{ height:'20px', width:'20px' }}/>}

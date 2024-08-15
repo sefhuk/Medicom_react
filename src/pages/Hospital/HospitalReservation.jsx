@@ -141,8 +141,7 @@ function HospitalReservation() {
         userRole // 사용자 역할 포함
       });
 
-      alert(response.data);
-      navigate('/success'); // 성공 시 성공 페이지로 이동
+      navigate('success'); // 성공 시 성공 페이지로 이동
     } catch (error) {
       if (error.response && error.response.data) {
         alert(error.response.data);
