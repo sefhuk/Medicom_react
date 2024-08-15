@@ -109,7 +109,7 @@ function MainPage() {
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
             {/* 상단 배너 부분 */}
-            <Grid item xs={12} sx={{ marginTop: 4 }}>
+            <Grid item xs={12} sx={{ marginTop : 4 }}>
               <CustomBoxTypo>
                 <Typography variant="h5" sx = {{fontWeight: 'bold'}}>이번주 유행 질병 알아보기</Typography>
               </CustomBoxTypo>
@@ -117,7 +117,7 @@ function MainPage() {
               <Banner/>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} sx = {{ marginTop: 4 }}>
               <CustomBoxTypo>
                 <Typography variant="h5" sx = {{fontWeight: 'bold'}}>병원 어디로 가지?</Typography>
               </CustomBoxTypo>
@@ -142,13 +142,13 @@ function MainPage() {
               </CustomBox>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} sx = {{ marginTop: 4 }}>
               <CustomBoxTypo>
                 <Typography variant="h5" sx = {{fontWeight: 'bold'}}>내 주변 진료과 찾기</Typography>
               </CustomBoxTypo>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} sx = {{ marginBottom: 10 }}>
               <CustomBox onClick={handleSearchPage} sx={{ height: '10vh', px: 2, textAlign: 'left', bgcolor:'#F3F4F0' }}>
                 <Box>
                   <Typography variant='h6'>진료과 기반 검색</Typography>
@@ -157,6 +157,13 @@ function MainPage() {
                 <LocalHospitalIcon fontSize="large" sx={{ marginLeft: 'auto', height: '100%' }} />
               </CustomBox>
             </Grid>
+
+            <Grid item xs={12} sx = {{ marginBottom: 5 }}>
+              <CustomBoxTypo>
+                <Typography variant="caption" sx = {{color: 'grey'}}>© 2024 MEDICOM ALL RIGHTS RESERVED</Typography>
+              </CustomBoxTypo>
+            </Grid>
+
           </Grid>
         </Box>
       </Container>
