@@ -7,6 +7,7 @@ import { axiosInstance } from '../../utils/axios';
 import PostCodeModal from '../../components/PostCodeModal';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase';
+import { Btntwo, TextF } from '../../components/global/CustomComponents';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -114,8 +115,8 @@ const Register = () => {
 
   return (
     <MainContainer>
-      <Paper elevation={6} sx={{ margin: '10px', padding: 3, borderRadius: '10px' }}>
-        <Typography variant='h5' align='center' gutterBottom sx={{ margin: '0px 0px 30px 0px' }}>회원 가입</Typography>
+      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px' }}>
+        <Typography variant='h5' align='center' gutterBottom sx={{ fontWeight: 'bold', margin: '0px 0px 30px 0px' }}>회원 가입</Typography>
         <form>
           <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
             <Avatar
@@ -131,7 +132,7 @@ const Register = () => {
           {uploading && <p>이미지 업로드 중...</p>}
           <Box sx={{ margin: "20px 0", borderBottom: "1px solid grey" }}></Box>
 
-          <TextField
+          <TextF
             label="이메일"
             name="email"
             type='email'
@@ -143,7 +144,7 @@ const Register = () => {
             helperText={EmailValidation() ? "이메일 형식이 잘못되었습니다." : ""}
           />
 
-          <TextField
+          <TextF
             label="비밀번호"
             name="password"
             type='password'
@@ -154,12 +155,12 @@ const Register = () => {
           />
 
           <InputMask
-            mask="999-9999-9999"
+            mask="010-9999-9999"
             value={formState.phoneNumber}
             onChange={handleChange}
           >
             {() => (
-              <TextField
+              <TextF
                 label="휴대폰 번호"
                 name="phoneNumber"
                 size='small'
@@ -171,7 +172,7 @@ const Register = () => {
             )}
           </InputMask>
 
-          <TextField
+          <TextF
             label="닉네임"
             name="name"
             type='name'
@@ -187,7 +188,7 @@ const Register = () => {
             onChange={handleChange}
           >
             {() => (
-              <TextField
+              <TextF
                 label="생년월일"
                 name="birthday"
                 size='small'
@@ -198,7 +199,7 @@ const Register = () => {
           </InputMask>
 
           <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-            <TextField
+            <TextF
               label="주소"
               name="address"
               size='small'
@@ -207,11 +208,11 @@ const Register = () => {
               value={formState.address}
               disabled
             />
-            <Button variant="contained" onClick={() => setPostcodeOpen(true)} sx={{ height: '40px' }}>
+            <Btntwo variant="contained" onClick={() => setPostcodeOpen(true)} sx={{ height: '40px' }}>
               검색
-            </Button>
+            </Btntwo>
           </Box>
-          <TextField
+          <TextF
             label="상세주소"
             name="addressDetail"
             size='small'
@@ -219,15 +220,15 @@ const Register = () => {
             onChange={handleChange}
           />
 
-          <Button
+          <Btntwo
             type='submit'
             variant="contained"
             fullWidth
-            sx={{ borderRadius: '5px', margin: '15px 0' }}
+            sx={{ borderRadius: '30px', margin: '15px 0', width: '483px'}}
             onClick={OnSubmit}
           >
             가입
-          </Button>
+          </Btntwo>
           <Snackbar
             open={SnackbarOpen}
             autoHideDuration={3000}

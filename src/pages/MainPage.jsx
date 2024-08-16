@@ -97,7 +97,7 @@ function MainPage() {
   return (
     <MainContainer>
       <Grid item xs={12}>
-        <CustomBoxTypo onClick={handleLocationPage} sx={{ bgcolor:'#F3F4F0', padding: 2, cursor: 'pointer', borderRadius: '30px' }}>
+        <CustomBoxTypo onClick={handleLocationPage} sx={{ bgcolor:'#F3F4F0', padding: 2, cursor: 'pointer', borderRadius: '30px', marginTop:'5px' }}>
           <MyLocationOutlinedIcon sx={{  color: 'black', marginRight: 1 }} />
           <Typography variant="h8" sx={{ color: 'black' }}>
             {auth.isLoggedIn ? address || '위치 설정 중...' : '위치 설정'} 
