@@ -306,8 +306,13 @@ function PostDetailPage() {
               )}
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="body1">
-                {post.content}
+              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                {post.content.split('\n').map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}
+                    <br />
+                  </React.Fragment>
+                ))}
               </Typography>
             </Grid>
               {post.imageUrls && post.imageUrls.length > 0 && (
@@ -318,7 +323,7 @@ function PostDetailPage() {
                       src={img.link}
                       alt={`image-${index}`}
                       style={{
-                        width: '386px',
+                        width: '408px',
                         height: 'auto',
                         objectFit: 'cover',
                         cursor: 'pointer',
@@ -350,10 +355,10 @@ function PostDetailPage() {
               sx={{
                 color: '#E9E9E9',
                 '&:hover': {
-                  color: '#BDBDBD' 
+                  color: '#BDBDBD'
                 },
                 '&:active': {
-                  color: '#9E9E9E' 
+                  color: '#9E9E9E'
                 }
               }}
             >

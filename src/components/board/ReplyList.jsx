@@ -1,14 +1,33 @@
-import React, { useState } from 'react';
-import { Box, Button, TextField, Typography, List, ListItem, IconButton, Menu, MenuItem,  Card, CardContent, CardActions, Avatar } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { Btn } from '../../components/global/CustomComponents';
+import React, { useState, useEffect } from 'react';
+import { Box, TextField, Typography, List, ListItem, IconButton, Menu, MenuItem } from '@mui/material';
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
+import { axiosInstance } from '../../utils/axios';  // axios 인스턴스를 사용
+import { Btn } from '../../components/global/CustomComponents';
 
 function ReplyList({ replies = [], onDelete, onUpdate, onReply, parentId }) {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [menuReplyId, setMenuReplyId] = useState(null);
   const [editReplyId, setEditReplyId] = useState(null);
   const [editReplyContent, setEditReplyContent] = useState('');
+  const [replyContent, setReplyContent] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [menuReplyId, setMenuReplyId] = useState(null);
+  const [repliesWithImages, setRepliesWithImages] = useState([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const updatedReplies = await Promise.all(replies.map(async (reply) => {
+        try {
+          const response = await axiosInstance.get(`/users/${reply.userId}/img`);
+          return { ...reply, userImg: response.data };
+        } catch (error) {
+          console.error("Error fetching user image:", error);
+          return reply;
+        }
+      }));
+      setRepliesWithImages(updatedReplies);
+    };
+
+    fetchImages();
+  }, [replies]);
 
   const handleMenuClick = (event, replyId) => {
     setAnchorEl(event.currentTarget);
@@ -42,9 +61,20 @@ function ReplyList({ replies = [], onDelete, onUpdate, onReply, parentId }) {
     handleMenuClose();
   };
 
+  const handleReply = () => {
+    onReply(parentId, replyContent);
+    setReplyContent('');
+  };
+
+  const handleCancelReply = () => {
+    setReplyContent('');
+  };
+
+  const open = Boolean(anchorEl);
+
   return (
     <List sx={{ pl: 4 }}>
-      {replies.map((reply) => (
+      {repliesWithImages.map((reply) => (
         <ListItem key={reply.id} sx={{ mb: 1, p: 0 }}>
           <Box sx={{ width: '100%', p: 1, bgcolor: '#f9f9f9', borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -62,7 +92,6 @@ function ReplyList({ replies = [], onDelete, onUpdate, onReply, parentId }) {
                     borderRadius: '50%',
                     marginRight: '10px',
                   }}
-  
                 />
               ) : (
                 <Box
@@ -122,7 +151,7 @@ function ReplyList({ replies = [], onDelete, onUpdate, onReply, parentId }) {
             </Box>
             <Menu
               anchorEl={anchorEl}
-              open={Boolean(anchorEl) && menuReplyId === reply.id}
+              open={open && menuReplyId === reply.id}
               onClose={handleMenuClose}
             >
               <MenuItem onClick={() => handleEditClick(reply)}>수정</MenuItem>
@@ -131,6 +160,24 @@ function ReplyList({ replies = [], onDelete, onUpdate, onReply, parentId }) {
           </Box>
         </ListItem>
       ))}
+      <Box sx={{ mt: 2, bgcolor: '#f5f5f5', p: 2, borderRadius: 2 }}>
+        <TextField
+          value={replyContent}
+          onChange={(e) => setReplyContent(e.target.value)}
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          placeholder="답글을 남기세요..."
+        />
+        <Box sx={{ display: 'flex' }}>
+          <Btn onClick={handleReply} sx={{ mr: 1, width: '15px' }}>
+            작성
+          </Btn>
+          <Btn onClick={handleCancelReply} sx={{ width: '15px' }}>
+            취소
+          </Btn>
+        </Box>
+      </Box>
     </List>
   );
 }

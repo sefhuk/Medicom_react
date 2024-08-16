@@ -6,6 +6,7 @@ import { axiosInstance } from '../../utils/axios';
 import { LocationContext } from '../../LocationContext';
 import { Btn } from '../../components/global/CustomComponents';
 
+
 const MapComponent = () => {
   const { latitude, longitude } = useContext(LocationContext);
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -16,6 +17,7 @@ const MapComponent = () => {
   const [error, setError] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const routeLocation = useLocation();
   const { state } = routeLocation;
@@ -23,6 +25,7 @@ const MapComponent = () => {
 
   useEffect(() => {
     const fetchHospitalsData = async () => {
+      setLoading(true);
       try {
         const response = await axiosInstance.get('/api/hospitals/all');
         setHospitals(response.data);
@@ -30,6 +33,8 @@ const MapComponent = () => {
       } catch (error) {
         setError(error.message);
         console.error('병원 데이터 가져오기 오류:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -211,13 +216,13 @@ const MapComponent = () => {
                     
                   }}
                 >
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb:1 }}>
+                  <Typography variant='body1' sx={{ fontWeight: 'bold', mb:1 }}>
                     {selectedHospital.name}
                   </Typography>
-                  <Typography sx={{mb:1}}>
+                  <Typography variant='body1' sx={{mb:1}}>
                     <strong>주소 :</strong> {selectedHospital.address}
                   </Typography>
-                  <Typography sx={{mb:1}}>
+                  <Typography variant='body1' sx={{mb:1}}>
                     <strong>진료과목 :</strong>
                   </Typography>
                   <ul
@@ -263,4 +268,3 @@ const MapComponent = () => {
 };
 
 export default MapComponent;
-
