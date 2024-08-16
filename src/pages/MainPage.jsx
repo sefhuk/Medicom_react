@@ -114,7 +114,9 @@ function MainPage() {
                 <Typography variant="h5" sx = {{fontWeight: 'bold'}}>이번주 유행 질병 알아보기</Typography>
               </CustomBoxTypo>
               <Typography variant="h10" sx = {{color: 'grey'}}>*해당 순위는 네이버 순위를 참고하며 매주 업데이트 됩니다.</Typography>
+              <Box sx = {{ width: '100%'}}>
               <Banner/>
+              </Box>
             </Grid>
 
             <Grid item xs={12} sx = {{ marginTop: 4 }}>
@@ -138,7 +140,7 @@ function MainPage() {
                   <img src='/images/AItwo.svg' alt="Doctor" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
                 </CustomMiniBox>
                 <Typography variant="h6" sx={{ marginTop: 2, color: 'white'}}>AI로 증상 진단</Typography>
-                <Typography variant="h9" sx={{ marginBottom: 2, mx: 3, color: 'white' }}>AI가 바로 답변해줄거에요.</Typography>
+                <Typography variant="h9" sx={{ marginBottom: 2, mx: 3, color: 'white' }}>AI가 바로 답변해줄 거에요.</Typography>
               </CustomBox>
             </Grid>
 

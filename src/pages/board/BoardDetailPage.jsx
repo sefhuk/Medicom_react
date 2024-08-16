@@ -98,7 +98,7 @@ function BoardDetailPage() {
     return (
         <MainContainer>
             <Container>
-                <Box sx={{ flexGrow: 1, marginTop: 2 }}>
+                <Box sx={{ flexGrow: 1, marginTop: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Box sx={{ display: 'flex', justifyContent: 'center' }}>

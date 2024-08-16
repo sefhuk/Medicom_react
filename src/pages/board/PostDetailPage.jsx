@@ -233,7 +233,7 @@ function PostDetailPage() {
   return (
     <MainContainer>
       <Container>
-        <Box sx={{ flexGrow: 1, marginTop: 2 }}>
+        <Box sx={{ flexGrow: 1, marginTop: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -306,12 +306,10 @@ function PostDetailPage() {
               )}
             </Grid>
             <Grid item xs={12}>
-              <Box sx = {{padding: 2 }}>
-              <Typography variant="body1" paragraph>
+              <Typography variant="body1">
                 {post.content}
               </Typography>
-              </Box>
-              
+            </Grid>
               {post.imageUrls && post.imageUrls.length > 0 && (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                   {post.imageUrls.map((img, index) => (
@@ -331,7 +329,6 @@ function PostDetailPage() {
                   ))}
                 </Box>
               )}
-            </Grid>
             <Grid item xs={12} sx = {{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <IconButton
               onClick={handleLikePost}

@@ -18,13 +18,6 @@ function PostList({ posts = [], boardId }) {
               to={`/posts/${post.id}`}
               sx={{ borderBottom: '1px solid #ddd', padding: 2 }}
             >
-              <ListItemIcon>
-                <img 
-                  src='/images/Contrast.png' 
-                  alt="Post Icon" 
-                  style={{ width: 30, height: 30, borderRadius: '50%' }} 
-                />
-              </ListItemIcon>
               <ListItemText
                 primary={post.title || 'No Title'}
                 secondary={`작성자: ${post.userName || 'Unknown User'} | 작성일: ${post.updatedAt
