@@ -54,16 +54,15 @@ function ChatRoomDetail({ data, selectedIndex }) {
               {data.user2.name}
               <Role>{data.user2.role === 'USER' ? '' : ` ${data.user2.role}`}</Role>
               {data.user2.role === 'DOCTOR' && (
-                <HospitalName>{data.doctorProfile.hospitalName}</HospitalName>
+                <HospitalName>{data.doctorProfile?.hospitalName}</HospitalName>
               )}
             </div>
           ) : (
             <div>
               {data.user1.name}
               <Role>{data.user1.role === 'USER' ? '' : ` ${data.user1.role}`}</Role>
-
               {data.user1.role === 'DOCTOR' && (
-                <HospitalName>{data.doctorProfile.hospitalName}</HospitalName>
+                <HospitalName>{data.doctorProfile?.hospitalName}</HospitalName>
               )}
             </div>
           )}
