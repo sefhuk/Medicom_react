@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { axiosInstance } from '../../utils/axios';
 import { Box, TextField, Typography, List, ListItem, IconButton, Menu, MenuItem } from '@mui/material';
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 import ReplyList from './ReplyList';
@@ -11,6 +12,24 @@ function CommentList({ comments = [], onDelete, onUpdate, onReply }) {
   const [replyContent, setReplyContent] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuCommentId, setMenuCommentId] = useState(null);
+  const [commentsWithImages, setCommentsWithImages] = useState([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const updatedComments = await Promise.all(comments.map(async (comment) => {
+        try {
+          const response = await axiosInstance.get(`/users/${comment.userId}/img`);
+          return { ...comment, userImg: response.data };
+        } catch (error) {
+          console.error("Error fetching user image:", error);
+          return comment;
+        }
+      }));
+      setCommentsWithImages(updatedComments);
+    };
+
+    fetchImages();
+  }, [comments]);
 
   const handleEditClick = (comment) => {
     setEditCommentId(comment.id);
@@ -60,16 +79,15 @@ function CommentList({ comments = [], onDelete, onUpdate, onReply }) {
     handleMenuClose();
   };
 
-
   const open = Boolean(anchorEl);
 
   return (
     <Box sx={{ width: '100%' }}>
       <List>
-        {comments.map((comment) => (
+        {commentsWithImages.map((comment) => (
           <ListItem key={comment.id} sx={{ mb: 2, p: 0 }}>
             <Box sx={{ width: '100%', p: 2, bgcolor: '#fff', borderRadius: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1}}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 {comment.userImg ? (
                   <img
                     src={comment.userImg}
@@ -82,7 +100,7 @@ function CommentList({ comments = [], onDelete, onUpdate, onReply }) {
                       objectFit: 'cover',
                       cursor: 'pointer',
                       borderRadius: '50%',
-                      marginRight: '10px', 
+                      marginRight: '10px',
                     }}
                   />
                 ) : (
@@ -192,6 +210,5 @@ function CommentList({ comments = [], onDelete, onUpdate, onReply }) {
     </Box>
   );
 }
-
 
 export default CommentList;
