@@ -19,6 +19,7 @@ import {
 import { GetUserRoleString } from '../../utils/stringUtil';
 import { theme } from '../../utils/theme';
 import { axiosInstance } from '../../utils/axios';
+import { Btntwo } from "../../components/global/CustomComponents";
 
 const DeleteDialog = props => {
   const { open, OnClose, userDetail } = props;
@@ -106,7 +107,7 @@ const AdminUserListDetail = () => {
 
   return (
     <MainContainer>
-      <Paper elevation={6} sx={{ margin: '10px', padding: 3, borderRadius: '10px' }}>
+      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)', minHeight: '-webkit-fill-available', height: 'fit-content'}}>
         <Avatar sx={{ float: 'left' }}></Avatar>
         <Typography variant='body1' sx={{ display: 'inline-block', margin: '0px 0px 0px 15px' }}>
           {userDetail.name}
@@ -143,24 +144,22 @@ const AdminUserListDetail = () => {
           sx={{ margin: '15px 0 auto' }}
         ></TextField>
         <ThemeProvider theme={theme}>
-          <Button
-            variant='contained'
-            color='black'
-            sx={{ margin: '10px 0 auto' }}
+          <Btntwo
+            sx={{width: '100px', height: '40px', margin: '10px 0 auto', float: 'left' }}
             onClick={e => OpenRoleDialog(true)}
           >
             권한 변경
-          </Button>
-          <Button
+          </Btntwo>
+          <Btntwo
             variant='contained'
             color='error'
-            sx={{ margin: '10px 0 auto', float: 'right' }}
+            sx={{width: '100px', height: '40px', margin: '10px 0 auto', float: 'right', backgroundColor: 'red' }}
             onClick={e => {
               OpenDeleteDialog(true);
             }}
           >
             회원 삭제
-          </Button>
+          </Btntwo>
         </ThemeProvider>
         <RoleDialog open={roleDialogOpen} OnClose={OpenRoleDialog} userDetail={userDetail} />
         <DeleteDialog open={deleteDialogOpen} OnClose={OpenDeleteDialog} userDetail={userDetail} />

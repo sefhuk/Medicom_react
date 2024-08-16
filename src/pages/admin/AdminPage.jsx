@@ -29,7 +29,7 @@ const AdminPage = () => {
 
   return(
     <MainContainer>
-      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)' }}> 
+      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)', minHeight: '-webkit-fill-available', height: 'fit-content'}}>
       <ThemeProvider theme={theme}>
       <Typography variant='h5' sx={{ display: 'inline', color: 'var(--main-common)' }}>
           관리자 페이지
