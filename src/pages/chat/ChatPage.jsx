@@ -102,10 +102,10 @@ function ChatPage() {
   useEffect(() => {
     fetchData();
 
-    if (chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '비활성화') {
-      setLoading(false);
-      return;
-    }
+    // if (chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status === '비활성화') {
+    //   setLoading(false);
+    //   return;
+    // }
 
     const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}/ws`);
 
