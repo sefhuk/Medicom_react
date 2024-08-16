@@ -11,13 +11,10 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Loading } from "../../components/Loading";
-import { useLocation } from 'react-router-dom';
 import Pagination from '../../components/board/Pagination';
 import { Btn, Btntwo, SmallBtn, TextF } from '../../components/global/CustomComponents';
 
-const HospitalResult = (hospital) => {
-  const location = useLocation();
-  const departmentsFromState = location.state?.departments || [];
+const HospitalList = (hospital) => {
   const { latitude, longitude } = useContext(LocationContext);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,31 +22,20 @@ const HospitalResult = (hospital) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [searchInput, setSearchInput] = useState('');
-  const [departmentInput, setDepartmentInput] = useState('');
-  const [departments, setDepartments] = useState(departmentsFromState);
+  const [setDepartmentInput] = useState('');
+  const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const navigate = useNavigate();
   const [showReviews, setShowReviews] = useState(false);
   const [searchParams, setSearchParams] = useState({
-    departmentNames: departmentsFromState,
+    name: '',
+    departmentName: '',
+    address: '',
     page: 0,
     size: 5,
   });
-
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-    setSearchParams(prev => ({
-      ...prev,
-      page,
-      departmentNames: prev.departmentNames.length > 0 ? prev.departmentNames : departments,
-    }));
-  };
-
-  //검색이 실행되었는지 확인
-  const [hasSearched, setHasSearched] = useState(false); 
-
 
   // 리뷰 관련 상태 추가
   const [hospitalReviews, setHospitalReviews] = useState({});
@@ -66,19 +52,17 @@ const HospitalResult = (hospital) => {
   const reviewPageSize = 4;
 
   useEffect(() => {
-    console.log('Received departments from navigate:', departmentsFromState); // 콘솔에 departments 값 출력
-  }, [departmentsFromState]);
+    const fetchDepartments = async () => {
+      try {
+        const response = await axiosInstance.get('/api/departments');
+        setDepartments(response.data || []);
+      } catch (error) {
+        console.error('fetching departments 에러:', error);
+      }
+    };
 
-
-
-  useEffect(() => {
-    if (departments.length > 0) {
-      const departmentNames = departments.join(', ');
-      console.log('Initialized departmentNames:', departmentNames); // 콘솔 출력
-      setDepartmentInput(departmentNames);
-    }
-  }, [departments]); // departments가 변경될 때만 실행
-
+    fetchDepartments();
+  }, []);
 
   useEffect(() => {
     const loadMapScript = () => {
@@ -122,22 +106,17 @@ const HospitalResult = (hospital) => {
     }
   }, [mapLoaded, selectedHospital]);
 
-
-  
-
   useEffect(() => {
     const fetchHospitals = async () => {
       if (!latitude || !longitude) return;
   
       setLoading(true);
       try {
-        const departmentNamesString = searchParams.departmentNames.join(', ');
         const response = await axiosInstance.get('/api/search', {
           params: {
             ...searchParams,
             latitude,
             longitude,
-            departmentNames: departmentNamesString,
           },
         });
   
@@ -149,25 +128,8 @@ const HospitalResult = (hospital) => {
         // 거리 기준으로 오름차순 정렬
         hospitalsData.sort((a, b) => a.distance - b.distance);
   
-        // 병원 정보에 평균 평점과 리뷰 수를 추가
-        const hospitalsWithAvgRating = await Promise.all(
-          hospitalsData.map(async (hospital) => {
-            const avgRatingAndReviewCount = await fetchAvgRatingAndReviewCount(hospital.id);
-            return {
-              ...hospital,
-              avgRating: avgRatingAndReviewCount ? avgRatingAndReviewCount.avgRating : 0.0,
-              reviewCount: avgRatingAndReviewCount ? avgRatingAndReviewCount.reviewCount : 0,
-            };
-          })
-        );
-  
-        // 평점과 리뷰 수를 추가한 병원 정보를 다시 거리 기준으로 오름차순 정렬
-        hospitalsWithAvgRating.sort((a, b) => a.distance - b.distance);
-  
-        // 상태 업데이트
-        setHospitals(hospitalsWithAvgRating);
+        setHospitals(hospitalsData);
         setTotalPages(response.data.totalPages || 0);
-  
       } catch (error) {
         setError(error);
         console.error('fetching hospitals 에러:', error);
@@ -178,7 +140,6 @@ const HospitalResult = (hospital) => {
   
     fetchHospitals();
   }, [searchParams, currentPage, latitude, longitude]);
-  
 
   useEffect(() => {
     const fetchBookmarks = async () => {
@@ -373,20 +334,33 @@ const HospitalResult = (hospital) => {
       </>
     );
   };
+  
+  
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+    setSearchParams(prev => ({ ...prev, page }));
+  };
 
   const handleSearch = () => {
-    const departmentNames = departmentInput.split(',').map(name => name.trim()).filter(name => name);
-    setSearchParams(prev => ({
-      ...prev,
-      departmentNames,
+    const [name, address] = searchInput.split(',').map(part => part.trim());
+    setSearchParams({
+      name: name || '',
+      departmentName: selectedDepartment,
+      address: address || '',
       page: 0,
       size: pageSize,
-    }));
+    });
   };
 
-  const handleDepartmentInputChange = (e) => {
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  const handleDepartmentChange = (e) => {
     setDepartmentInput(e.target.value);
   };
+
 
   const handleFilter = (departmentName) => {
     setSelectedDepartment(departmentName);
@@ -428,6 +402,16 @@ const HospitalResult = (hospital) => {
           key={i}
           onClick={() => handlePageClick(i)}
           disabled={i === currentPage}
+           sx={{
+            color: i === currentPage ? 'black' : '#0a7729', // 글자색 설정
+            borderRadius: '20px',
+            border: '1px solid gray',
+            margin: '0 4px',
+            padding: '6px 12px',
+            '&:hover': {
+              backgroundColor: '#f3f4f0',
+            },
+          }}
         >
           {i + 1}
         </Button>
@@ -444,12 +428,53 @@ const HospitalResult = (hospital) => {
       console.log(hospital.id);
       navigate(`/hospitals/maps/${hospital.id}/reservation`, {
       state: { hospital }
-      })} else {
+    });
+    } else {
       setError('예약할 병원을 선택해주세요.');
     }
   };
 
-  
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      if (!latitude || !longitude) return;
+
+      setLoading(true);
+      try {
+        const response = await axiosInstance.get('/api/search', {
+          params: {
+            ...searchParams,
+            latitude,
+            longitude,
+          },
+        });
+
+        let hospitalsData = response.data.content;
+
+        const hospitalsWithAvgRating = await Promise.all(
+          hospitalsData.map(async (hospital) => {
+            const avgRatingAndReviewCount = await fetchAvgRatingAndReviewCount(hospital.id);
+            return {
+              ...hospital,
+              avgRating: avgRatingAndReviewCount ? avgRatingAndReviewCount.avgRating : 0.0,
+              reviewCount: avgRatingAndReviewCount ? avgRatingAndReviewCount.reviewCount : 0,
+            };
+          })
+        );
+
+        hospitalsWithAvgRating.sort((a, b) => a.distance - b.distance);
+
+        setHospitals(hospitalsWithAvgRating);
+        setTotalPages(response.data.totalPages || 0);
+      } catch (error) {
+        setError(error);
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHospitals();
+  }, [searchParams, currentPage, latitude, longitude]);
 
   const fetchAvgRatingAndReviewCount = async (hospitalId) => {
     try {
@@ -461,35 +486,62 @@ const HospitalResult = (hospital) => {
     }
   };
 
-  useEffect(() => {
-    if (!hasSearched) {
-      console.log('Triggering handleSearch');
-      handleSearch();
-      setHasSearched(true);
-    }
-  }, [hasSearched]);
 
   if (loading) return <Loading open={true} />;
   if (error) return <p>Error fetching data: {error.message}</p>;
 
   return (
     <MainContainer>
-      <Box className="container" sx={{ padding: '20px', marginLeft: 2, marginRight: 2 }}>
-        <Typography variant="h5" sx={ {fontWeight:'bold'}}>병원 리스트</Typography>
+      <Box className="container" sx={{ padding: 2, marginLeft: 2, marginRight: 2 }}>
+        <Typography variant="h5" sx={ {fontWeight:'bold'}}>병원 검색하기</Typography>
 
-        <Grid item xs={12} sx={{ marginTop: 2 }}>
-              <Box sx={{ bgcolor: '#F3F4F0', padding: 2, borderRadius: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box sx={{ marginLeft: 2 }}>
-                <Typography variant='body1'>
-                  현재 위치 기준 가까운&nbsp;&nbsp;<span style={{ fontWeight: 'bold' }}>{departments.join(', ')}</span>
-                </Typography>
-                </Box>
-              </Box>
-            </Grid>
-
-          <Grid item xs={12} sm={2} md={2}>
-            <Button fullWidth variant="contained" color="primary" onClick={handleSearch} sx={{ height: '100%', display: 'none' }}>검색</Button>
+        <Grid container spacing={2} sx={{ marginTop: 1, flexWrap: 'nowrap' }}>
+          <Grid item xs={2} sm={2} md={2}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="department-select-label" sx={{ textAlign: 'center' }}>부서</InputLabel>
+              <Select
+                labelId="department-select-label"
+                value={selectedDepartment}
+                onChange={e => handleFilter(e.target.value)}
+                sx={{
+                  borderRadius: '30px',
+                  textAlign: 'center',
+                }}
+                label="부서"
+              >
+                <MenuItem value="">
+                  <em>부서</em>
+                </MenuItem>
+                {departments.map(department => (
+                  <MenuItem key={department.id} value={department.name}>
+                    {department.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
+
+          <Grid item xs={7} sm={7} md={7}>
+            <TextF
+              fullWidth
+              type="text"
+              value={searchInput}
+              onChange={handleInputChange}
+              placeholder="병원 이름 또는 주소를 입력"
+              variant="outlined"
+              sx={{ marginBottom: { xs: '10px', sm: 0 } }} // 작은 화면에서 margin 조정
+            />
+          </Grid>
+
+          <Grid item xs={3} sm={3} md={3}>
+            <Btntwo
+              onClick={handleSearch}
+              sx={{ width: '100%' }} // 버튼을 전체 너비로 설정
+            >
+              SEARCH
+            </Btntwo>
+          </Grid>
+        </Grid>
 
 
         <List sx={{ border: '1px solid #ddd', borderRadius: '20px', padding: '0', marginTop: '20px' }}>
@@ -558,7 +610,6 @@ const HospitalResult = (hospital) => {
                   <Typography variant="body2">
                       {hospital.openStatusMessage}
                   </Typography>
-
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <SmallBtn
                         onClick={() => handleReservation(hospital)}
@@ -598,4 +649,4 @@ const HospitalResult = (hospital) => {
   );
 };
 
-export default HospitalResult;
+export default HospitalList;
