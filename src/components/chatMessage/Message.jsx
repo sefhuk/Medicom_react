@@ -25,10 +25,10 @@ const style = {
 function Message({ data, repeat, self }) {
   const [auth] = useRecoilState(userauthState);
 
-  const [dptBtnHoverd, setDtpBtnHovered] = useState(false);
+  const [dptBtnHovered, setDtpBtnHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
-    if (auth.userId !== Number(data.user.id) || dptBtnHoverd) return;
+    if (auth.userId !== Number(data.user.id) || dptBtnHovered) return;
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
