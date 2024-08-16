@@ -132,7 +132,8 @@ const Login = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '80dvh',
+          minHeight: '80dvh',
+          py: 4
         }}
       >
         <Box
@@ -204,9 +205,33 @@ const Login = () => {
               or
             </Typography>
           </Divider>
-          <Grid sx={{ display: 'flex', marginTop: 2 }}>
-            <Box sx={{ mx: 2, cursor: 'pointer' }} onClick={handleGoogleLogin}>
-              <img src='/images/googlelogin.png' alt="구글 로그인" style={{ width: '175px', height: '45px' }} />
+          <Grid sx={{ display: 'flex', marginTop: 2, gap : 3 }}>
+            <Box sx={{ cursor: 'pointer' }} onClick={handleGoogleLogin}>
+              <img
+                src='/images/googlelogin.png'
+                alt="구글 로그인"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  maxWidth: '175px',
+                  maxHeight: '45px',
+                  objectFit: 'contain',
+                  margin: 0,
+                  padding: 0,
+                  '@media (max-width: 600px)': {
+                    maxWidth: '120px',
+                    maxHeight: '31px',
+                  },
+                  '@media (min-width: 601px) and (max-width: 960px)': {
+                    maxWidth: '150px',
+                    maxHeight: '39px',
+                  },
+                  '@media (min-width: 961px)': {
+                    maxWidth: '175px',
+                    maxHeight: '45px',
+                  },
+                }}
+              />
             </Box>
             <NaverLoginButton />
           </Grid>
