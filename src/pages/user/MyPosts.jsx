@@ -14,7 +14,12 @@ export const MyPosts = () => {
   useEffect(() => {
     const getPosts = async () => {
       try {
-        const response = await axiosInstance.get('/users/my-page/post');
+        const token = localStorage.getItem('token');
+        const response = await axiosInstance.get('/users/my-page/post', {
+          headers: {
+            Authorization: `${token}`
+          }
+        });
         setPostList(response.data);
       } catch (exception) {
         console.log(exception);
