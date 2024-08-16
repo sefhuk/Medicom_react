@@ -414,7 +414,7 @@ const UserInfoPage = () => {
 const getFieldLabel = (field) => {
   switch (field) {
     case 'name':
-      return '이름';
+      return '이름(닉네임)';
     case 'email':
       return '이메일 주소';
     case 'password':
