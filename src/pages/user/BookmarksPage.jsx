@@ -108,7 +108,6 @@ const BookmarksPage = () => {
           margin: '10px',
           padding: 3,
           borderRadius: '10px',
-          backgroundColor: 'var(--paper-soft)',
           minHeight: '-webkit-fill-available',
           height: 'fit-content'
         }}
