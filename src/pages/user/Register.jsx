@@ -224,7 +224,7 @@ const Register = () => {
             type='submit'
             variant="contained"
             fullWidth
-            sx={{ borderRadius: '30px', margin: '15px 0', width: '483px'}}
+            sx={{ borderRadius: '30px', margin: '15px 0', width: '100%'}}
             onClick={OnSubmit}
           >
             가입
