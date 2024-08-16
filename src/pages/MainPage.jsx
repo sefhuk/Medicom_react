@@ -114,9 +114,7 @@ function MainPage() {
                 <Typography variant="h5" sx = {{fontWeight: 'bold'}}>이번주 유행 질병 알아보기</Typography>
               </CustomBoxTypo>
               <Typography variant="h10" sx = {{color: 'grey'}}>*해당 순위는 네이버 순위를 참고하며 매주 업데이트 됩니다.</Typography>
-              <Box sx = {{ width: '100%'}}>
               <Banner/>
-              </Box>
             </Grid>
 
             <Grid item xs={12} sx = {{ marginTop: 4 }}>
