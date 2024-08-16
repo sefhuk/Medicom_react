@@ -34,7 +34,11 @@ const ReservationList = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const response = await axiosInstance.get('/api/reservations/user');
+        const response = await axiosInstance.get('/api/reservations/user', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
         const reservationData = response.data;
 
 
@@ -222,7 +226,7 @@ const ReservationList = () => {
                           sx={{
                             backgroundColor: 'var(--main-deep)',
                             color: 'white',
-                            marginRight: 2,
+                            marginRight: 0,
                             borderRadius: '20px',
                             '&:hover': {
                               backgroundColor: 'var(--main-common)',

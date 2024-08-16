@@ -39,10 +39,14 @@ function ChatListPage() {
     setError(false);
     setData([]);
     setIsLoading(true);
+    const token = localStorage.getItem('token');
     try {
       const response = await axiosInstance.get(
         `${selectedIndex === 2 ? '/admin' : ''}/chatrooms${selectedIndex === 1 ? '/wait' : ''}`,
         {
+          headers: {
+            Authorization: `${token}`
+          },
           params: {
             userId: auth.userId || 0,
           },
