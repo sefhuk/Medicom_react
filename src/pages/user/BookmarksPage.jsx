@@ -113,13 +113,13 @@ const BookmarksPage = () => {
           height: 'fit-content'
         }}
       >
-        <ThemeProvider theme={theme}>
-          <Typography variant='h5' sx={{ color: 'var(--main-common)' }}>
+
+          <Typography variant='h5' sx={{ fontWeight: 'bold', color: 'var(--main-common)' }}>
             나의 즐겨찾기
           </Typography>
           <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
           {state.bookmarks.length === 0 ? (
-            <Typography variant="body1" sx={{ textAlign: 'left', marginTop: 3, color: 'var(--main-common)' }}>
+            <Typography variant="body1" sx={{ color: 'var(--main-common)', textAlign: 'center', marginTop: 3 }}>
               즐겨찾기한 병원이 없습니다.
             </Typography>
           ) : (
@@ -220,7 +220,7 @@ const BookmarksPage = () => {
               </Button>
             </DialogActions>
           </Dialog>
-        </ThemeProvider>
+
       </Paper>
     </MainContainer>
   );

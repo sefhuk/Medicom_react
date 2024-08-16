@@ -34,7 +34,11 @@ const ReservationList = () => {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const response = await axiosInstance.get('/api/reservations/user');
+        const response = await axiosInstance.get('/api/reservations/user', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
         const reservationData = response.data;
 
 
@@ -173,7 +177,7 @@ const ReservationList = () => {
           height: 'fit-content'
         }}
       >
-        <Typography variant='h5' sx={{ display: 'inline', color: 'var(--main-common)' }}>
+        <Typography variant='h5' sx={{fontWeight: 'bold', display: 'inline', color: 'var(--main-common)' }}>
           예약 내역
         </Typography>
         <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
@@ -182,9 +186,9 @@ const ReservationList = () => {
             <CircularProgress />
           </Box>
         ) : (
-          <List component="nav">
+          <List component="nav" sx={{paddingTop: '0px',}}>
             {reservations.length === 0 ? (
-              <Typography variant="body1">예약 내역이 없습니다.</Typography>
+              <Typography variant="body1" sx={{ color: 'var(--main-common)', textAlign: 'center', marginTop: 3 }}>예약 내역이 없습니다.</Typography>
             ) : (
               reservations.map((reservation) => (
                 <React.Fragment key={reservation.id}>
@@ -222,7 +226,7 @@ const ReservationList = () => {
                           sx={{
                             backgroundColor: 'var(--main-deep)',
                             color: 'white',
-                            marginRight: 2,
+                            marginRight: 0,
                             borderRadius: '20px',
                             '&:hover': {
                               backgroundColor: 'var(--main-common)',

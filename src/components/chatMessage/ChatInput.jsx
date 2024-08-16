@@ -1,4 +1,3 @@
-import { Button } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Modal from '@mui/material/Modal';
@@ -7,6 +6,9 @@ import AdvancedModal from '../chatRoom/modal/AdvancedModal';
 import { useRecoilValue } from 'recoil';
 import { chatRoomState, stompState, userauthState } from '../../utils/atom';
 import { useParams } from 'react-router';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import SendIcon from '@mui/icons-material/Send';
 
 const style = {
   position: 'absolute',
@@ -86,33 +88,35 @@ function ChatInput({ sendMessage, enable }) {
           <AdvancedModal sendMessage={sendMessage} setOpens={setOpen} />
         </Box>
       </Modal>
-      <Button
-        variant='contained'
+      <IconButton
         sx={{
-          width: '10%',
-          backgroundColor: 'var(--paper-common)',
-          fontSize: '2rem',
-          color: 'black',
+          marginTop: 1,
+          width: '40px',
+          height: '40px',
+          borderRadius: '50%',
+          backgroundColor: 'var(--paper-soft)',
           '&:hover': {
             backgroundColor: 'var(--paper-deep)'
           }
         }}
         onClick={handleOpen}
       >
-        +
-      </Button>
+        <AddIcon />
+      </IconButton>
       <Input
         value={input}
         onChange={e => setInput(e.target.value)}
         onKeyDown={handleInput}
         readOnly={!enable}
       />
-      <Button
-        variant='contained'
+      <IconButton
         ref={button}
         onClick={handleClick}
         sx={{
-          width: '10%',
+          marginTop: 1,
+          width: '40px',
+          height: '40px',
+          borderRadius: '50%',
           color: 'black',
           backgroundColor: 'var(--main-common)',
           '&:hover': {
@@ -120,37 +124,35 @@ function ChatInput({ sendMessage, enable }) {
           }
         }}
       >
-        전송
-      </Button>
+        <SendIcon sx={{ fontSize: 'medium', color: 'white' }} />
+      </IconButton>
     </Container>
   );
 }
 
 const Container = styled.div`
+  background-color: white;
   display: flex;
   justify-content: space-around;
   position: fixed;
   bottom: 8dvh;
   box-sizing: border-box;
-  padding: 4px;
   max-width: 60dvh;
   width: 100%;
   height: 7dvh;
-  padding: 5px;
-  background-color: #cac9c9;
 `;
 
 const Input = styled.textarea`
-  outline: 1px solid;
-  width: 65%;
+  border: 2px solid #e2e2e2;
+  width: 70%;
   border-radius: 10px;
-  background-color: var(--paper-common);
-  padding: 1.8dvh 15px 0;
-  font-size: 1.2rem;
+  background-color: white;
+  padding: 2.3dvh 15px 0;
+  font-size: 1rem;
   resize: none;
   white-space: pre-line;
   @media (max-width: 500px) {
-    font-size: 1rem;
+    font-size: 0.8rem;
     width: 55%;
   }
 `;

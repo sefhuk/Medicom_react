@@ -199,27 +199,26 @@ const MapComponent = () => {
               </Box>
 
               {error && <Box sx={{ color: 'red', mb: 2 }}>{error}</Box>}
-
               {selectedHospital && (
                 <Box
                   sx={{
-                    width: '100%',
-                    backgroundColor: 'white',
+                    width: '100%',  borderRadius: '30px',
+                    backgroundColor: '#F3F4F0',
                     boxSizing: 'border-box',
                     padding: 2,
+                    paddingLeft: 3,
                     textAlign: 'left',
-                    border: '1px solid gray',
-                    borderRadius: '5px',
+                    
                   }}
                 >
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb:1 }}>
                     {selectedHospital.name}
                   </Typography>
-                  <Typography>
-                    <strong>주소:</strong> {selectedHospital.address}
+                  <Typography sx={{mb:1}}>
+                    <strong>주소 :</strong> {selectedHospital.address}
                   </Typography>
-                  <Typography>
-                    <strong>진료과목:</strong>
+                  <Typography sx={{mb:1}}>
+                    <strong>진료과목 :</strong>
                   </Typography>
                   <ul
                     style={{
@@ -264,3 +263,4 @@ const MapComponent = () => {
 };
 
 export default MapComponent;
+

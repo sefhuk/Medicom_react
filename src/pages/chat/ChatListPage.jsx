@@ -6,21 +6,16 @@ import ChatRoomDetail from '../../components/chatRoom/ChatRoomDetail';
 import { useRecoilState } from 'recoil';
 import { chatRoomState, userauthState } from '../../utils/atom';
 import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
 import { useNavigate } from 'react-router';
 import { Loading } from '../../components/Loading';
 
 function ChatListPage() {
   const [auth] = useRecoilState(userauthState);
   const [chatRoom, setChatRoom] = useRecoilState(chatRoomState);
-
   const navigate = useNavigate();
 
   const [data, setData] = useState([]);
@@ -29,58 +24,48 @@ function ChatListPage() {
   const [options] = useState([
     '상담 진행 목록',
     ...(auth.role !== 'USER' ? ['상담 수락 대기 목록'] : []),
-    ...(auth.role === 'ADMIN' ? ['전체 상담 목록'] : [])
+    ...(auth.role === 'ADMIN' ? ['전체 상담 목록'] : []),
   ]);
 
-  const [open, setOpen] = useState(false);
-  const anchorRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(chatRoom.selectedIndex);
 
-  const handleMenuItemClick = (event, index) => {
+  const handleSelectChange = (event) => {
+    const index = options.indexOf(event.target.value);
     setSelectedIndex(index);
-    setChatRoom(m => ({ ...m, selectedIndex: index }));
-    setOpen(false);
-  };
-
-  const handleToggle = () => {
-    setOpen(prevOpen => !prevOpen);
-  };
-
-  const handleClose = event => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-
-    setOpen(false);
+    setChatRoom((m) => ({ ...m, selectedIndex: index }));
   };
 
   const fetchData = async () => {
     setError(false);
     setData([]);
     setIsLoading(true);
+    const token = localStorage.getItem('token');
     try {
       const response = await axiosInstance.get(
         `${selectedIndex === 2 ? '/admin' : ''}/chatrooms${selectedIndex === 1 ? '/wait' : ''}`,
         {
+          headers: {
+            Authorization: `${token}`
+          },
           params: {
-            userId: auth.userId || 0
-          }
+            userId: auth.userId || 0,
+          },
         }
       );
       const chatRooms = {};
-      response.data.forEach(e => {
+      response.data.forEach((e) => {
         const room = {
           ...e,
           lastMessage: e.lastMessage
             ? {
                 ...e.lastMessage,
-                content: e.lastMessage.content.replace(/\\n/g, ' ')
+                content: e.lastMessage.content.replace(/\\n/g, ' '),
               }
-            : null
+            : null,
         };
         chatRooms[`ch_${e.id}`] = room;
       });
-      setChatRoom(m => ({ ...m, rooms: chatRooms }));
+      setChatRoom((m) => ({ ...m, rooms: chatRooms }));
       setData(
         Object.values(chatRooms).sort((a, b) => {
           if (a.status.status === '진행') return -1;
@@ -106,128 +91,50 @@ function ChatListPage() {
   return (
     <MainContainer>
       <Loading open={isLoading} />
-      <Wrapper>
-        <ButtonGroup
-          sx={{ width: '28%' }}
-          variant='contained'
-          ref={anchorRef}
-          aria-label='Button group with a nested menu'
-        >
-          <Button
-            onClick={() => navigate('/chat/new')}
-            sx={{
-              width: '100%',
-              backgroundColor: 'var(--main-common)',
-              fontSize: '1.2rem',
-              '@media (max-width: 600px)': {
-                fontSize: '0.8rem'
-              },
-              '&:hover': {
-                backgroundColor: 'var(--main-deep)'
-              }
-            }}
-          >
-            새로운 상담
-          </Button>
-        </ButtonGroup>
-        <ButtonGroup
+      <HeaderWrapper>
+        <Select
+          value={options[selectedIndex]}
+          onChange={handleSelectChange}
           sx={{
-            width: '70%',
-            display: 'flex',
-            '& .MuiButtonGroup-firstButton': {
-              borderColor: 'var(--main-soft)'
-            }
+            minWidth: 200,
+            fontSize: '1rem',
+            marginRight: '10px',
           }}
-          variant='contained'
-          ref={anchorRef}
         >
-          <Button
-            sx={{
-              width: '100%',
-              backgroundColor: '#4A885D',
-              borderColor: '#dd2dff',
-              borderRightWidth: '20px',
-              fontSize: '1.2rem',
-              padding: '0px',
-              '@media (max-width: 600px)': {
-                fontSize: '0.8rem'
-              },
-              '&:hover': {
-                backgroundColor: '#0a7729'
-              }
-            }}
-          >
-            {options[selectedIndex]}
-          </Button>
-          <Button
-            sx={{
-              width: '5%',
-              backgroundColor: 'var(--main-common)',
-              '&:hover': {
-                backgroundColor: 'var(--main-deep)'
-              }
-            }}
-            size='large'
-            aria-controls={open ? 'split-button-menu' : undefined}
-            aria-expanded={open ? 'true' : undefined}
-            aria-label='select merge strategy'
-            aria-haspopup='menu'
-            onClick={handleToggle}
-          >
-            <ArrowDropDownIcon />
-          </Button>
-        </ButtonGroup>
-
-        <Popper
+          {options.map((option, index) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+        <IconButton
           sx={{
-            zIndex: 1
+            backgroundColor: 'var(--main-common)',
+            '&:hover': {
+              backgroundColor: 'var(--main-deep)',
+            },
+            marginRight: '30px',
           }}
-          open={open}
-          anchorEl={anchorRef.current}
-          role={undefined}
-          transition
-          disablePortal
+          onClick={() => navigate('/chat/new')}
         >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList id='split-button-menu' autoFocusItem>
-                    {options.map((option, index) => (
-                      <MenuItem
-                        key={option}
-                        selected={index === selectedIndex}
-                        onClick={event => handleMenuItemClick(event, index)}
-                      >
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
-      </Wrapper>
-      <div style={{ height: '78dvh', overflowY: 'scroll' }}>
-        {error && <Notice>{error}</Notice>}
-        {data &&
-          data.map(e => <ChatRoomDetail key={e.id} data={e} selectedIndex={selectedIndex} />)}
-      </div>
+          <AddIcon sx={{ color: '#fff' }} />
+        </IconButton>
+      </HeaderWrapper>
+        <div style={{ height: '78dvh' }}>
+          {error && <Notice>{error}</Notice>}
+          {data &&
+            data.map((e) => <ChatRoomDetail key={e.id} data={e} selectedIndex={selectedIndex} />)}
+        </div>
     </MainContainer>
   );
 }
 
-const Wrapper = styled.div`
+const HeaderWrapper = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-end;
+  align-items: center;
   width: 95%;
-  margin: 10px auto 0;
+  margin: 10px auto;
 `;
 
 const Notice = styled.div`

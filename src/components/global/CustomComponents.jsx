@@ -26,8 +26,8 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputLabel-root': {
     color: '#000', // 기본 라벨 색상
   },
-  '& .Mui-focused .MuiInputLabel-root': {
-    color: '#4A885D', // 포커스 상태에서 라벨 색상
+  '& label.Mui-focused': {
+    color: '#4A885D', //포커스 시 라벨 색상
   },
 }));
 

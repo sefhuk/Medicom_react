@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../../../../utils/axios';
 import { useRecoilValue } from 'recoil';
 import { stompState } from '../../../../utils/atom';
+import { Btn } from '../../../../components/global/CustomComponents';
 
 const style = {
   position: 'absolute',
@@ -70,8 +71,8 @@ function DepartmentSuggestion({ setOpens, text, defaultValue, msgId }) {
       <Button
         onClick={handleOpen}
         sx={{
-          color: 'var(--main-deep)',
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          color: 'var(--main-deep)'
         }}
       >
         {text || '진료과목 정보 제공하기'}
@@ -93,19 +94,7 @@ function DepartmentSuggestion({ setOpens, text, defaultValue, msgId }) {
             renderInput={params => <TextField {...params} />}
             onChange={e => setValue(e.target.innerText)}
           />
-          <Button
-            variant='contained'
-            onClick={handleButtonClick}
-            sx={{
-              backgroundColor: 'var(--main-common)',
-              fontWeight: 'bold',
-              '&:hover': {
-                backgroundColor: 'var(--main-deep)'
-              }
-            }}
-          >
-            정보 제공하기
-          </Button>
+          <Btn onClick={handleButtonClick}>정보 제공하기</Btn>
         </Box>
       </Modal>
     </>

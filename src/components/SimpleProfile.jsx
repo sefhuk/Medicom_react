@@ -7,6 +7,7 @@ import { userauthState } from '../utils/atom';
 import { Button } from '@mui/material';
 import { axiosInstance } from '../utils/axios';
 import { useNavigate } from 'react-router';
+import { Btn } from '../components/global/CustomComponents';
 
 function SimpleProfile(props) {
   const auth = useRecoilValue(userauthState);
@@ -44,21 +45,17 @@ function SimpleProfile(props) {
         </Wrapper>
       </Head>
       {auth.role === 'ADMIN' && (
-        <Button
-          variant='contained'
+        <Btn
+          
           onClick={handleButtonClick}
           sx={{
             width: '60%',
             marginTop: '20px',
-            backgroundColor: 'var(--main-common)',
             fontWeight: 'bold',
-            '&:hover': {
-              backgroundColor: 'var(--main-deep)'
-            }
           }}
         >
           유저 상세정보
-        </Button>
+        </Btn>
       )}
     </Container>
   );

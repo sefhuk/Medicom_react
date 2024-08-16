@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import ProfileImage from './ProfileImage';
 import styled from 'styled-components';
 import { fromatDate, isToday } from '../../utils/time';
-import { Box, Button, Modal } from '@mui/material';
+import { Box, Modal } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { userauthState } from '../../utils/atom';
 import EditModal from './modal/EditModal';
 import { useNavigate } from 'react-router';
+import { Btn } from '../global/CustomComponents';
 
 const style = {
   position: 'absolute',
@@ -24,9 +25,10 @@ const style = {
 function Message({ data, repeat, self }) {
   const [auth] = useRecoilState(userauthState);
 
+  const [dptBtnHoverd, setDtpBtnHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
-    if (auth.userId !== Number(data.user.id)) return;
+    if (auth.userId !== Number(data.user.id) || dptBtnHoverd) return;
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
@@ -98,13 +100,14 @@ function Message({ data, repeat, self }) {
             {data.content.startsWith('dpt: ') && data.user.role === 'DOCTOR' ? (
               <Suggestion>
                 <p>진료과 추천 정보가 제공되었습니다</p>
-                <Button
-                  variant='contained'
+                <Btn
                   onClick={requestHospital}
-                  sx={{ width: '80%', color: 'black', backgroundColor: '#c5e7aa' }}
+                  sx={{ width: '80%' }}
+                  onMouseEnter={() => setDtpBtnHovered(true)}
+                  onMouseLeave={() => setDtpBtnHovered(false)}
                 >
                   {data.content.split(' ')[1]}
-                </Button>
+                </Btn>
               </Suggestion>
             ) : (
               data.content.split('\\n').map(e => (
@@ -162,7 +165,7 @@ const Author = styled.p`
 `;
 
 const Content = styled.div`
-  background-color: ${({ self }) => (self ? 'var(--main-soft)' : 'var(--paper-deep)')};
+  background-color: ${({ self }) => (self ? 'var(--main-soft)' : 'var(--paper-soft)')};
   padding: 10px;
   border-radius: 10px;
   margin-right: ${({ self }) => (self ? '10px' : '0px')};

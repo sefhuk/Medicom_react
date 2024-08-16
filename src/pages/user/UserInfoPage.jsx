@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Typography, TextField, IconButton, Box, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Typography, IconButton, Box, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { axiosInstance } from '../../utils/axios';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -11,6 +11,12 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import PostCodeModal from '../../components/PostCodeModal';
 import { deleteCookie } from '../../utils/cookies';
 import MainContainer from '../../components/global/MainContainer';
+import {
+  TextF,
+  Btntwo,
+  Btn,
+  SmallBtn
+} from '../../components/global/CustomComponents';
 
 const theme = createTheme({
   palette: {
@@ -160,7 +166,6 @@ const UserInfoPage = () => {
     }));
   };
 
-
   const handleDeleteAccount = async () => {
     if (state.deleteInput !== '메디콤탈퇴') {
       setState((prevState) => ({
@@ -193,216 +198,215 @@ const UserInfoPage = () => {
 
   return (
     <MainContainer>
-    <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)',minHeight: '-webkit-fill-available',
-      height: 'fit-content' }}>
-      <ThemeProvider theme={theme}>
-        <Typography variant='h5' sx={{ display: 'inline', color: 'var(--main-common)' }}>
-          내 정보 수정
-        </Typography>
-        <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
-        <form>
-          {['name', 'birthday', 'email'].map((field) => (
-            <Box key={field} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-              <TextField
-                label={getFieldLabel(field)}
-                name={field}
-                type='text'
-                value={formData[field] || ''}
-                fullWidth
-                margin="normal"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Box>
-          ))}
-          {['address', 'phoneNumber'].map((field) => (
-            <Box key={field} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-              <TextField
-                label={getFieldLabel(field)}
-                name={field}
-                type='text'
-                value={field === 'address' ? `${formData.address || ''} ${formData.addressDetail || ''}` : formData[field] || ''}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-                InputProps={{
-                  readOnly: editField !== field,
-                }}
-              />
-              {editField === field ? (
-                <>
-                  <IconButton onClick={() => handleSaveClick(field)}>
-                    <SaveIcon sx={{ color: 'var(--main-common)' }} />
-                  </IconButton>
-                  <IconButton onClick={handleCancelClick}>
-                    <CancelIcon sx={{ color: 'var(--main-common)' }} />
-                  </IconButton>
-                </>
-              ) : (
-                <IconButton onClick={() => handleEditClick(field)}>
-                  <EditIcon sx={{ color: 'var(--main-common)' }} />
-                </IconButton>
-              )}
-            </Box>
-          ))}
-          {!userInfo?.provider && (
-            <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-              <TextField
-                label="비밀번호"
-                name="password"
-                type="password"
-                value={formData.password || ''}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-                InputProps={{
-                  readOnly: editField !== 'password',
-                }}
-              />
-              {editField === 'password' ? (
-                <>
-                  <IconButton onClick={() => handleEditClick('password')}>
-                    <EditIcon sx={{ color: 'var(--main-common)' }} />
-                  </IconButton>
-                </>
-              ) : (
-                <IconButton onClick={() => handleEditClick('password')}>
-                  <EditIcon sx={{ color: 'var(--main-common)' }} />
-                </IconButton>
-              )}
-            </Box>
-          )}
-        </form>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'flex-end',
-            height: '100%',
-            marginTop: '50px'
-          }}
-        >
-          <Button
-            onClick={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: true }))}
-            sx={{
-              backgroundColor: 'red',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'darkred',
-              },
-              marginBottom: '10px',
-            }}
-          >
-            회원 탈퇴
-          </Button>
-        </Box>
-      </ThemeProvider>
+      <Paper elevation={0} sx={{ margin: '10px', padding: 3, borderRadius: '10px', backgroundColor: 'var(--paper-soft)', minHeight: '-webkit-fill-available', height: 'fit-content' }}>
 
-      <Dialog open={dialogOpen} onClose={handleCancelClick}>
-        <DialogTitle>{getFieldLabel(editField)}</DialogTitle>
-        <DialogContent>
-          {editField === 'address' ? (
-            <>
-              <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <TextField
-                  label="주소"
-                  name="address"
-                  value={addressData.address}
-                  onChange={handleDialogInputChange}
+          <Typography variant='h5' sx={{fontWeight: 'bold', display: 'inline', color: 'var(--main-common)' }}>
+            내 정보 수정
+          </Typography>
+          <Box sx={{ margin: '20px 0', borderBottom: '1px solid var(--main-common)' }}></Box>
+          <form>
+            {['name', 'birthday', 'email'].map((field) => (
+              <Box key={field} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <TextF
+                  label={getFieldLabel(field)}
+                  name={field}
+                  type='text'
+                  value={formData[field] || ''}
                   fullWidth
                   margin="normal"
                   InputProps={{
                     readOnly: true,
                   }}
                 />
-                <Button variant="contained" onClick={() => setState((prevState) => ({ ...prevState, postcodeOpen: true }))} sx={{ height: '40px', marginLeft: '10px' }}>
-                  검색
-                </Button>
               </Box>
-              <TextField
-                label="상세주소"
-                name="addressDetail"
-                value={addressData.addressDetail}
-                onChange={handleDialogInputChange}
-                fullWidth
-                margin="normal"
-              />
-            </>
-          ) : editField === 'password' ? (
-            <>
-              <TextField
-                label="기존 비밀번호"
-                name="verifyPassword"
-                type="password"
-                value={formData.verifyPassword || ''}
+            ))}
+            {['address', 'phoneNumber'].map((field) => (
+              <Box key={field} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <TextF
+                  label={getFieldLabel(field)}
+                  name={field}
+                  type='text'
+                  value={field === 'address' ? `${formData.address || ''} ${formData.addressDetail || ''}` : formData[field] || ''}
+                  onChange={handleInputChange}
+                  fullWidth
+                  margin="normal"
+                  InputProps={{
+                    readOnly: editField !== field,
+                  }}
+                />
+                {editField === field ? (
+                  <>
+                    <IconButton onClick={() => handleSaveClick(field)}>
+                      <SaveIcon sx={{ color: 'var(--main-common)' }} />
+                    </IconButton>
+                    <IconButton onClick={handleCancelClick}>
+                      <CancelIcon sx={{ color: 'var(--main-common)' }} />
+                    </IconButton>
+                  </>
+                ) : (
+                  <IconButton onClick={() => handleEditClick(field)}>
+                    <EditIcon sx={{ color: 'var(--main-common)' }} />
+                  </IconButton>
+                )}
+              </Box>
+            ))}
+            {!userInfo?.provider && (
+              <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <TextF
+                  label="비밀번호"
+                  name="password"
+                  type="password"
+                  value={formData.password || ''}
+                  onChange={handleInputChange}
+                  fullWidth
+                  margin="normal"
+                  InputProps={{
+                    readOnly: editField !== 'password',
+                  }}
+                />
+                {editField === 'password' ? (
+                  <>
+                    <IconButton onClick={() => handleEditClick('password')}>
+                      <EditIcon sx={{ color: 'var(--main-common)' }} />
+                    </IconButton>
+                  </>
+                ) : (
+                  <IconButton onClick={() => handleEditClick('password')}>
+                    <EditIcon sx={{ color: 'var(--main-common)' }} />
+                  </IconButton>
+                )}
+              </Box>
+            )}
+          </form>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              height: '100%',
+              marginTop: '50px'
+            }}
+          >
+            <Btn
+              onClick={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: true }))}
+              sx={{
+                backgroundColor: 'red',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: 'darkred',
+                },
+                marginBottom: '10px',
+              }}
+            >
+              회원 탈퇴
+            </Btn>
+          </Box>
+
+
+        <Dialog open={dialogOpen} onClose={handleCancelClick}>
+          <DialogTitle>{getFieldLabel(editField)}</DialogTitle>
+          <DialogContent>
+            {editField === 'address' ? (
+              <>
+                <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <TextF
+                    label="주소"
+                    name="address"
+                    value={addressData.address}
+                    onChange={handleDialogInputChange}
+                    fullWidth
+                    margin="normal"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                  <Btntwo variant="contained" onClick={() => setState((prevState) => ({ ...prevState, postcodeOpen: true }))} sx={{ height: '40px', marginLeft: '10px' }}>
+                    검색
+                  </Btntwo>
+                </Box>
+                <TextF
+                  label="상세주소"
+                  name="addressDetail"
+                  value={addressData.addressDetail}
+                  onChange={handleDialogInputChange}
+                  fullWidth
+                  margin="normal"
+                />
+              </>
+            ) : editField === 'password' ? (
+              <>
+                <TextF
+                  label="기존 비밀번호"
+                  name="verifyPassword"
+                  type="password"
+                  value={formData.verifyPassword || ''}
+                  onChange={handleInputChange}
+                  fullWidth
+                  margin="normal"
+                />
+                <TextF
+                  label="변경할 비밀번호"
+                  name="alterPassword"
+                  type="password"
+                  value={formData.alterPassword || ''}
+                  onChange={handleInputChange}
+                  fullWidth
+                  margin="normal"
+                />
+              </>
+            ) : (
+              <TextF
+                label={getFieldLabel(editField)}
+                name={editField}
+                type='text'
+                value={formData[editField] || ''}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
               />
-              <TextField
-                label="변경할 비밀번호"
-                name="alterPassword"
-                type="password"
-                value={formData.alterPassword || ''}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
-            </>
-          ) : (
-            <TextField
-              label={getFieldLabel(editField)}
-              name={editField}
-              type='text'
-              value={formData[editField] || ''}
-              onChange={handleInputChange}
+            )}
+          </DialogContent>
+          <DialogActions>
+            <SmallBtn onClick={handleCancelClick} color="primary">
+              취소
+            </SmallBtn>
+            <SmallBtn onClick={() => handleSaveClick(editField)} color="primary" sx = {{color: 'white', backgroundColor: 'green'}}>
+              저장
+            </SmallBtn>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={deleteConfirmOpen} onClose={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: false }))}>
+          <DialogTitle>정말 탈퇴하시겠습니까?</DialogTitle>
+          <DialogContent>
+            <Typography>
+              계정을 탈퇴하시려면 아래 입력란에 <strong>메디콤탈퇴</strong>를 입력해 주세요.
+            </Typography>
+            <TextF
+              label="메디콤탈퇴 입력"
               fullWidth
+              value={deleteInput}
+              onChange={(e) => setState((prevState) => ({ ...prevState, deleteInput: e.target.value, deleteError: '' }))}
               margin="normal"
             />
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelClick} color="primary">
-            취소
-          </Button>
-          <Button onClick={() => handleSaveClick(editField)} color="primary">
-            저장
-          </Button>
-        </DialogActions>
-      </Dialog>
+            {deleteError && (
+              <Typography color="error" variant="body2">
+                {deleteError}
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: false }))} color="primary">
+              취소
+            </Button>
+            <Button onClick={handleDeleteAccount} color="error">
+              탈퇴
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-      <Dialog open={deleteConfirmOpen} onClose={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: false }))}>
-        <DialogTitle>정말 탈퇴하시겠습니까?</DialogTitle>
-        <DialogContent>
-          <Typography>
-            계정을 탈퇴하시려면 아래 입력란에 <strong>메디콤탈퇴</strong>를 입력해 주세요.
-          </Typography>
-          <TextField
-            label="메디콤탈퇴 입력"
-            fullWidth
-            value={deleteInput}
-            onChange={(e) => setState((prevState) => ({ ...prevState, deleteInput: e.target.value, deleteError: '' }))}
-            margin="normal"
-          />
-          {deleteError && (
-            <Typography color="error" variant="body2">
-              {deleteError}
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setState((prevState) => ({ ...prevState, deleteConfirmOpen: false }))} color="primary">
-            취소
-          </Button>
-          <Button onClick={handleDeleteAccount} color="error">
-            탈퇴
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <PostCodeModal open={postcodeOpen} onClose={() => setState((prevState) => ({ ...prevState, postcodeOpen: false }))} onComplete={handleAddressComplete} />
-    </Paper>
+        <PostCodeModal open={postcodeOpen} onClose={() => setState((prevState) => ({ ...prevState, postcodeOpen: false }))} onComplete={handleAddressComplete} />
+      </Paper>
     </MainContainer>
   );
 };
@@ -410,7 +414,7 @@ const UserInfoPage = () => {
 const getFieldLabel = (field) => {
   switch (field) {
     case 'name':
-      return '이름';
+      return '이름(닉네임)';
     case 'email':
       return '이메일 주소';
     case 'password':
