@@ -237,6 +237,9 @@ const MapComponent = () => {
                       </li>
                     ))}
                   </ul>
+                    <Typography variant="body1"sx={{mt:1}}>
+                      <strong>영업여부 :&nbsp;&nbsp;</strong>{selectedHospital.openStatusMessage}
+                    </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Btn onClick={handleReservation} sx={{ marginTop: '10px' }}>
                       병원 예약
