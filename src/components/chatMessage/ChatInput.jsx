@@ -1,4 +1,3 @@
-import { Button } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Modal from '@mui/material/Modal';
@@ -9,8 +8,8 @@ import { chatRoomState, stompState, userauthState } from '../../utils/atom';
 import { useParams } from 'react-router';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
-import { TextFieldsRounded } from '@mui/icons-material';
 import SendIcon from '@mui/icons-material/Send';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -102,7 +101,7 @@ function ChatInput({ sendMessage, enable }) {
         }}
         onClick={handleOpen}
       >
-        <AddIcon/>
+        <AddIcon />
       </IconButton>
       <Input
         value={input}
@@ -125,7 +124,7 @@ function ChatInput({ sendMessage, enable }) {
           }
         }}
       >
-        <SendIcon sx = {{ fontSize: "medium", color: 'white' }} />
+        <SendIcon sx={{ fontSize: 'medium', color: 'white' }} />
       </IconButton>
     </Container>
   );
@@ -144,11 +143,11 @@ const Container = styled.div`
 `;
 
 const Input = styled.textarea`
-  border: 2px solid #E2E2E2;
+  border: 2px solid #e2e2e2;
   width: 70%;
   border-radius: 10px;
   background-color: white;
-  padding: 1.8dvh 15px 0;
+  padding: 2.3dvh 15px 0;
   font-size: 1rem;
   resize: none;
   white-space: pre-line;

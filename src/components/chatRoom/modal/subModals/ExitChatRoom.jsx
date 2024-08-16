@@ -42,8 +42,8 @@ function ExitChatRoom() {
       <Button
         onClick={handleClick}
         sx={{
-          color: 'black',
-          fontWeight: 'bold',
+          color: 'var(--main-deep)',
+          fontWeight: 'bold'
         }}
       >
         채팅방 나가기
