@@ -578,6 +578,15 @@ const HospitalResult = (hospital) => {
                 {selectedHospital?.id === hospital.id && (
                   <Box sx={{ width: '100%' }}>
                     {renderMap()}
+                    <Typography
+                        variant="body2"
+                        sx={{ 
+                          whiteSpace: 'pre-line',
+                          textAlign: 'center',
+                        }}
+                        >
+                        {hospital.formattedOpenHours}
+                      </Typography>
                     {renderReviews(hospital.id)}
                   </Box>
                 )}
