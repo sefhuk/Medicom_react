@@ -303,7 +303,7 @@ const HospitalList = (hospital) => {
     return (
       <>
         {reviews.length > 0 ? (
-          <ul>
+          <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
             {reviews.map((review, index) => (
               <li key={index}>
                 <HospitalReviewCard review={review} />
@@ -629,7 +629,9 @@ const HospitalList = (hospital) => {
                 {selectedHospital?.id === hospital.id && (
                   <Box sx={{ width: '100%' }}>
                     {renderMap()}
+                    <Box sx={{ marginTop: '20px' }}>
                     {renderReviews(hospital.id)}
+                    </Box>
                   </Box>
                 )}
               </ListItem>
