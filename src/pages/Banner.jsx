@@ -58,36 +58,77 @@ const Banner = () => {
       });
   }, []);
 
-  return (
-    <Box sx={{ width: '100%', marginTop: 3 }}>
-      <StyledSlider {...settings}>
-        {diseases.length > 0 ? (
-          diseases.map((disease) => (
-            <SlideBox key={disease.id}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-                <img
-                  src='/images/Trophy.png'
-                  alt="Top"
-                  style={{ width: '30px', height: '30px' }}/>
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  TOP{disease.rank}
-                </Typography>
-                <Typography variant="h8">
-                  {disease.diseaseName}
-                </Typography>
-              </Box>
-            </SlideBox>
-          ))
-        ) : (
-          <SlideBox>
-            <Typography variant="h6" color="text.primary">
-              로딩중...
-            </Typography>
-          </SlideBox>
-        )}
-      </StyledSlider>
-    </Box>
-  );
+  const StyledLink = styled('a')({
+  textDecoration: 'none',
+  color: 'inherit',
+  display: 'block',
+});
+
+
+
+return (
+  <Box sx={{ width: '100%', marginTop: 3 }}>
+    <StyledSlider {...settings}>
+      {diseases.length > 0 ? (
+        diseases.map((disease) => {
+          // rank에 따른 URL 설정
+          let url = '';
+          switch (disease.rank) {
+            case 1:
+              url = '/posts/22';
+              break;
+            case 2:
+              url = '/posts/24';
+              break;
+            case 3:
+              url = '/posts/25';
+              break;
+            case 4:
+              url = '/posts/26';
+              break;
+            case 5:
+              url = '/posts/27';
+              break;
+            default:
+              url = '#'; // rank가 1에서 5 사이가 아닐 경우
+          }
+
+          return (
+            <StyledLink 
+              href={url} 
+              key={disease.id} 
+              rel="noopener noreferrer"
+            >
+              <SlideBox>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                  <img
+                    src='/images/Trophy.png'
+                    alt="Top"
+                    style={{ width: '30px', height: '30px' }}
+                  />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'black' }}>
+                    TOP {disease.rank}
+                  </Typography>
+                  <Typography variant="h8" sx={{ color: 'black' }}>
+                    {disease.diseaseName}
+                  </Typography>
+                </Box>
+              </SlideBox>
+            </StyledLink>
+          );
+        })
+      ) : (
+        <SlideBox>
+          <Typography variant="h6" color="text.primary">
+            로딩중...
+          </Typography>
+        </SlideBox>
+      )}
+    </StyledSlider>
+  </Box>
+);
+
+
 };
 
 export default Banner;
