@@ -607,9 +607,11 @@ const HospitalList = (hospital) => {
                       {hospital.telephoneNumber}
                     </a>
                   </Typography>
+                  <Typography variant="body2">
+                      {hospital.openStatusMessage}
+                  </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <SmallBtn
-
                         onClick={() => handleReservation(hospital)}
                       >
                         예약
