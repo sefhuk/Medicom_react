@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ProfileImage from './ProfileImage';
 import styled from 'styled-components';
 import { fromatDate, isToday } from '../../utils/time';
-import { Box, Button, Modal } from '@mui/material';
+import { Box, Modal } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { userauthState } from '../../utils/atom';
 import EditModal from './modal/EditModal';
@@ -25,9 +25,10 @@ const style = {
 function Message({ data, repeat, self }) {
   const [auth] = useRecoilState(userauthState);
 
+  const [dptBtnHoverd, setDtpBtnHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
-    if (auth.userId !== Number(data.user.id)) return;
+    if (auth.userId !== Number(data.user.id) || dptBtnHoverd) return;
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
@@ -101,7 +102,9 @@ function Message({ data, repeat, self }) {
                 <p>진료과 추천 정보가 제공되었습니다</p>
                 <Btn
                   onClick={requestHospital}
-                  sx={{ width: '80%'}}
+                  sx={{ width: '80%' }}
+                  onMouseEnter={() => setDtpBtnHovered(true)}
+                  onMouseLeave={() => setDtpBtnHovered(false)}
                 >
                   {data.content.split(' ')[1]}
                 </Btn>
