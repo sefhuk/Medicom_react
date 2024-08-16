@@ -318,7 +318,7 @@ function PostDetailPage() {
                       src={img.link}
                       alt={`image-${index}`}
                       style={{
-                        width: '386px',
+                        width: '408px',
                         height: 'auto',
                         objectFit: 'cover',
                         cursor: 'pointer',
