@@ -109,7 +109,12 @@ function ChatPage() {
 
     const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}/ws`);
 
-    const stomp = Stomp.over(socket);
+    const stomp = Stomp.over(socket, null, {
+      transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
+      heartbeat_in: 10000,
+      heartbeat_out: 10000,
+      reconnect_delay: 5000
+    });
 
     stomp.connect({ Authorization: localStorage.getItem('token') }, frame => {
       setLoading(false);
