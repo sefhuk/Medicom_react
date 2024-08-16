@@ -8,7 +8,6 @@ import SockJS from 'sockjs-client';
 import ChatInput from '../../components/chatMessage/ChatInput';
 import { useRecoilState } from 'recoil';
 import { chatRoomState, stompState, userauthState } from '../../utils/atom';
-import { Button, ButtonGroup } from '@mui/material';
 import { Loading } from '../../components/Loading';
 import InsertMessage from '../../components/chatMessage/InsertMessage';
 import { Btn } from '../../components/global/CustomComponents';
@@ -73,6 +72,9 @@ function ChatPage() {
       const response = await axiosInstance.get(`/chat-messages`, {
         params: {
           chatRoomId: Number(params.chatRoomId)
+        },
+        headers: {
+          Authorization: localStorage.getItem('token')
         }
       });
 
@@ -237,7 +239,7 @@ function ChatPage() {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
+                alignItems: 'center'
               }}
             >
               <Btn
@@ -252,7 +254,7 @@ function ChatPage() {
               </Btn>
             </div>
           )}
-
+        <div ref={tmp} style={{ height: '0.1dvh' }} />
         <ChatInput
           sendMessage={sendMessage}
           enable={
@@ -261,7 +263,7 @@ function ChatPage() {
             chatRoom.rooms[`ch_${params.chatRoomId}`]?.status?.status !== '비활성화'
           }
         />
-       </CustomScrollBox> 
+      </CustomScrollBox>
     </MainContainer>
   );
 }

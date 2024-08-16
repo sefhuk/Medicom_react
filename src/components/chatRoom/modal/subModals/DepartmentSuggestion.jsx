@@ -71,7 +71,8 @@ function DepartmentSuggestion({ setOpens, text, defaultValue, msgId }) {
       <Button
         onClick={handleOpen}
         sx={{
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          color: 'var(--main-deep)'
         }}
       >
         {text || '진료과목 정보 제공하기'}
@@ -93,11 +94,7 @@ function DepartmentSuggestion({ setOpens, text, defaultValue, msgId }) {
             renderInput={params => <TextField {...params} />}
             onChange={e => setValue(e.target.innerText)}
           />
-          <Btn
-            onClick={handleButtonClick}
-          >
-            정보 제공하기
-          </Btn>
+          <Btn onClick={handleButtonClick}>정보 제공하기</Btn>
         </Box>
       </Modal>
     </>
