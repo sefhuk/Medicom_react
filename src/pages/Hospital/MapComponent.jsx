@@ -27,7 +27,12 @@ const MapComponent = () => {
     const fetchHospitalsData = async () => {
       setLoading(true);
       try {
-        const response = await axiosInstance.get('/api/hospitals/all');
+        const response = await axiosInstance.get('/api/hospitals/all', {
+          params: {
+            latitude,
+            longitude
+          }
+        });
         setHospitals(response.data);
         console.log('병원 데이터를 가져왔습니다:', response.data);
       } catch (error) {
@@ -37,9 +42,11 @@ const MapComponent = () => {
         setLoading(false);
       }
     };
-
-    fetchHospitalsData();
-  }, []);
+  
+    if (latitude && longitude) {
+      fetchHospitalsData();
+    }
+  }, [latitude, longitude]);
 
   useEffect(() => {
     const handleDepartmentSearch = (hospitalsData) => {
@@ -47,37 +54,20 @@ const MapComponent = () => {
         setError('부서명이 입력되지 않았습니다.');
         return;
       }
-
+  
       const departmentsArray = departments.map(dep => dep.trim());
-
+  
       const filteredByDepartment = hospitalsData.filter(hospital =>
         hospital.departments.some(department => departmentsArray.includes(department.name))
       );
-
+  
       setFilteredHospitals(filteredByDepartment);
     };
-
+  
     if (hospitals.length > 0) {
-      const distance = (lat1, lng1, lat2, lng2) => {
-        const R = 6371;
-        const dLat = (lat2 - lat1) * (Math.PI / 180);
-        const dLng = (lng2 - lng1) * (Math.PI / 180);
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                  Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-                  Math.sin(dLng / 2) * Math.sin(dLng / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-      };
-
-      const filteredByLocation = hospitals.filter(hospital => {
-        const hospitalLat = hospital.latitude;
-        const hospitalLng = hospital.longitude;
-        return distance(latitude, longitude, hospitalLat, hospitalLng) <= 5;
-      });
-
-      handleDepartmentSearch(filteredByLocation);
+      handleDepartmentSearch(hospitals);
     }
-  }, [hospitals, latitude, longitude, departments]);
+  }, [hospitals, departments]);
 
   useEffect(() => {
     if (mapLoaded && latitude && longitude) {
@@ -222,7 +212,7 @@ const MapComponent = () => {
                   <Typography variant='body1' sx={{mb:1}}>
                     <strong>주소 :</strong> {selectedHospital.address}
                   </Typography>
-                  <Typography variant='body1' sx={{mb:1}}>
+                  <Typography variant='body1'sx={{mb:1}}>
                     <strong>진료과목 :</strong>
                   </Typography>
                   <ul
