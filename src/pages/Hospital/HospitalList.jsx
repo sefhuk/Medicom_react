@@ -629,6 +629,17 @@ const HospitalList = (hospital) => {
                 {selectedHospital?.id === hospital.id && (
                   <Box sx={{ width: '100%' }}>
                     {renderMap()}
+                    <Box sx={{ bgcolor: '#F3F4F0', padding: 2, borderRadius: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', mt:2 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ 
+                          whiteSpace: 'pre-line',
+                          textAlign: 'center',
+                        }}
+                        >
+                        {hospital.formattedOpenHours}
+                      </Typography>
+                    </Box>
                     <Box sx={{ marginTop: '20px' }}>
                     {renderReviews(hospital.id)}
                     </Box>
