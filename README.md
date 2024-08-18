@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+# 메디콤
+![logo (1)](https://github.com/user-attachments/assets/1c157835-d764-46e6-bcf5-c250ff089ba2)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+#### 원인 모를 통증과 증상을 통해 의심되는 질병을 알려주고,
+#### 어떤 진료과를 가야하는지와 근처에 있는 해당 진료과 병원을 찾아주는 시스템
 
-## Available Scripts
+## 기술 스택
+- React
+- Nginx
+- Axios
+- MUI Component
+- FireBase
+- Naver Map API
 
-In the project directory, you can run:
+### 배포
+- GCP
+- Gitlab CI/CD
 
-### `npm start`
+## 와이어프레임
+https://www.figma.com/design/GX6CyJdzJCfZVgUN4t9mZd/elice-project3?node-id=0-1&t=8cqv2TCWyLXtmpu7-0
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 기능
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 메인 기능
+- AI에게 질의를 통해 간단한 진단 및 진료과 소개 후 근처 병원 검색 및 지도에 표시
+- 유행중인 질병 확인
+- 현재 위치 기반으로 주변 병원 검색
+- 병원 예약
+- 병원 방문 리뷰
 
-### `npm test`
+### 유저
+- 일반 회원가입 및 Oauth2
+- 로그인 시 Access Token, Refresh Token 발급
+- Access Token 만료 시 Access Token, Refresh Token 모두 재발급
+- 일반 유저, 의사, 관리자 총 3가지 Role
+- 관리자는 유저 관리(삭제, 권한 관리) 가능
+- 회원정보 수정 및 회원탈퇴
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 게시판
+- 공지사항을 통해 유저들에게 주요 사항 공지
+- 게시글 조회수
+- 게시글 추천
+- 게시글 정렬(최신, 추천, 조회)
+- 게시글 수정 및 삭제
+- 댓글 및 대댓글
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 채팅
+- 유저는 의사와 1:1 채팅을 통해 간편 원격 진단 및 진료과 소개
+- 의사에게 소개받은 진료과를 통해 빠르게 근처의 해당 진료과 병원 검색
+- 유저는 관리자와 1:1 채팅을 통해 문의 가능
+- 의사는 진단 신청 대기중인 채팅방 확인 및 채팅 수락
+- 관리자는 문의 대기중인 채팅방 확인 및 채팅 수락
