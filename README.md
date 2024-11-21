@@ -22,7 +22,7 @@ https://www.figma.com/design/GX6CyJdzJCfZVgUN4t9mZd/elice-project3?node-id=0-1&t
 ## 기능
 
 ### 메인 기능
-- AI에게 질의를 통해 간단한 진단 및 진료과 소개 후 근처 병원 검색 및 지도에 표시
+- AI에게 질의를 통해 간단한 진단 및 진료과 소개 후 근처 병원 검색 및 지도에 표
 - 유행중인 질병 확인
 - 현재 위치 기반으로 주변 병원 검색
 - 병원 예약
@@ -50,3 +50,11 @@ https://www.figma.com/design/GX6CyJdzJCfZVgUN4t9mZd/elice-project3?node-id=0-1&t
 - 유저는 관리자와 1:1 채팅을 통해 문의 가능
 - 의사는 진단 신청 대기중인 채팅방 확인 및 채팅 수락
 - 관리자는 문의 대기중인 채팅방 확인 및 채팅 수락
+
+### 서비스 화면
+![KakaoTalk_Photo_2024-11-21-10-45-44 001](https://github.com/user-attachments/assets/f1097516-a43c-4bd5-80e5-a3d564178e85)
+![KakaoTalk_Photo_2024-11-21-10-45-44 003](https://github.com/user-attachments/assets/c3a83f00-c4a7-4834-99da-1d6d7f563653)
+![KakaoTalk_Photo_2024-11-21-10-45-44 004](https://github.com/user-attachments/assets/cea91a77-c096-4b02-9196-7382b387c79e)
+![KakaoTalk_Photo_2024-11-21-10-45-44 005](https://github.com/user-attachments/assets/6d73bdc8-6341-4acc-b767-c246d27eda57)
+
+<img width="444" alt="image" src="https://github.com/user-attachments/assets/93094e5e-3e81-4d43-a514-cb02e3934f03">
